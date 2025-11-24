@@ -3,19 +3,28 @@ import { AIInsightCard } from "@/components/AIInsightCard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Activity, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Activity, TrendingUp, AlertCircle, CheckCircle, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const AIInsights = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container px-6 py-8">
+        <Link to="/">
+          <Button variant="ghost" className="mb-4 gap-2">
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </Button>
+        </Link>
+
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
             AI Insights Pulse
           </h1>
-          <p className="text-muted-foreground">
-            Intelligent summaries and actionable insights from across your business
+          <p className="text-muted-foreground text-lg">
+            Your AI-powered business intelligence assistant • Real-time insights • Anomaly detection • Predictive analytics
           </p>
         </div>
 
@@ -80,7 +89,27 @@ const AIInsights = () => {
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-xl font-semibold">What Happened Yesterday</h3>
+              <div className="mb-6">
+                <h3 className="text-2xl font-semibold mb-2">What Happened Yesterday</h3>
+                <p className="text-muted-foreground">AI-generated narrative summary of your business performance compared to historical patterns</p>
+              </div>
+              
+              <Card className="border-l-4 border-l-green-500 bg-gradient-to-r from-green-50/50 to-background card-shadow mb-6">
+                <CardHeader>
+                  <CardTitle className="text-lg">📊 Daily Business Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="prose prose-sm max-w-none text-muted-foreground">
+                  <p className="mb-3">
+                    <strong className="text-foreground">Yesterday was a strong day for your business.</strong> Revenue reached <strong className="text-foreground">₹12.4L</strong>, marking an <strong className="text-green-600">8.2% increase</strong> compared to the same day last week. This growth came despite a slight dip in store traffic, indicating higher customer value and improved conversion efficiency.
+                  </p>
+                  <p className="mb-3">
+                    The <strong className="text-foreground">premium saree collection</strong> was the star performer, contributing <strong className="text-foreground">34% of total revenue</strong>. Average transaction value increased to ₹4,350 from ₹4,020, suggesting customers are purchasing higher-value items. Zone A stores showed particularly strong performance with conversion rates reaching 4.8%.
+                  </p>
+                  <p>
+                    However, <strong className="text-foreground">store visits declined by 3.1%</strong>, concentrated in evening hours. This appears to be a temporary anomaly due to local events and weather conditions rather than a concerning trend.
+                  </p>
+                </CardContent>
+              </Card>
               
               <AIInsightCard
                 title="Revenue Performance"
@@ -89,6 +118,7 @@ const AIInsights = () => {
                 trend="up"
                 metric="+8.2%"
                 category="Atlas Prime"
+                modulePath="/module/atlas-prime"
               />
 
               <AIInsightCard
@@ -98,6 +128,7 @@ const AIInsights = () => {
                 trend="down"
                 metric="-3.1%"
                 category="Behavioural Analytics"
+                modulePath="/module/behavioural-analytics"
               />
 
               <AIInsightCard
@@ -107,6 +138,7 @@ const AIInsights = () => {
                 trend="up"
                 metric="4.2⭐"
                 category="Clickrev"
+                modulePath="/module/clickrev"
               />
 
               <AIInsightCard
@@ -116,13 +148,34 @@ const AIInsights = () => {
                 trend="down"
                 metric="+14%"
                 category="Fraud"
+                modulePath="/module/fraud"
               />
             </div>
           </TabsContent>
 
           <TabsContent value="weekly" className="space-y-6">
             <div className="space-y-4">
-              <h3 className="text-xl font-semibold">What Happened Last Week</h3>
+              <div className="mb-6">
+                <h3 className="text-2xl font-semibold mb-2">What Happened Last Week</h3>
+                <p className="text-muted-foreground">Week-over-week analysis with trend identification and strategic recommendations</p>
+              </div>
+              
+              <Card className="border-l-4 border-l-primary bg-gradient-to-r from-primary/5 to-background card-shadow mb-6">
+                <CardHeader>
+                  <CardTitle className="text-lg">📈 Weekly Business Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="prose prose-sm max-w-none text-muted-foreground">
+                  <p className="mb-3">
+                    <strong className="text-foreground">Last week marked exceptional performance across all metrics.</strong> Your business generated <strong className="text-foreground">₹86.4L in revenue</strong>, representing a <strong className="text-green-600">12% increase</strong> compared to the previous week. This growth was accompanied by improvements in both volume (store visits up 5.3%) and efficiency (conversion rate up 0.4%).
+                  </p>
+                  <p className="mb-3">
+                    The <strong className="text-foreground">VIP customer segment</strong> showed particularly strong engagement, with purchase frequency increasing by 23%. This segment now contributes a disproportionate share of revenue with average transactions of ₹8,750. The data suggests your high-value customers are becoming more loyal and increasing their spending.
+                  </p>
+                  <p>
+                    <strong className="text-foreground">Operational efficiency</strong> also improved significantly. The new POS system deployment resulted in 18% faster checkout times, which contributed to higher customer satisfaction scores and increased capacity during peak hours.
+                  </p>
+                </CardContent>
+              </Card>
               
               <AIInsightCard
                 title="Weekly Performance Overview"
@@ -131,6 +184,7 @@ const AIInsights = () => {
                 trend="up"
                 metric="+12%"
                 category="Atlas Prime"
+                modulePath="/module/atlas-prime"
               />
 
               <AIInsightCard
@@ -140,6 +194,7 @@ const AIInsights = () => {
                 trend="up"
                 metric="+23%"
                 category="Insights"
+                modulePath="/module/insights"
               />
 
               <AIInsightCard
@@ -149,13 +204,17 @@ const AIInsights = () => {
                 trend="up"
                 metric="-18%"
                 category="Behavioural Analytics"
+                modulePath="/module/behavioural-analytics"
               />
             </div>
           </TabsContent>
 
           <TabsContent value="anomalies" className="space-y-6">
             <div className="space-y-4">
-              <h3 className="text-xl font-semibold">Detected Anomalies</h3>
+              <div className="mb-6">
+                <h3 className="text-2xl font-semibold mb-2">Detected Anomalies</h3>
+                <p className="text-muted-foreground">AI-powered anomaly detection identifying patterns that deviate from historical norms</p>
+              </div>
               
               <Card className="border-red-200 bg-red-50/50 card-shadow">
                 <CardHeader>
@@ -183,6 +242,7 @@ const AIInsights = () => {
                 trend="down"
                 metric="4 stores"
                 category="Atlas Prime"
+                modulePath="/module/atlas-prime"
               />
 
               <AIInsightCard
@@ -192,6 +252,7 @@ const AIInsights = () => {
                 trend="down"
                 metric="-22%"
                 category="Behavioural Analytics"
+                modulePath="/module/behavioural-analytics"
               />
             </div>
           </TabsContent>

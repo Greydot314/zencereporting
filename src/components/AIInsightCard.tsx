@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
+import { ChevronDown, ChevronUp, TrendingUp, TrendingDown, Sparkles, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface AIInsightCardProps {
   title: string;
@@ -10,9 +12,10 @@ interface AIInsightCardProps {
   trend?: "up" | "down" | "neutral";
   metric?: string;
   category?: string;
+  modulePath?: string;
 }
 
-export const AIInsightCard = ({ title, summary, details, trend, metric, category }: AIInsightCardProps) => {
+export const AIInsightCard = ({ title, summary, details, trend, metric, category, modulePath }: AIInsightCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -70,6 +73,17 @@ export const AIInsightCard = ({ title, summary, details, trend, metric, category
               </div>
             )}
           </>
+        )}
+        
+        {modulePath && (
+          <div className="mt-4 pt-4 border-t border-border">
+            <Link to={modulePath}>
+              <Button variant="outline" size="sm" className="w-full gap-2">
+                View in {category}
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
         )}
       </CardContent>
     </Card>

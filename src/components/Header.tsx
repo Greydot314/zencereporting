@@ -18,15 +18,16 @@ export const Header = () => {
           </Link>
         </div>
 
-        <div className="flex-1 max-w-md">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search modules, insights, KPIs..."
-              className="pl-9 bg-accent/30 border-border/50 focus-visible:ring-1"
-            />
+        <Link to="/ai-chat" className="flex-1 max-w-md">
+          <div className="relative cursor-pointer group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            <div className="h-10 pl-9 pr-4 bg-accent/30 border border-border/50 rounded-md flex items-center group-hover:border-primary/50 transition-colors">
+              <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                Ask AI anything...
+              </span>
+            </div>
           </div>
-        </div>
+        </Link>
 
         <div className="flex items-center gap-2">
           <Link to="/ai-insights">

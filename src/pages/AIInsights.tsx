@@ -1,264 +1,252 @@
-import { Header } from "@/components/Header";
+import { TrendingDown, TrendingUp, AlertTriangle, Sparkles, Star, ShoppingCart, Users, Activity, ArrowUpRight, ArrowDownRight, Clock } from "lucide-react";
 import { AIInsightCard } from "@/components/AIInsightCard";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Activity, TrendingUp, AlertCircle, CheckCircle, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+
+const insightFeed = [
+  {
+    id: 1,
+    type: "critical",
+    title: "Revenue dropped 6% yesterday vs last week",
+    description: "Primary cause: 12% decrease in store footfall in Tier 2 cities. Category analysis shows saree and ethnic wear segments most affected.",
+    module: "Atlas Prime",
+    modulePath: "/module/atlas-prime",
+    timestamp: "2 hours ago",
+    metrics: { current: "₹11.68L", previous: "₹12.4L", change: "-6%" },
+    recommendation: "Consider targeted promotional campaigns for Tier 2 stores focusing on saree collection.",
+  },
+  {
+    id: 2,
+    type: "positive",
+    title: "Footfall spike in Tier 2 stores by 12%",
+    description: "Weekend promotional campaign drove 340 additional store visits. Conversion rate improved from 3.2% to 3.8% in targeted locations.",
+    module: "Behavioural Analytics",
+    modulePath: "/module/behavioural-analytics",
+    timestamp: "5 hours ago",
+    metrics: { current: "2,847", previous: "2,540", change: "+12%" },
+    recommendation: "Extend successful campaign tactics to Tier 1 cities.",
+  },
+  {
+    id: 3,
+    type: "warning",
+    title: "Fraud attempts increased by 18% this week",
+    description: "Pattern detected: Multiple high-value transactions from new accounts in specific pin codes. Risk clustering in payment gateway bypass attempts.",
+    module: "Fraud",
+    modulePath: "/module/fraud",
+    timestamp: "1 day ago",
+    metrics: { current: "43 cases", previous: "36 cases", change: "+18%" },
+    recommendation: "Enable enhanced verification for transactions above ₹5,000 from new customers.",
+  },
+  {
+    id: 4,
+    type: "positive",
+    title: "Saree category ratings improved to 4.3⭐",
+    description: "Customer sentiment analysis shows 78% positive mentions for new collection. Top keywords: 'quality', 'authentic designs', 'value for money'.",
+    module: "Clickrev",
+    modulePath: "/module/clickrev",
+    timestamp: "1 day ago",
+    metrics: { current: "4.3⭐", previous: "4.0⭐", change: "+0.3" },
+    recommendation: "Feature saree collection prominently in marketing materials.",
+  },
+  {
+    id: 5,
+    type: "warning",
+    title: "App funnel drop-off rose at payment screen",
+    description: "Checkout abandonment increased from 22% to 31%. Exit rate highest on mobile devices during payment method selection.",
+    module: "Behavioural Analytics",
+    modulePath: "/module/behavioural-analytics",
+    timestamp: "2 days ago",
+    metrics: { current: "31%", previous: "22%", change: "+9%" },
+    recommendation: "Review payment gateway UX and add one-click payment options.",
+  },
+  {
+    id: 6,
+    type: "info",
+    title: "Customer segment 'Premium Shoppers' grew by 8%",
+    description: "Loyalty program members making 3+ purchases per month increased. Average order value in this segment: ₹8,400 (up 14%).",
+    module: "Segcon",
+    modulePath: "/module/segcon",
+    timestamp: "2 days ago",
+    metrics: { current: "1,247", previous: "1,154", change: "+8%" },
+    recommendation: "Create exclusive early-access campaigns for this segment.",
+  },
+];
 
 const AIInsights = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main className="container px-6 py-8">
-        <Link to="/">
-          <Button variant="ghost" className="mb-4 gap-2">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </Button>
-        </Link>
-
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-            AI Insights Pulse
+    <main className="flex-1 p-6 space-y-6 overflow-auto">
+      {/* Header Section */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+            <Sparkles className="h-8 w-8 text-primary" />
+            AI Insight Hub
           </h1>
-          <p className="text-muted-foreground text-lg">
-            Your AI-powered business intelligence assistant • Real-time insights • Anomaly detection • Predictive analytics
+          <p className="text-sm text-muted-foreground mt-1">
+            Real-time intelligence across all your modules
           </p>
         </div>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+            <Activity className="w-3 h-3 mr-1" />
+            Live
+          </Badge>
+          <Badge variant="outline" className="text-xs">
+            <Clock className="w-3 h-3 mr-1" />
+            Updated 5 min ago
+          </Badge>
+        </div>
+      </div>
 
-        <Tabs defaultValue="daily" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="daily">Daily Pulse</TabsTrigger>
-            <TabsTrigger value="weekly">Weekly Pulse</TabsTrigger>
-            <TabsTrigger value="anomalies">Anomalies</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="daily" className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card className="card-shadow">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Business Health</CardTitle>
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">Normal</div>
-                  <p className="text-xs text-muted-foreground">All systems operating well</p>
-                </CardContent>
-              </Card>
-
-              <Card className="card-shadow">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-primary" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">₹12.4L</div>
-                  <p className="text-xs text-muted-foreground">
-                    <span className="text-green-600">+8.2%</span> from yesterday
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="card-shadow">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Store Visits</CardTitle>
-                  <Activity className="h-4 w-4 text-primary" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">2,847</div>
-                  <p className="text-xs text-muted-foreground">
-                    <span className="text-red-600">-3.1%</span> from yesterday
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="card-shadow">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-primary" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">4.3%</div>
-                  <p className="text-xs text-muted-foreground">
-                    <span className="text-green-600">+0.5%</span> from yesterday
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="space-y-4">
-              <div className="mb-6">
-                <h3 className="text-2xl font-semibold mb-2">What Happened Yesterday</h3>
-                <p className="text-muted-foreground">AI-generated narrative summary of your business performance compared to historical patterns</p>
+      {/* KPI Monitor */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="border-red-500/30 bg-gradient-to-br from-red-500/10 to-background">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between mb-2">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Critical</p>
+                <p className="text-2xl font-bold text-foreground">2</p>
               </div>
-              
-              <Card className="border-l-4 border-l-green-500 bg-gradient-to-r from-green-50/50 to-background card-shadow mb-6">
-                <CardHeader>
-                  <CardTitle className="text-lg">📊 Daily Business Summary</CardTitle>
-                </CardHeader>
-                <CardContent className="prose prose-sm max-w-none text-muted-foreground">
-                  <p className="mb-3">
-                    <strong className="text-foreground">Yesterday was a strong day for your business.</strong> Revenue reached <strong className="text-foreground">₹12.4L</strong>, marking an <strong className="text-green-600">8.2% increase</strong> compared to the same day last week. This growth came despite a slight dip in store traffic, indicating higher customer value and improved conversion efficiency.
-                  </p>
-                  <p className="mb-3">
-                    The <strong className="text-foreground">premium saree collection</strong> was the star performer, contributing <strong className="text-foreground">34% of total revenue</strong>. Average transaction value increased to ₹4,350 from ₹4,020, suggesting customers are purchasing higher-value items. Zone A stores showed particularly strong performance with conversion rates reaching 4.8%.
-                  </p>
-                  <p>
-                    However, <strong className="text-foreground">store visits declined by 3.1%</strong>, concentrated in evening hours. This appears to be a temporary anomaly due to local events and weather conditions rather than a concerning trend.
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <AIInsightCard
-                title="Revenue Performance"
-                summary="Revenue increased by 8.2% yesterday compared to last week, driven by strong performance in the premium saree collection."
-                details="The increase was primarily driven by: 1) Higher average transaction value (₹4,350 vs ₹4,020), 2) Improved conversion rate in Zone A stores (4.8% vs 4.1%), 3) Strong weekend foot traffic. Recommended action: Increase inventory for premium sarees and consider expanding similar collections."
-                trend="up"
-                metric="+8.2%"
-                category="Atlas Prime"
-                modulePath="/module/atlas-prime"
-              />
-
-              <AIInsightCard
-                title="Store Visits Decline"
-                summary="Store visits dropped by 3.1% yesterday. The decline was concentrated in evening hours (6-9 PM) across Zone B locations."
-                details="Contributing factors: 1) Local festival event diverted foot traffic, 2) Weather conditions (heavy rain between 5-8 PM), 3) Temporary road construction near 3 key stores. This is likely a temporary anomaly. Monitor over the next 48 hours."
-                trend="down"
-                metric="-3.1%"
-                category="Behavioural Analytics"
-                modulePath="/module/behavioural-analytics"
-              />
-
-              <AIInsightCard
-                title="Customer Sentiment Improved"
-                summary="Clickrev rating improved to 4.2⭐ driven by positive reviews about the new saree collection and improved customer service."
-                details="Key themes from recent reviews: 1) 'Beautiful new designs' mentioned 47 times, 2) 'Helpful staff' sentiment up 23%, 3) 'Fast checkout' mentioned positively in 31 reviews. Consider highlighting these strengths in marketing materials."
-                trend="up"
-                metric="4.2⭐"
-                category="Clickrev"
-                modulePath="/module/clickrev"
-              />
-
-              <AIInsightCard
-                title="Fraud Detection Alert"
-                summary="Fraud attempts increased by 14% this week. High-risk cluster detected in Store Zone 3 with unusual return patterns."
-                details="Pattern analysis shows: 1) 12 transactions flagged for similar purchase-return behavior, 2) Common characteristics: high-value items, cash payments, same-day returns, 3) Estimated risk exposure: ₹2.1L. Recommended actions: Enhanced verification for returns over ₹5,000, staff training on fraud indicators."
-                trend="down"
-                metric="+14%"
-                category="Fraud"
-                modulePath="/module/fraud"
-              />
+              <AlertTriangle className="h-5 w-5 text-red-500" />
             </div>
-          </TabsContent>
+            <p className="text-xs text-muted-foreground">Requires immediate attention</p>
+          </CardContent>
+        </Card>
 
-          <TabsContent value="weekly" className="space-y-6">
-            <div className="space-y-4">
-              <div className="mb-6">
-                <h3 className="text-2xl font-semibold mb-2">What Happened Last Week</h3>
-                <p className="text-muted-foreground">Week-over-week analysis with trend identification and strategic recommendations</p>
+        <Card className="border-orange-500/30 bg-gradient-to-br from-orange-500/10 to-background">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between mb-2">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Important</p>
+                <p className="text-2xl font-bold text-foreground">4</p>
               </div>
-              
-              <Card className="border-l-4 border-l-primary bg-gradient-to-r from-primary/5 to-background card-shadow mb-6">
-                <CardHeader>
-                  <CardTitle className="text-lg">📈 Weekly Business Summary</CardTitle>
-                </CardHeader>
-                <CardContent className="prose prose-sm max-w-none text-muted-foreground">
-                  <p className="mb-3">
-                    <strong className="text-foreground">Last week marked exceptional performance across all metrics.</strong> Your business generated <strong className="text-foreground">₹86.4L in revenue</strong>, representing a <strong className="text-green-600">12% increase</strong> compared to the previous week. This growth was accompanied by improvements in both volume (store visits up 5.3%) and efficiency (conversion rate up 0.4%).
-                  </p>
-                  <p className="mb-3">
-                    The <strong className="text-foreground">VIP customer segment</strong> showed particularly strong engagement, with purchase frequency increasing by 23%. This segment now contributes a disproportionate share of revenue with average transactions of ₹8,750. The data suggests your high-value customers are becoming more loyal and increasing their spending.
-                  </p>
-                  <p>
-                    <strong className="text-foreground">Operational efficiency</strong> also improved significantly. The new POS system deployment resulted in 18% faster checkout times, which contributed to higher customer satisfaction scores and increased capacity during peak hours.
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <AIInsightCard
-                title="Weekly Performance Overview"
-                summary="Overall business performance was strong this week with revenue up 12% week-over-week. All key metrics showing positive trends."
-                details="Week highlights: 1) Revenue: ₹86.4L (+12%), 2) Store visits: 19,850 (+5.3%), 3) Conversion rate: 4.1% (+0.4%), 4) Customer satisfaction: 4.1⭐ (+0.2). Top performing category: Premium sarees contributed 34% of revenue."
-                trend="up"
-                metric="+12%"
-                category="Atlas Prime"
-                modulePath="/module/atlas-prime"
-              />
-
-              <AIInsightCard
-                title="Customer Segment Analysis"
-                summary="VIP segment showed exceptional growth with 23% increase in purchases. New customer acquisition is up 8% compared to last week."
-                details="Segment insights: 1) VIP customers: Average transaction ₹8,750 (+15% vs previous week), 2) Repeat customers: Strong loyalty with 3.2 visits per week, 3) New customers: 847 new acquisitions, 52% conversion to first purchase. Recommended: Launch VIP exclusive preview events."
-                trend="up"
-                metric="+23%"
-                category="Insights"
-                modulePath="/module/insights"
-              />
-
-              <AIInsightCard
-                title="Operational Efficiency"
-                summary="Average checkout time reduced by 18% this week following new POS system deployment. Customer satisfaction with checkout experience improved."
-                details="Efficiency gains: 1) Average checkout: 2.8 minutes (down from 3.4 minutes), 2) Peak hour capacity: +25%, 3) Staff productivity: +12%. Customer feedback mentions 'quick service' up 31%. Continue monitoring system performance."
-                trend="up"
-                metric="-18%"
-                category="Behavioural Analytics"
-                modulePath="/module/behavioural-analytics"
-              />
+              <TrendingDown className="h-5 w-5 text-orange-500" />
             </div>
-          </TabsContent>
+            <p className="text-xs text-muted-foreground">Needs monitoring</p>
+          </CardContent>
+        </Card>
 
-          <TabsContent value="anomalies" className="space-y-6">
-            <div className="space-y-4">
-              <div className="mb-6">
-                <h3 className="text-2xl font-semibold mb-2">Detected Anomalies</h3>
-                <p className="text-muted-foreground">AI-powered anomaly detection identifying patterns that deviate from historical norms</p>
+        <Card className="border-green-500/30 bg-gradient-to-br from-green-500/10 to-background">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between mb-2">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Positive</p>
+                <p className="text-2xl font-bold text-foreground">5</p>
               </div>
-              
-              <Card className="border-red-200 bg-red-50/50 card-shadow">
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5 text-red-600" />
-                    <CardTitle className="text-red-900">Critical Anomaly</CardTitle>
+              <TrendingUp className="h-5 w-5 text-green-500" />
+            </div>
+            <p className="text-xs text-muted-foreground">Performing well</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-primary/30 bg-gradient-to-br from-primary/10 to-background">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between mb-2">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Total Insights</p>
+                <p className="text-2xl font-bold text-foreground">11</p>
+              </div>
+              <Sparkles className="h-5 w-5 text-primary" />
+            </div>
+            <p className="text-xs text-muted-foreground">Last 24 hours</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Insight Feed (Timeline) */}
+      <div>
+        <h2 className="text-xl font-bold text-foreground mb-4">Insight Feed</h2>
+        <div className="space-y-3">
+          {insightFeed.map((insight) => {
+            const typeColors = {
+              critical: "border-l-red-500 bg-red-500/5",
+              warning: "border-l-orange-500 bg-orange-500/5",
+              positive: "border-l-green-500 bg-green-500/5",
+              info: "border-l-blue-500 bg-blue-500/5",
+            };
+
+            const typeIcons = {
+              critical: <AlertTriangle className="h-4 w-4 text-red-500" />,
+              warning: <TrendingDown className="h-4 w-4 text-orange-500" />,
+              positive: <TrendingUp className="h-4 w-4 text-green-500" />,
+              info: <Activity className="h-4 w-4 text-blue-500" />,
+            };
+
+            return (
+              <Card
+                key={insight.id}
+                className={`border-l-4 ${typeColors[insight.type]} hover:shadow-md transition-all group`}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-start gap-3">
+                        <div className="mt-1">{typeIcons[insight.type]}</div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-base text-foreground mb-1">
+                            {insight.title}
+                          </h3>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {insight.description}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground pl-7">
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {insight.timestamp}
+                        </span>
+                        <Badge variant="outline" className="text-xs">
+                          {insight.module}
+                        </Badge>
+                      </div>
+
+                      {insight.recommendation && (
+                        <div className="pl-7 mt-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                          <p className="text-xs text-foreground">
+                            <span className="font-semibold text-primary">Recommended Action:</span>{" "}
+                            {insight.recommendation}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col items-end gap-2">
+                      <div className="text-right">
+                        <p className="text-xs text-muted-foreground">Current</p>
+                        <p className="text-lg font-bold text-foreground">{insight.metrics.current}</p>
+                        <div className="flex items-center gap-1 mt-1">
+                          {insight.metrics.change.startsWith("+") ? (
+                            <ArrowUpRight className="h-3 w-3 text-green-600" />
+                          ) : (
+                            <ArrowDownRight className="h-3 w-3 text-red-600" />
+                          )}
+                          <span
+                            className={`text-xs font-semibold ${
+                              insight.metrics.change.startsWith("+") ? "text-green-600" : "text-red-600"
+                            }`}
+                          >
+                            {insight.metrics.change}
+                          </span>
+                        </div>
+                      </div>
+                      <AIInsightCard
+                        title=""
+                        description=""
+                        trend="stable"
+                        modulePath={insight.modulePath}
+                        compact
+                      />
+                    </div>
                   </div>
-                  <CardDescription className="text-red-700">
-                    Unusual transaction pattern detected
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="text-sm text-red-900">
-                  <p className="mb-2">
-                    A spike in high-value transactions followed by immediate returns was detected in Store 7. 
-                    This pattern matches known fraud signatures.
-                  </p>
-                  <Badge variant="destructive">Requires Immediate Action</Badge>
                 </CardContent>
               </Card>
-
-              <AIInsightCard
-                title="Inventory Anomaly"
-                summary="Stock levels for popular items dropped below reorder threshold in 4 stores. Potential stock-out risk identified."
-                details="At-risk items: 1) Premium silk sarees (Store 2, 5, 8), 2) Designer blouses (Store 3, 7). Current stock: 2-3 days remaining at current sales velocity. Recommended: Expedite replenishment orders and consider inter-store transfers."
-                trend="down"
-                metric="4 stores"
-                category="Atlas Prime"
-                modulePath="/module/atlas-prime"
-              />
-
-              <AIInsightCard
-                title="Traffic Pattern Shift"
-                summary="Unusual decrease in morning traffic (9-11 AM) across all stores this week. Pattern differs from historical baseline."
-                details="Analysis shows: 1) Morning traffic down 22% vs 4-week average, 2) Evening traffic stable, 3) No corresponding decrease in revenue (customers purchasing more per visit). Possible causes: Weather patterns, local events, changing customer behavior. Continue monitoring."
-                trend="down"
-                metric="-22%"
-                category="Behavioural Analytics"
-                modulePath="/module/behavioural-analytics"
-              />
-            </div>
-          </TabsContent>
-        </Tabs>
-      </main>
-    </div>
+            );
+          })}
+        </div>
+      </div>
+    </main>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Settings, FileText, TrendingUp, Shield, Lightbulb, Bell, UserCheck, Users, ArrowUpRight, ArrowDownRight, Activity, AlertTriangle, Clock, Zap, TrendingDown } from "lucide-react";
+import { Settings, FileText, TrendingUp, Shield, Lightbulb, Bell, UserCheck, Users, ArrowUpRight, ArrowDownRight, Activity, AlertTriangle, Clock, Zap, TrendingDown, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
@@ -134,6 +134,80 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* AI Summary Strip - Enhanced */}
+      <Card className="p-6 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/5 border-primary/20 hover:shadow-lg transition-all">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-primary/20 animate-pulse">
+              <Sparkles className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-foreground">AI Business Pulse</h2>
+              <p className="text-xs text-muted-foreground">Real-time intelligence • Last updated: Just now</p>
+            </div>
+          </div>
+          <Link to="/ai-chat">
+            <Button variant="outline" size="sm" className="gap-2 hover:bg-primary/10 transition-all">
+              Ask AI
+              <Sparkles className="h-3 w-3" />
+            </Button>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="p-3 rounded-lg bg-background/50 border border-border/50 hover:border-primary/30 transition-all cursor-pointer">
+            <p className="text-xs text-muted-foreground mb-1">Yesterday</p>
+            <p className="text-sm font-semibold text-foreground">Revenue -6.2%, Fraud +18%</p>
+            <div className="mt-2 h-8">
+              {/* Mini sparkline could go here */}
+              <div className="flex items-end gap-1 h-full">
+                {[45, 52, 48, 51, 49, 47, 44].map((val, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 bg-primary/30 rounded-t"
+                    style={{ height: `${(val / 52) * 100}%` }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="p-3 rounded-lg bg-background/50 border border-border/50 hover:border-primary/30 transition-all cursor-pointer">
+            <p className="text-xs text-muted-foreground mb-1">Last 7 Days</p>
+            <p className="text-sm font-semibold text-foreground">Tier 2 stores -12%, Saree category -8%</p>
+            <Badge variant="outline" className="mt-2 text-[10px] border-orange-500/30 text-orange-600">
+              NEEDS ATTENTION
+            </Badge>
+          </div>
+
+          <div className="p-3 rounded-lg bg-background/50 border border-border/50 hover:border-green-500/30 transition-all cursor-pointer">
+            <p className="text-xs text-muted-foreground mb-1">Business Health</p>
+            <p className="text-sm font-semibold text-green-600">Good</p>
+            <p className="text-xs text-muted-foreground mt-1">3 anomalies detected</p>
+          </div>
+        </div>
+
+        {/* Conversational Quick Actions */}
+        <div className="flex gap-2 flex-wrap">
+          <p className="text-xs text-muted-foreground w-full mb-1">Quick questions:</p>
+          {[
+            "Why did revenue drop?",
+            "Show fraud hotspots",
+            "Compare this week vs last",
+            "Analyze sentiment",
+          ].map((question) => (
+            <Link key={question} to="/ai-chat">
+              <Badge
+                variant="outline"
+                className="cursor-pointer hover:bg-primary/10 hover:border-primary/50 transition-all"
+              >
+                {question}
+              </Badge>
+            </Link>
+          ))}
+        </div>
+      </Card>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

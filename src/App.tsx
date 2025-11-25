@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { Header } from "@/components/Header";
 import Dashboard from "./pages/Dashboard";
 import AIInsights from "./pages/AIInsights";
+import AIChat from "./pages/AIChat";
 import ModuleDetail from "./pages/ModuleDetail";
 import NotFound from "./pages/NotFound";
 
@@ -27,6 +28,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/ai-insights" element={<AIInsights />} />
+                <Route path="/ai-chat" element={<AIChat />} />
                 <Route path="/module/:moduleId" element={<ModuleDetail />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

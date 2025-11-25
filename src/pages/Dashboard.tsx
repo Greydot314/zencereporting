@@ -1,7 +1,8 @@
-import { Settings, FileText, TrendingUp, Shield, Lightbulb, Bell, UserCheck, Users, ArrowUpRight, ArrowDownRight, Activity, AlertTriangle } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Settings, FileText, TrendingUp, Shield, Lightbulb, Bell, UserCheck, Users, ArrowUpRight, ArrowDownRight, Activity, AlertTriangle, Clock, Zap, TrendingDown } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const modules = [
   {
@@ -71,66 +72,181 @@ const modules = [
   },
 ];
 
+const recentAlerts = [
+  { id: 1, title: "Revenue dropped 6% vs last week", severity: "high", time: "2h ago", module: "Atlas Prime" },
+  { id: 2, title: "Fraud attempts increased by 18%", severity: "high", time: "5h ago", module: "Fraud" },
+  { id: 3, title: "Payment funnel drop-off at 31%", severity: "medium", time: "1d ago", module: "Behavioural" },
+  { id: 4, title: "Customer segment grew by 8%", severity: "low", time: "1d ago", module: "Segcon" },
+];
+
 const Dashboard = () => {
   return (
     <main className="flex-1 p-6 space-y-6 overflow-auto">
-      {/* AI Summary Strip */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="md:col-span-2 bg-gradient-to-br from-primary/5 via-purple-500/5 to-background border-primary/20 hover:shadow-lg transition-all">
+      {/* Welcome Section */}
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Welcome back! 👋</h1>
+        <p className="text-sm text-muted-foreground mt-1">Here's what's happening with your business today</p>
+      </div>
+
+      {/* Key Metrics Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="bg-gradient-to-br from-green-500/10 to-background border-green-500/20 hover:shadow-md transition-all">
           <CardContent className="p-4">
-            <div className="flex items-start justify-between mb-3">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs text-muted-foreground">Revenue Today</p>
+              <ArrowUpRight className="h-4 w-4 text-green-600" />
+            </div>
+            <p className="text-2xl font-bold text-foreground">₹12.4L</p>
+            <p className="text-xs text-green-600 mt-1">+8.2% vs yesterday</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-blue-500/10 to-background border-blue-500/20 hover:shadow-md transition-all">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs text-muted-foreground">Store Visits</p>
+              <TrendingDown className="h-4 w-4 text-red-600" />
+            </div>
+            <p className="text-2xl font-bold text-foreground">2,847</p>
+            <p className="text-xs text-red-600 mt-1">-3.1% vs yesterday</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-purple-500/10 to-background border-purple-500/20 hover:shadow-md transition-all">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs text-muted-foreground">Conversion</p>
+              <Activity className="h-4 w-4 text-primary" />
+            </div>
+            <p className="text-2xl font-bold text-foreground">3.4%</p>
+            <p className="text-xs text-muted-foreground mt-1">Stable</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-orange-500/10 to-background border-orange-500/20 hover:shadow-md transition-all">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs text-muted-foreground">Active Alerts</p>
+              <AlertTriangle className="h-4 w-4 text-orange-600" />
+            </div>
+            <p className="text-2xl font-bold text-foreground">7</p>
+            <p className="text-xs text-orange-600 mt-1">+2 new today</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent Alerts */}
+        <Card className="lg:col-span-2">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">Recent Alerts & Insights</CardTitle>
+              <Link to="/ai-insights">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  View All
+                  <ArrowUpRight className="h-3 w-3" />
+                </Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {recentAlerts.map((alert) => (
+              <div
+                key={alert.id}
+                className={`p-3 rounded-lg border-l-4 ${
+                  alert.severity === "high"
+                    ? "border-l-red-500 bg-red-500/5"
+                    : alert.severity === "medium"
+                    ? "border-l-orange-500 bg-orange-500/5"
+                    : "border-l-blue-500 bg-blue-500/5"
+                } hover:shadow-sm transition-all cursor-pointer`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Badge
+                        variant="outline"
+                        className={`text-[10px] ${
+                          alert.severity === "high"
+                            ? "border-red-500/30 text-red-600"
+                            : alert.severity === "medium"
+                            ? "border-orange-500/30 text-orange-600"
+                            : "border-blue-500/30 text-blue-600"
+                        }`}
+                      >
+                        {alert.severity.toUpperCase()}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">{alert.module}</span>
+                    </div>
+                    <p className="text-sm font-medium text-foreground">{alert.title}</p>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    {alert.time}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Quick Stats */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">Performance Overview</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
               <div>
-                <h3 className="font-semibold text-sm text-muted-foreground mb-1">Business Health</h3>
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-foreground">Good</span>
-                  <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
-                    +2.1%
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-muted-foreground">Business Health</span>
+                  <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
+                    Good
                   </Badge>
                 </div>
-              </div>
-              <Activity className="h-5 w-5 text-primary" />
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Revenue up 8.2% • Visits stable • 3 moderate alerts detected
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-background/50 border-border/50 hover:shadow-md transition-all">
-          <CardContent className="p-4">
-            <h3 className="font-semibold text-xs text-muted-foreground mb-2">Yesterday</h3>
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-foreground">Revenue</span>
-                <div className="flex items-center gap-1">
-                  <ArrowUpRight className="h-3 w-3 text-green-600" />
-                  <span className="text-xs font-semibold text-green-600">+8.2%</span>
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div className="h-full bg-green-500 w-[78%]"></div>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-foreground">Visits</span>
-                <div className="flex items-center gap-1">
-                  <ArrowDownRight className="h-3 w-3 text-red-600" />
-                  <span className="text-xs font-semibold text-red-600">-3.1%</span>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-muted-foreground">Customer Satisfaction</span>
+                  <span className="text-xs font-semibold text-foreground">4.2⭐</span>
+                </div>
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div className="h-full bg-primary w-[84%]"></div>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-muted-foreground">Fraud Risk</span>
+                  <Badge variant="outline" className="bg-orange-500/10 text-orange-600 border-orange-500/30">
+                    Medium
+                  </Badge>
+                </div>
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div className="h-full bg-orange-500 w-[45%]"></div>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
 
-        <Card className="bg-background/50 border-border/50 hover:shadow-md transition-all">
-          <CardContent className="p-4">
-            <h3 className="font-semibold text-xs text-muted-foreground mb-2">Last 7 Days</h3>
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-foreground">Avg Revenue</span>
-                <span className="text-xs font-semibold text-foreground">₹11.8L</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-foreground">Anomalies</span>
-                <div className="flex items-center gap-1">
-                  <AlertTriangle className="h-3 w-3 text-orange-500" />
-                  <span className="text-xs font-semibold text-orange-500">4</span>
+            <div className="pt-4 border-t border-border/50">
+              <p className="text-xs text-muted-foreground mb-3">Top Categories</p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-foreground">Premium Sarees</span>
+                  <span className="font-semibold text-foreground">₹4.2L (34%)</span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-foreground">Designer Blouses</span>
+                  <span className="font-semibold text-foreground">₹2.8L (22%)</span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-foreground">Traditional Wear</span>
+                  <span className="font-semibold text-foreground">₹2.1L (17%)</span>
                 </div>
               </div>
             </div>
@@ -138,32 +254,32 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Smart Module Launcher */}
+      {/* Module Launcher */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-bold text-foreground">Modules</h2>
-            <p className="text-xs text-muted-foreground">Quick access to all analytics modules</p>
+            <h2 className="text-lg font-bold text-foreground">Quick Access</h2>
+            <p className="text-xs text-muted-foreground">Jump to any analytics module</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-3">
           {modules.map((module) => {
             const Icon = module.icon;
             const isDisabled = module.status === "coming";
 
             const content = (
               <Card
-                className={`group relative overflow-hidden transition-all duration-300 hover:shadow-lg ${
+                className={`group relative overflow-hidden transition-all duration-300 hover:shadow-md ${
                   isDisabled
                     ? "opacity-50 cursor-not-allowed"
                     : "cursor-pointer hover:-translate-y-1 hover:border-primary/30"
                 }`}
               >
-                <CardContent className="p-4 space-y-3">
+                <CardContent className="p-3 space-y-2">
                   {module.badge && (
                     <Badge
-                      className={`absolute top-2 right-2 text-[9px] px-1.5 py-0.5 ${
+                      className={`absolute top-1.5 right-1.5 text-[8px] px-1 py-0.5 ${
                         module.badge === "PRIME"
                           ? "bg-primary/20 text-primary border-primary/30"
                           : "bg-secondary/20 text-secondary-foreground border-secondary/30"
@@ -174,31 +290,15 @@ const Dashboard = () => {
                   )}
 
                   <div className="flex items-center justify-center">
-                    <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                      <Icon className="w-6 h-6 text-primary" strokeWidth={1.5} />
+                    <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                      <Icon className="w-5 h-5 text-primary" strokeWidth={1.5} />
                     </div>
                   </div>
 
-                  <div className="space-y-1.5">
-                    <h3 className="font-semibold text-sm text-center text-foreground truncate">
+                  <div className="text-center">
+                    <h3 className="font-semibold text-xs text-foreground truncate">
                       {module.name}
                     </h3>
-
-                    <div className="text-center">
-                      <p className="text-[10px] text-muted-foreground">{module.kpi.label}</p>
-                      <div className="flex items-center justify-center gap-1 mt-0.5">
-                        <span className="text-xs font-bold text-foreground">{module.kpi.value}</span>
-                        {module.kpi.trend && (
-                          <span
-                            className={`text-[10px] font-semibold ${
-                              module.kpi.positive ? "text-green-600" : "text-red-600"
-                            }`}
-                          >
-                            {module.kpi.trend}
-                          </span>
-                        )}
-                      </div>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -215,77 +315,35 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Live Tiles */}
-      <div>
-        <h2 className="text-lg font-bold text-foreground mb-4">Live Metrics</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-          <Card className="bg-gradient-to-br from-green-500/10 to-background border-green-500/20">
-            <CardContent className="p-3">
-              <p className="text-[10px] text-muted-foreground mb-1">Revenue Today</p>
-              <p className="text-lg font-bold text-foreground">₹12.4L</p>
-              <div className="flex items-center gap-1 mt-1">
-                <ArrowUpRight className="h-3 w-3 text-green-600" />
-                <span className="text-xs text-green-600">+8.2%</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-blue-500/10 to-background border-blue-500/20">
-            <CardContent className="p-3">
-              <p className="text-[10px] text-muted-foreground mb-1">Transactions</p>
-              <p className="text-lg font-bold text-foreground">2,847</p>
-              <div className="flex items-center gap-1 mt-1">
-                <ArrowDownRight className="h-3 w-3 text-red-600" />
-                <span className="text-xs text-red-600">-3.1%</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-yellow-500/10 to-background border-yellow-500/20">
-            <CardContent className="p-3">
-              <p className="text-[10px] text-muted-foreground mb-1">New Reviews</p>
-              <p className="text-lg font-bold text-foreground">47</p>
-              <div className="flex items-center gap-1 mt-1">
-                <ArrowUpRight className="h-3 w-3 text-green-600" />
-                <span className="text-xs text-green-600">+12</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-red-500/10 to-background border-red-500/20">
-            <CardContent className="p-3">
-              <p className="text-[10px] text-muted-foreground mb-1">Fraud Alerts</p>
-              <p className="text-lg font-bold text-foreground">3</p>
-              <div className="flex items-center gap-1 mt-1">
-                <AlertTriangle className="h-3 w-3 text-orange-500" />
-                <span className="text-xs text-orange-500">Active</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-purple-500/10 to-background border-purple-500/20">
-            <CardContent className="p-3">
-              <p className="text-[10px] text-muted-foreground mb-1">Behaviour</p>
-              <p className="text-lg font-bold text-foreground">3.4%</p>
-              <div className="flex items-center gap-1 mt-1">
-                <ArrowDownRight className="h-3 w-3 text-red-600" />
-                <span className="text-xs text-red-600">-0.2%</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-primary/10 to-background border-primary/20">
-            <CardContent className="p-3">
-              <p className="text-[10px] text-muted-foreground mb-1">Segments</p>
-              <p className="text-lg font-bold text-foreground">24</p>
-              <div className="flex items-center gap-1 mt-1">
-                <ArrowUpRight className="h-3 w-3 text-green-600" />
-                <span className="text-xs text-green-600">+3</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      {/* Activity Feed */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">Recent Activity</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {[
+              { icon: Zap, text: "AI Insight generated for revenue trends", time: "5 min ago", color: "text-primary" },
+              { icon: TrendingUp, text: "New customer segment identified", time: "23 min ago", color: "text-green-600" },
+              { icon: AlertTriangle, text: "Fraud alert triggered in Zone 3", time: "1h ago", color: "text-orange-600" },
+              { icon: Users, text: "847 new customers acquired today", time: "2h ago", color: "text-blue-600" },
+            ].map((activity, i) => {
+              const Icon = activity.icon;
+              return (
+                <div key={i} className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors">
+                  <div className={`${activity.color}`}>
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-foreground">{activity.text}</p>
+                    <p className="text-xs text-muted-foreground">{activity.time}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
     </main>
   );
 };

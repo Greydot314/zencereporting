@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Copy, Check } from "lucide-react";
+import { ChevronDown, Copy, Check } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface CodeBlockProps {
   code: string;
   language?: string;
-  title?: string;
 }
 
-export const CodeBlock = ({ code, language = "sql", title = "Analysis Query" }: CodeBlockProps) => {
+export const CodeBlock = ({ code, language = "sql" }: CodeBlockProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -20,55 +20,30 @@ export const CodeBlock = ({ code, language = "sql", title = "Analysis Query" }: 
   };
 
   return (
-    <Card className="my-3 overflow-hidden border-primary/20 bg-muted/30">
-      {/* Header */}
+    <Card className="mt-3 overflow-hidden">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-3 hover:bg-accent/50 transition-colors"
+        className="w-full flex items-center justify-between px-3 py-2 hover:bg-secondary/50 transition-colors"
       >
         <div className="flex items-center gap-2">
-          {isExpanded ? (
-            <ChevronDown className="h-4 w-4 text-muted-foreground" />
-          ) : (
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          )}
-          <span className="text-sm font-medium text-foreground">{title}</span>
-          <span className="text-xs text-muted-foreground px-2 py-0.5 rounded bg-accent">
-            {language}
-          </span>
+          <span className="text-xs font-medium text-muted-foreground">View Query</span>
+          <span className="text-[10px] text-muted-foreground px-1.5 py-0.5 rounded bg-secondary">{language}</span>
         </div>
-        {isExpanded && (
+        <ChevronDown className={cn("h-3.5 w-3.5 text-muted-foreground transition-transform", isExpanded && "rotate-180")} />
+      </button>
+      
+      {isExpanded && (
+        <div className="relative border-t border-border">
           <Button
             variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCopy();
-            }}
-            className="h-7 gap-1"
+            size="icon"
+            className="absolute top-2 right-2 h-7 w-7"
+            onClick={handleCopy}
           >
-            {copied ? (
-              <>
-                <Check className="h-3 w-3" />
-                Copied
-              </>
-            ) : (
-              <>
-                <Copy className="h-3 w-3" />
-                Copy
-              </>
-            )}
+            {copied ? <Check className="h-3 w-3 text-emerald-500" /> : <Copy className="h-3 w-3" />}
           </Button>
-        )}
-      </button>
-
-      {/* Code Content */}
-      {isExpanded && (
-        <div className="border-t border-border/50 bg-background/50">
-          <pre className="p-4 overflow-x-auto">
-            <code className="text-xs font-mono text-foreground leading-relaxed">
-              {code}
-            </code>
+          <pre className="p-4 pt-2 overflow-x-auto bg-secondary/30">
+            <code className="text-xs font-mono text-foreground">{code}</code>
           </pre>
         </div>
       )}

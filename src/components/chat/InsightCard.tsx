@@ -1,7 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Lightbulb, TrendingUp, TrendingDown, AlertCircle, ExternalLink } from "lucide-react";
+import { Lightbulb, TrendingUp, TrendingDown } from "lucide-react";
 
 interface InsightCardProps {
   summary: string;
@@ -14,69 +12,48 @@ interface InsightCardProps {
 export const InsightCard = ({ 
   summary, 
   confidence = "high", 
-  recommendations, 
-  relatedModule,
+  recommendations,
   trend 
 }: InsightCardProps) => {
-  const confidenceColors = {
-    high: "bg-green-500/10 text-green-500 border-green-500/20",
-    medium: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
-    low: "bg-red-500/10 text-red-500 border-red-500/20",
-  };
-
-  const getTrendIcon = () => {
-    if (trend === "up") return <TrendingUp className="h-4 w-4 text-green-500" />;
-    if (trend === "down") return <TrendingDown className="h-4 w-4 text-red-500" />;
-    return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
-  };
-
   return (
-    <Card className="p-4 bg-gradient-to-br from-primary/5 to-accent/10 border-primary/20 my-3">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-primary/10">
-            <Lightbulb className="h-4 w-4 text-primary" />
-          </div>
-          <span className="text-sm font-semibold text-foreground">AI Insight</span>
+    <Card className="p-4 mt-3 bg-accent/30 border-primary/10">
+      <div className="flex items-start gap-3">
+        <div className="p-1.5 rounded-md bg-primary/10 flex-shrink-0">
+          <Lightbulb className="h-3.5 w-3.5 text-primary" />
         </div>
-        <div className="flex items-center gap-2">
-          {trend && getTrendIcon()}
-          <Badge variant="outline" className={confidenceColors[confidence]}>
-            {confidence} confidence
-          </Badge>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs font-medium text-foreground">Insight</span>
+            {trend && (
+              trend === "up" ? 
+                <TrendingUp className="h-3 w-3 text-destructive" /> : 
+                <TrendingDown className="h-3 w-3 text-emerald-500" />
+            )}
+            <span className={`text-[10px] px-1.5 py-0.5 rounded ${
+              confidence === 'high' ? 'bg-emerald-500/10 text-emerald-600' :
+              confidence === 'medium' ? 'bg-amber-500/10 text-amber-600' :
+              'bg-destructive/10 text-destructive'
+            }`}>
+              {confidence} confidence
+            </span>
+          </div>
+          <p className="text-sm text-foreground leading-relaxed">{summary}</p>
+          
+          {recommendations && recommendations.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-border">
+              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-2">Recommendations</p>
+              <ul className="space-y-1">
+                {recommendations.map((rec, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-xs text-muted-foreground">
+                    <span className="text-primary mt-0.5">•</span>
+                    <span>{rec}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Summary */}
-      <p className="text-sm text-foreground leading-relaxed mb-4">
-        {summary}
-      </p>
-
-      {/* Recommendations */}
-      {recommendations && recommendations.length > 0 && (
-        <div className="mb-4">
-          <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-            Recommendations
-          </h5>
-          <ul className="space-y-1.5">
-            {recommendations.map((rec, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-sm text-foreground">
-                <span className="text-primary mt-1">•</span>
-                <span>{rec}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Related Module */}
-      {relatedModule && (
-        <Button variant="outline" size="sm" className="gap-2 text-xs">
-          View in {relatedModule}
-          <ExternalLink className="h-3 w-3" />
-        </Button>
-      )}
     </Card>
   );
 };

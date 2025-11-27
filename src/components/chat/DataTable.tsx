@@ -7,34 +7,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 interface DataTableProps {
   title?: string;
   columns: string[];
   data: Record<string, any>[];
-  showTrends?: boolean;
 }
 
-export const DataTable = ({ title, columns, data, showTrends = false }: DataTableProps) => {
-  const getTrendIcon = (value: any) => {
-    if (typeof value !== "number") return null;
-    if (value > 0) return <TrendingUp className="h-3 w-3 text-green-500" />;
-    if (value < 0) return <TrendingDown className="h-3 w-3 text-red-500" />;
-    return <Minus className="h-3 w-3 text-muted-foreground" />;
-  };
-
+export const DataTable = ({ title, columns, data }: DataTableProps) => {
   return (
-    <Card className="p-4 bg-accent/20 border-primary/20 my-3 overflow-hidden">
+    <Card className="mt-3 overflow-hidden">
       {title && (
-        <h4 className="text-sm font-semibold text-foreground mb-3">{title}</h4>
+        <div className="px-4 py-2 border-b border-border">
+          <p className="text-xs font-medium text-muted-foreground">{title}</p>
+        </div>
       )}
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="border-border/50">
+            <TableRow className="bg-secondary/50">
               {columns.map((col) => (
-                <TableHead key={col} className="text-xs font-semibold text-foreground">
+                <TableHead key={col} className="text-xs font-medium text-muted-foreground py-2">
                   {col}
                 </TableHead>
               ))}
@@ -42,13 +35,10 @@ export const DataTable = ({ title, columns, data, showTrends = false }: DataTabl
           </TableHeader>
           <TableBody>
             {data.map((row, idx) => (
-              <TableRow key={idx} className="border-border/30">
+              <TableRow key={idx} className="hover:bg-accent/50">
                 {columns.map((col) => (
-                  <TableCell key={col} className="text-sm">
-                    <div className="flex items-center gap-2">
-                      <span>{row[col]}</span>
-                      {showTrends && getTrendIcon(row[col])}
-                    </div>
+                  <TableCell key={col} className="text-sm py-2">
+                    {row[col]}
                   </TableCell>
                 ))}
               </TableRow>

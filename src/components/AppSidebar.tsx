@@ -26,8 +26,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
 import {
@@ -63,7 +61,7 @@ export function AppSidebar() {
   const [modulesOpen, setModulesOpen] = useState(true);
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border bg-sidebar">
+    <Sidebar collapsible="icon" className="border-r border-border/50 bg-sidebar">
       <SidebarContent className="pt-16">
         {/* Main Navigation */}
         <SidebarGroup>
@@ -78,8 +76,8 @@ export function AppSidebar() {
                     <NavLink
                       to={item.url}
                       end={item.url === "/"}
-                      className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                      activeClassName="bg-accent text-foreground"
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                      activeClassName="bg-primary/10 text-primary border border-primary/20"
                     >
                       <item.icon className="h-4 w-4 flex-shrink-0" />
                       {open && <span>{item.title}</span>}
@@ -118,8 +116,8 @@ export function AppSidebar() {
                       <SidebarMenuButton asChild tooltip={module.title}>
                         <NavLink
                           to={module.url}
-                          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                          activeClassName="bg-accent text-foreground"
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                          activeClassName="bg-primary/10 text-primary border border-primary/20"
                         >
                           <module.icon className="h-4 w-4 flex-shrink-0" />
                           {open && (
@@ -127,8 +125,8 @@ export function AppSidebar() {
                               <span className="truncate">{module.title}</span>
                               {module.badge && (
                                 <span className={cn(
-                                  "text-[9px] px-1.5 py-0.5 rounded font-medium",
-                                  module.badge === "PRIME" ? "bg-primary/10 text-primary" : "bg-accent text-accent-foreground"
+                                  "text-[9px] px-1.5 py-0.5 rounded-full font-semibold",
+                                  module.badge === "PRIME" ? "bg-primary/20 text-primary" : "bg-emerald-400/20 text-emerald-400"
                                 )}>
                                   {module.badge}
                                 </span>
@@ -154,8 +152,8 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild tooltip={item.title}>
                     <NavLink
                       to={item.url}
-                      className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                      activeClassName="bg-accent text-foreground"
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                      activeClassName="bg-primary/10 text-primary border border-primary/20"
                     >
                       <item.icon className="h-4 w-4 flex-shrink-0" />
                       {open && <span>{item.title}</span>}

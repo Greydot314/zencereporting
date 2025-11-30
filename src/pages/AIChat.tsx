@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Sparkles, Loader2, Plus, MessageSquare, ChevronLeft } from "lucide-react";
+import { Send, Sparkles, Loader2, ArrowLeft, Zap, TrendingUp, Shield, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
 import { InlineChart } from "@/components/chat/InlineChart";
 import { DataTable } from "@/components/chat/DataTable";
 import { CodeBlock } from "@/components/chat/CodeBlock";
 import { InsightCard } from "@/components/chat/InsightCard";
+import { StreamingText } from "@/components/chat/StreamingText";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 
@@ -17,28 +17,14 @@ interface Message {
   tableData?: any;
   code?: string;
   insight?: any;
-}
-
-interface Thread {
-  id: string;
-  title: string;
-  preview: string;
-  timestamp: string;
+  isStreaming?: boolean;
 }
 
 const AIChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeThreadId, setActiveThreadId] = useState("thread-1");
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const threads: Thread[] = [
-    { id: "thread-1", title: "Revenue Analysis", preview: "Why did revenue drop?", timestamp: "2h ago" },
-    { id: "thread-2", title: "Fraud Detection", preview: "Show fraud patterns", timestamp: "5h ago" },
-    { id: "thread-3", title: "Customer Insights", preview: "Analyze sentiment", timestamp: "Yesterday" },
-  ];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -48,12 +34,53 @@ const AIChat = () => {
     scrollToBottom();
   }, [messages]);
 
+  const simulateStreaming = (fullMessage: Message) => {
+    const words = fullMessage.content.split(" ");
+    let currentContent = "";
+    let wordIndex = 0;
+
+    // Add initial streaming message
+    setMessages(prev => [...prev, { ...fullMessage, content: "", isStreaming: true }]);
+
+    const streamInterval = setInterval(() => {
+      if (wordIndex < words.length) {
+        currentContent += (wordIndex > 0 ? " " : "") + words[wordIndex];
+        wordIndex++;
+        
+        setMessages(prev => {
+          const newMessages = [...prev];
+          const lastIndex = newMessages.length - 1;
+          newMessages[lastIndex] = { 
+            ...newMessages[lastIndex], 
+            content: currentContent,
+            isStreaming: wordIndex < words.length
+          };
+          return newMessages;
+        });
+      } else {
+        clearInterval(streamInterval);
+        // Add charts/insights after text completes
+        setMessages(prev => {
+          const newMessages = [...prev];
+          const lastIndex = newMessages.length - 1;
+          newMessages[lastIndex] = { 
+            ...fullMessage, 
+            content: fullMessage.content,
+            isStreaming: false 
+          };
+          return newMessages;
+        });
+        setIsLoading(false);
+      }
+    }, 50);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
     const userMessage: Message = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
 
@@ -64,7 +91,7 @@ const AIChat = () => {
       if (query.includes("revenue") || query.includes("sales")) {
         aiMessage = {
           role: "assistant",
-          content: "Revenue dropped by **6.2%** yesterday. Key factors:\n\n• Tier 2 stores: -12%\n• Saree category: -8%\n• Payment issues: affected 3.4% of checkouts",
+          content: "I've analyzed your revenue data and found some interesting patterns.\n\nRevenue dropped by **6.2%** yesterday compared to the weekly average. Here's what's contributing to this decline:\n\n• **Tier 2 stores** are down 12% - this is the biggest factor\n• **Saree category** sales decreased by 8%\n• **Payment gateway issues** affected 3.4% of checkout attempts\n\nLet me show you the detailed breakdown below.",
           chartData: {
             type: "line",
             title: "Daily Revenue (Last 7 Days)",
@@ -79,7 +106,7 @@ const AIChat = () => {
             ],
           },
           tableData: {
-            title: "Store Breakdown",
+            title: "Store Tier Performance",
             columns: ["Tier", "Revenue", "Change"],
             data: [
               { Tier: "Tier 1", Revenue: "₹25,400", Change: "-2.1%" },
@@ -88,23 +115,23 @@ const AIChat = () => {
             ],
           },
           insight: {
-            summary: "Revenue decline driven by Tier 2 payment issues during peak hours. Fixing gateway stability could recover ~4% of lost revenue.",
+            summary: "The revenue decline is primarily driven by Tier 2 store performance and payment gateway stability issues during peak hours. Addressing gateway reliability could recover approximately 4% of the lost revenue.",
             confidence: "high" as const,
             trend: "down" as const,
             recommendations: [
-              "Check payment gateway logs",
-              "Implement fallback options",
-              "Monitor Saree inventory",
+              "Review payment gateway logs for error patterns",
+              "Implement automatic failover to backup gateway",
+              "Check Saree inventory levels at Tier 2 stores",
             ],
           },
         };
       } else if (query.includes("fraud")) {
         aiMessage = {
           role: "assistant",
-          content: "Fraud increased **18%** this week.\n\n• Account takeover: +24%\n• Payment fraud: +15%\n• Promo abuse: +12%",
+          content: "I've detected a significant increase in fraudulent activity this week.\n\nFraud attempts are up **18%** compared to last week. Here's the breakdown by type:\n\n• **Account takeover** attempts increased by 24%\n• **Payment fraud** up by 15%\n• **Promo code abuse** increased by 12%\n\nThis spike correlates with your recent promotional campaign launch.",
           chartData: {
             type: "bar",
-            title: "Fraud by Type",
+            title: "Fraud Incidents by Type",
             data: [
               { name: "Takeover", value: 45 },
               { name: "Payment", value: 32 },
@@ -113,26 +140,40 @@ const AIChat = () => {
             ],
           },
           insight: {
-            summary: "Spike correlates with promotional campaign. Enable 2FA for high-value orders.",
+            summary: "The fraud spike correlates strongly with the promotional campaign that started 3 days ago. Implementing additional verification for high-value orders and promotional redemptions is recommended.",
             confidence: "high" as const,
             trend: "up" as const,
             recommendations: [
-              "Enable two-factor auth",
-              "Implement velocity checks",
-              "Review IP blocking rules",
+              "Enable two-factor authentication for orders over ₹5,000",
+              "Implement velocity checks on promo code usage",
+              "Review and update IP blocking rules",
+            ],
+          },
+        };
+      } else if (query.includes("customer") || query.includes("sentiment")) {
+        aiMessage = {
+          role: "assistant",
+          content: "Here's your customer sentiment analysis.\n\nOverall sentiment score is **4.2/5** with some areas needing attention:\n\n• **Product quality** feedback is excellent at 4.6/5\n• **Delivery experience** dropped to 3.8/5 this week\n• **Customer support** maintaining steady at 4.1/5",
+          insight: {
+            summary: "Delivery experience is the main pain point. 23% of negative reviews mention late deliveries or damaged packaging. Consider reviewing logistics partner performance.",
+            confidence: "medium" as const,
+            trend: "stable" as const,
+            recommendations: [
+              "Audit logistics partner SLAs",
+              "Implement better packaging for fragile items",
+              "Add proactive delivery status updates",
             ],
           },
         };
       } else {
         aiMessage = {
           role: "assistant",
-          content: "I can analyze your business data across Atlas, Clickrev, Behavioural Analytics, and Fraud Detection. What would you like to explore?",
+          content: "I can help you analyze your business data across multiple modules including **Atlas** (store analytics), **Clickrev** (revenue optimization), **Behavioural Analytics** (customer insights), and **Fraud Detection**.\n\nTry asking me about:\n• Revenue trends and store performance\n• Fraud patterns and prevention\n• Customer sentiment and behavior\n• Category and product analysis\n\nWhat would you like to explore?",
         };
       }
 
-      setMessages((prev) => [...prev, aiMessage]);
-      setIsLoading(false);
-    }, 1200);
+      simulateStreaming(aiMessage);
+    }, 800);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -142,174 +183,147 @@ const AIChat = () => {
     }
   };
 
-  const suggestions = [
-    "Why did revenue drop?",
-    "Show fraud patterns",
-    "Analyze customer sentiment",
-    "Compare store performance",
+  const quickActions = [
+    { label: "Revenue Analysis", icon: TrendingUp, query: "Why did revenue drop yesterday?" },
+    { label: "Fraud Patterns", icon: Shield, query: "Show me recent fraud patterns" },
+    { label: "Customer Sentiment", icon: Users, query: "Analyze customer sentiment" },
+    { label: "Store Performance", icon: Zap, query: "Compare store performance" },
   ];
 
   return (
-    <div className="flex h-screen bg-background pt-14">
-      {/* Sidebar */}
-      <div className={cn(
-        "border-r border-border bg-card flex-shrink-0 transition-all duration-200",
-        sidebarOpen ? "w-64" : "w-0 overflow-hidden"
-      )}>
-        <div className="p-4 space-y-4">
-          <Button 
-            variant="outline" 
-            className="w-full justify-start gap-2 text-sm"
-            onClick={() => {
-              setMessages([]);
-              setActiveThreadId(`thread-${Date.now()}`);
-            }}
-          >
-            <Plus className="h-4 w-4" />
-            New Chat
-          </Button>
-
-          <div className="space-y-1">
-            <p className="text-xs font-medium text-muted-foreground px-2 py-1">Recent</p>
-            {threads.map((thread) => (
-              <button
-                key={thread.id}
-                onClick={() => setActiveThreadId(thread.id)}
-                className={cn(
-                  "w-full text-left px-3 py-2 rounded-md text-sm transition-colors",
-                  activeThreadId === thread.id 
-                    ? "bg-accent text-foreground" 
-                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                )}
-              >
-                <div className="flex items-center gap-2">
-                  <MessageSquare className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span className="truncate">{thread.title}</span>
-                </div>
-                <p className="text-xs text-muted-foreground truncate mt-0.5 ml-5">{thread.timestamp}</p>
-              </button>
-            ))}
+    <div className="flex flex-col h-screen bg-background">
+      {/* Minimal Header */}
+      <header className="flex items-center justify-between px-4 h-14 border-b border-border/50 glass-strong">
+        <div className="flex items-center gap-3">
+          <Link to="/">
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center ai-glow">
+              <Sparkles className="h-4 w-4 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-sm font-semibold text-foreground">Zence AI</h1>
+              <p className="text-[10px] text-muted-foreground">Business Intelligence</p>
+            </div>
           </div>
+        </div>
+      </header>
+
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+          {messages.length === 0 ? (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+              <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mb-6 ai-glow animate-float">
+                <Sparkles className="h-8 w-8 text-primary-foreground" />
+              </div>
+              <h2 className="text-2xl font-semibold text-foreground mb-2">How can I help you today?</h2>
+              <p className="text-muted-foreground mb-8 max-w-md">
+                Ask me anything about your business data, from revenue analysis to fraud detection.
+              </p>
+              
+              {/* Quick Action Chips */}
+              <div className="flex flex-wrap justify-center gap-2 max-w-lg">
+                {quickActions.map((action, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setInput(action.query)}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-full glass hover:bg-secondary/80 transition-all text-sm text-foreground group"
+                  >
+                    <action.icon className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
+                    {action.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <>
+              {messages.map((msg, i) => (
+                <div key={i} className="animate-fade-in">
+                  {msg.role === "user" ? (
+                    <div className="flex justify-end">
+                      <div className="max-w-[80%] px-4 py-3 rounded-2xl rounded-br-md bg-primary text-primary-foreground">
+                        <p className="text-sm">{msg.content}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex gap-3">
+                      <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center flex-shrink-0 mt-1 ai-glow">
+                        <Sparkles className="h-4 w-4 text-primary-foreground" />
+                      </div>
+                      <div className="flex-1 space-y-3 min-w-0">
+                        <div className="px-4 py-3 rounded-2xl rounded-tl-md glass">
+                          <StreamingText 
+                            text={msg.content} 
+                            isStreaming={msg.isStreaming}
+                            className="text-sm text-foreground leading-relaxed"
+                          />
+                        </div>
+                        {!msg.isStreaming && (
+                          <>
+                            {msg.chartData && <InlineChart {...msg.chartData} />}
+                            {msg.tableData && <DataTable {...msg.tableData} />}
+                            {msg.code && <CodeBlock code={msg.code} />}
+                            {msg.insight && <InsightCard {...msg.insight} />}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+              {isLoading && messages[messages.length - 1]?.role === "user" && (
+                <div className="flex gap-3 animate-fade-in">
+                  <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center ai-glow">
+                    <Sparkles className="h-4 w-4 text-primary-foreground animate-pulse" />
+                  </div>
+                  <div className="px-4 py-3 rounded-2xl rounded-tl-md glass">
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                      <span className="text-sm text-muted-foreground">Analyzing your data...</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
-      {/* Main Chat */}
-      <main className="flex-1 flex flex-col min-w-0">
-        {/* Chat Header */}
-        <div className="h-12 border-b border-border flex items-center px-4 gap-3">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 text-muted-foreground"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            <ChevronLeft className={cn("h-4 w-4 transition-transform", !sidebarOpen && "rotate-180")} />
-          </Button>
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium text-foreground">AI Assistant</span>
-          </div>
-          <Link to="/" className="ml-auto">
-            <Button variant="ghost" size="sm" className="text-xs text-muted-foreground">
-              Back to Dashboard
+      {/* Input Area */}
+      <div className="border-t border-border/50 p-4 glass-strong">
+        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
+          <div className="relative">
+            <Textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Ask about your business data..."
+              className="pr-14 min-h-[52px] max-h-[150px] resize-none text-sm bg-secondary/50 border-border/50 focus:border-primary/50 rounded-xl placeholder:text-muted-foreground"
+              disabled={isLoading}
+            />
+            <Button
+              type="submit"
+              size="icon"
+              className="absolute right-2 bottom-2 h-9 w-9 rounded-lg gradient-primary hover:opacity-90 transition-opacity"
+              disabled={!input.trim() || isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
             </Button>
-          </Link>
-        </div>
-
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-3xl mx-auto space-y-6">
-            {messages.length === 0 ? (
-              <div className="text-center py-16">
-                <div className="inline-flex p-3 rounded-full bg-primary/10 mb-4">
-                  <Sparkles className="h-6 w-6 text-primary" />
-                </div>
-                <h2 className="text-lg font-medium text-foreground mb-1">How can I help you today?</h2>
-                <p className="text-sm text-muted-foreground mb-8">Ask about revenue, fraud, customers, or any metric</p>
-                
-                <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
-                  {suggestions.map((s, i) => (
-                    <Card
-                      key={i}
-                      className="p-3 cursor-pointer hover:bg-accent hover:border-primary/30 transition-all text-left"
-                      onClick={() => setInput(s)}
-                    >
-                      <p className="text-sm text-foreground">{s}</p>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <>
-                {messages.map((msg, i) => (
-                  <div key={i}>
-                    {msg.role === "user" ? (
-                      <div className="flex justify-end">
-                        <Card className="max-w-[70%] p-3 bg-primary text-primary-foreground">
-                          <p className="text-sm">{msg.content}</p>
-                        </Card>
-                      </div>
-                    ) : (
-                      <div className="flex gap-3">
-                        <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
-                          <Sparkles className="h-3.5 w-3.5 text-primary" />
-                        </div>
-                        <div className="flex-1 space-y-3 min-w-0">
-                          <Card className="p-3 bg-card">
-                            <p className="text-sm text-foreground whitespace-pre-wrap">{msg.content}</p>
-                          </Card>
-                          {msg.chartData && <InlineChart {...msg.chartData} />}
-                          {msg.tableData && <DataTable {...msg.tableData} />}
-                          {msg.code && <CodeBlock code={msg.code} />}
-                          {msg.insight && <InsightCard {...msg.insight} />}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {isLoading && (
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Sparkles className="h-3.5 w-3.5 text-primary" />
-                    </div>
-                    <Card className="p-3">
-                      <div className="flex items-center gap-2">
-                        <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                        <span className="text-sm text-muted-foreground">Analyzing...</span>
-                      </div>
-                    </Card>
-                  </div>
-                )}
-              </>
-            )}
-            <div ref={messagesEndRef} />
           </div>
-        </div>
-
-        {/* Input */}
-        <div className="border-t border-border p-4">
-          <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-            <div className="relative">
-              <Textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Ask about your business data..."
-                className="pr-12 min-h-[48px] max-h-[120px] resize-none text-sm"
-                disabled={isLoading}
-              />
-              <Button
-                type="submit"
-                size="icon"
-                className="absolute right-2 bottom-2 h-8 w-8"
-                disabled={!input.trim() || isLoading}
-              >
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </main>
+          <p className="text-[10px] text-muted-foreground text-center mt-2">
+            Press Enter to send • Shift+Enter for new line
+          </p>
+        </form>
+      </div>
     </div>
   );
 };

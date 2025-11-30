@@ -10,10 +10,11 @@ interface InlineChartProps {
 }
 
 export const InlineChart = ({ type, data, title, dataKey = "value", nameKey = "name" }: InlineChartProps) => {
-  const chartColor = "hsl(199, 89%, 48%)";
+  const chartColor = "hsl(199, 89%, 55%)";
+  const mutedColor = "hsl(215, 20%, 45%)";
   
   return (
-    <Card className="p-4 mt-3">
+    <Card className="p-4 glass border-border/50">
       {title && (
         <p className="text-xs font-medium text-muted-foreground mb-3">{title}</p>
       )}
@@ -25,28 +26,35 @@ export const InlineChart = ({ type, data, title, dataKey = "value", nameKey = "n
                 dataKey={nameKey} 
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: 'hsl(220, 10%, 46%)', fontSize: 10 }}
+                tick={{ fill: mutedColor, fontSize: 10 }}
               />
               <YAxis 
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: 'hsl(220, 10%, 46%)', fontSize: 10 }}
+                tick={{ fill: mutedColor, fontSize: 10 }}
               />
               <Tooltip 
                 contentStyle={{
-                  backgroundColor: "hsl(0, 0%, 100%)",
-                  border: "1px solid hsl(220, 13%, 91%)",
-                  borderRadius: "6px",
-                  fontSize: "12px"
+                  backgroundColor: "hsl(222, 47%, 10%)",
+                  border: "1px solid hsl(222, 47%, 20%)",
+                  borderRadius: "8px",
+                  fontSize: "12px",
+                  color: "hsl(210, 40%, 98%)"
                 }}
+                cursor={{ fill: 'hsl(222, 47%, 14%)' }}
               />
-              <Bar dataKey={dataKey} fill={chartColor} radius={[4, 4, 0, 0]} />
+              <Bar 
+                dataKey={dataKey} 
+                fill={chartColor} 
+                radius={[4, 4, 0, 0]}
+                style={{ filter: 'drop-shadow(0 0 8px hsl(199, 89%, 55%, 0.3))' }}
+              />
             </BarChart>
           ) : (
             <AreaChart data={data}>
               <defs>
                 <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={chartColor} stopOpacity={0.2} />
+                  <stop offset="0%" stopColor={chartColor} stopOpacity={0.3} />
                   <stop offset="100%" stopColor={chartColor} stopOpacity={0} />
                 </linearGradient>
               </defs>
@@ -54,19 +62,20 @@ export const InlineChart = ({ type, data, title, dataKey = "value", nameKey = "n
                 dataKey={nameKey} 
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: 'hsl(220, 10%, 46%)', fontSize: 10 }}
+                tick={{ fill: mutedColor, fontSize: 10 }}
               />
               <YAxis 
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: 'hsl(220, 10%, 46%)', fontSize: 10 }}
+                tick={{ fill: mutedColor, fontSize: 10 }}
               />
               <Tooltip 
                 contentStyle={{
-                  backgroundColor: "hsl(0, 0%, 100%)",
-                  border: "1px solid hsl(220, 13%, 91%)",
-                  borderRadius: "6px",
-                  fontSize: "12px"
+                  backgroundColor: "hsl(222, 47%, 10%)",
+                  border: "1px solid hsl(222, 47%, 20%)",
+                  borderRadius: "8px",
+                  fontSize: "12px",
+                  color: "hsl(210, 40%, 98%)"
                 }}
               />
               <Area 
@@ -75,6 +84,7 @@ export const InlineChart = ({ type, data, title, dataKey = "value", nameKey = "n
                 stroke={chartColor}
                 strokeWidth={2}
                 fill="url(#chartGradient)"
+                style={{ filter: 'drop-shadow(0 0 8px hsl(199, 89%, 55%, 0.3))' }}
               />
             </AreaChart>
           )}

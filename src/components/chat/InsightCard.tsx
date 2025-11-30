@@ -16,23 +16,23 @@ export const InsightCard = ({
   trend 
 }: InsightCardProps) => {
   return (
-    <Card className="p-4 mt-3 bg-accent/30 border-primary/10">
+    <Card className="p-4 glass border-primary/20 ai-glow">
       <div className="flex items-start gap-3">
-        <div className="p-1.5 rounded-md bg-primary/10 flex-shrink-0">
-          <Lightbulb className="h-3.5 w-3.5 text-primary" />
+        <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
+          <Lightbulb className="h-4 w-4 text-primary" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-medium text-foreground">Insight</span>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs font-semibold text-primary">AI Insight</span>
             {trend && (
               trend === "up" ? 
-                <TrendingUp className="h-3 w-3 text-destructive" /> : 
-                <TrendingDown className="h-3 w-3 text-emerald-500" />
+                <TrendingUp className="h-3.5 w-3.5 text-destructive" /> : 
+                <TrendingDown className="h-3.5 w-3.5 text-emerald-400" />
             )}
-            <span className={`text-[10px] px-1.5 py-0.5 rounded ${
-              confidence === 'high' ? 'bg-emerald-500/10 text-emerald-600' :
-              confidence === 'medium' ? 'bg-amber-500/10 text-amber-600' :
-              'bg-destructive/10 text-destructive'
+            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+              confidence === 'high' ? 'bg-emerald-500/20 text-emerald-400' :
+              confidence === 'medium' ? 'bg-amber-500/20 text-amber-400' :
+              'bg-destructive/20 text-destructive'
             }`}>
               {confidence} confidence
             </span>
@@ -40,12 +40,14 @@ export const InsightCard = ({
           <p className="text-sm text-foreground leading-relaxed">{summary}</p>
           
           {recommendations && recommendations.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-border">
-              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-2">Recommendations</p>
-              <ul className="space-y-1">
+            <div className="mt-4 pt-3 border-t border-border/50">
+              <p className="text-[10px] font-semibold text-primary uppercase tracking-wider mb-2">
+                Recommendations
+              </p>
+              <ul className="space-y-1.5">
                 {recommendations.map((rec, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-xs text-muted-foreground">
-                    <span className="text-primary mt-0.5">•</span>
+                    <span className="text-primary mt-0.5">→</span>
                     <span>{rec}</span>
                   </li>
                 ))}

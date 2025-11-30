@@ -1,8 +1,8 @@
-import { ArrowUpRight, ArrowDownRight, TrendingUp, AlertCircle, Sparkles, ChevronRight } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, AlertCircle, Sparkles, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Area, AreaChart } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Area, AreaChart } from "recharts";
 
 const revenueData = [
   { day: "Mon", value: 42000 },
@@ -29,6 +29,9 @@ const alerts = [
 ];
 
 const Dashboard = () => {
+  const chartColor = "hsl(199, 89%, 55%)";
+  const mutedColor = "hsl(215, 20%, 45%)";
+
   return (
     <main className="flex-1 p-6 pt-20 overflow-auto bg-background">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -39,7 +42,7 @@ const Dashboard = () => {
             <p className="text-sm text-muted-foreground mt-0.5">Here's your business overview</p>
           </div>
           <Link to="/ai-chat">
-            <Button size="sm" className="gap-2 bg-primary hover:bg-primary/90">
+            <Button size="sm" className="gap-2 gradient-primary hover:opacity-90 ai-glow">
               <Sparkles className="h-3.5 w-3.5" />
               Ask AI
             </Button>
@@ -79,17 +82,17 @@ const Dashboard = () => {
         </div>
 
         {/* AI Insight Banner */}
-        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-accent/30 to-primary/5">
+        <Card className="glass border-primary/20 ai-glow">
           <CardContent className="p-4">
             <div className="flex items-start gap-4">
-              <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
-                <Sparkles className="h-5 w-5 text-primary" />
+              <div className="p-2.5 rounded-xl gradient-primary flex-shrink-0">
+                <Sparkles className="h-5 w-5 text-primary-foreground" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground">AI Insight</p>
+                <p className="text-sm font-semibold text-primary">AI Insight</p>
                 <p className="text-sm text-muted-foreground mt-1">
                   Revenue is 6% below target. Tier 2 stores showing consistent decline. 
-                  <Link to="/ai-chat" className="text-primary hover:underline ml-1">Analyze →</Link>
+                  <Link to="/ai-chat" className="text-primary hover:underline ml-1 font-medium">Analyze →</Link>
                 </p>
               </div>
             </div>
@@ -99,10 +102,10 @@ const Dashboard = () => {
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Revenue Chart */}
-          <Card className="lg:col-span-2">
+          <Card className="lg:col-span-2 glass border-border/50">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-medium">Revenue Trend</CardTitle>
+                <CardTitle className="text-base font-medium text-foreground">Revenue Trend</CardTitle>
                 <span className="text-xs text-muted-foreground">Last 7 days</span>
               </div>
             </CardHeader>
@@ -112,37 +115,38 @@ const Dashboard = () => {
                   <AreaChart data={revenueData}>
                     <defs>
                       <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="hsl(199, 89%, 48%)" stopOpacity={0.2} />
-                        <stop offset="100%" stopColor="hsl(199, 89%, 48%)" stopOpacity={0} />
+                        <stop offset="0%" stopColor={chartColor} stopOpacity={0.3} />
+                        <stop offset="100%" stopColor={chartColor} stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <XAxis 
                       dataKey="day" 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fill: 'hsl(220, 10%, 46%)', fontSize: 11 }}
+                      tick={{ fill: mutedColor, fontSize: 11 }}
                     />
                     <YAxis 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fill: 'hsl(220, 10%, 46%)', fontSize: 11 }}
+                      tick={{ fill: mutedColor, fontSize: 11 }}
                       tickFormatter={(v) => `₹${v/1000}K`}
                     />
                     <Tooltip 
                       contentStyle={{ 
-                        backgroundColor: 'hsl(0, 0%, 100%)', 
-                        border: '1px solid hsl(220, 13%, 91%)',
+                        backgroundColor: 'hsl(222, 47%, 10%)', 
+                        border: '1px solid hsl(222, 47%, 20%)',
                         borderRadius: '8px',
-                        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
+                        color: 'hsl(210, 40%, 98%)'
                       }}
                       formatter={(value: number) => [`₹${(value/1000).toFixed(1)}K`, 'Revenue']}
                     />
                     <Area 
                       type="monotone" 
                       dataKey="value" 
-                      stroke="hsl(199, 89%, 48%)" 
+                      stroke={chartColor} 
                       strokeWidth={2}
                       fill="url(#revenueGradient)"
+                      style={{ filter: 'drop-shadow(0 0 8px hsl(199, 89%, 55%, 0.3))' }}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -151,10 +155,10 @@ const Dashboard = () => {
           </Card>
 
           {/* Alerts */}
-          <Card>
+          <Card className="glass border-border/50">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-medium">Recent Alerts</CardTitle>
+                <CardTitle className="text-base font-medium text-foreground">Recent Alerts</CardTitle>
                 <Link to="/ai-insights" className="text-xs text-primary hover:underline">View all</Link>
               </div>
             </CardHeader>
@@ -162,11 +166,11 @@ const Dashboard = () => {
               {alerts.map((alert) => (
                 <div 
                   key={alert.id}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer"
+                  className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors cursor-pointer border border-border/30"
                 >
                   <AlertCircle className={`h-4 w-4 flex-shrink-0 ${
                     alert.severity === 'error' ? 'text-destructive' : 
-                    alert.severity === 'warning' ? 'text-amber-500' : 'text-primary'
+                    alert.severity === 'warning' ? 'text-amber-400' : 'text-primary'
                   }`} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-foreground truncate">{alert.title}</p>
@@ -182,9 +186,9 @@ const Dashboard = () => {
         {/* Secondary Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Category Performance */}
-          <Card>
+          <Card className="glass border-border/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-medium">Category Performance</CardTitle>
+              <CardTitle className="text-base font-medium text-foreground">Category Performance</CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
               <div className="h-[180px] w-full">
@@ -196,22 +200,24 @@ const Dashboard = () => {
                       dataKey="name" 
                       axisLine={false} 
                       tickLine={false}
-                      tick={{ fill: 'hsl(220, 10%, 46%)', fontSize: 11 }}
+                      tick={{ fill: mutedColor, fontSize: 11 }}
                       width={80}
                     />
                     <Tooltip 
                       contentStyle={{ 
-                        backgroundColor: 'hsl(0, 0%, 100%)', 
-                        border: '1px solid hsl(220, 13%, 91%)',
-                        borderRadius: '8px'
+                        backgroundColor: 'hsl(222, 47%, 10%)', 
+                        border: '1px solid hsl(222, 47%, 20%)',
+                        borderRadius: '8px',
+                        color: 'hsl(210, 40%, 98%)'
                       }}
                       formatter={(value: number) => [`${value}%`, 'Share']}
                     />
                     <Bar 
                       dataKey="value" 
-                      fill="hsl(199, 89%, 48%)" 
+                      fill={chartColor} 
                       radius={[0, 4, 4, 0]}
                       barSize={20}
+                      style={{ filter: 'drop-shadow(0 0 8px hsl(199, 89%, 55%, 0.3))' }}
                     />
                   </BarChart>
                 </ResponsiveContainer>
@@ -220,9 +226,9 @@ const Dashboard = () => {
           </Card>
 
           {/* Quick Stats */}
-          <Card>
+          <Card className="glass border-border/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-medium">Performance Summary</CardTitle>
+              <CardTitle className="text-base font-medium text-foreground">Performance Summary</CardTitle>
             </CardHeader>
             <CardContent className="pt-0 space-y-4">
               <StatRow label="Business Health" value="Good" status="success" percent={78} />
@@ -257,14 +263,14 @@ const MetricCard = ({
   const maxVal = sparkData ? Math.max(...sparkData) : 100;
   
   return (
-    <Card className="hover:shadow-card-hover transition-shadow">
+    <Card className="glass border-border/50 hover:border-primary/30 transition-colors">
       <CardContent className="p-4">
         <p className="text-xs text-muted-foreground">{label}</p>
         <div className="flex items-end justify-between mt-2">
           <div>
             <p className="text-2xl font-semibold text-foreground">{value}</p>
             <div className={`flex items-center gap-1 mt-1 text-xs ${
-              isAlert ? 'text-amber-500' : positive ? 'text-emerald-600' : 'text-destructive'
+              isAlert ? 'text-amber-400' : positive ? 'text-emerald-400' : 'text-destructive'
             }`}>
               {!isAlert && (positive ? 
                 <ArrowUpRight className="h-3 w-3" /> : 
@@ -278,7 +284,7 @@ const MetricCard = ({
               {sparkData.map((val, i) => (
                 <div 
                   key={i}
-                  className={`w-1.5 rounded-full ${positive ? 'bg-emerald-500/60' : 'bg-destructive/60'}`}
+                  className={`w-1.5 rounded-full ${positive ? 'bg-emerald-400/60' : 'bg-destructive/60'}`}
                   style={{ height: `${((val - minVal) / (maxVal - minVal)) * 100}%`, minHeight: '4px' }}
                 />
               ))}
@@ -306,17 +312,22 @@ const StatRow = ({
     <div className="flex items-center justify-between mb-1.5">
       <span className="text-sm text-muted-foreground">{label}</span>
       <span className={`text-xs font-medium ${
-        status === 'success' ? 'text-emerald-600' : 
-        status === 'warning' ? 'text-amber-500' : 'text-destructive'
+        status === 'success' ? 'text-emerald-400' : 
+        status === 'warning' ? 'text-amber-400' : 'text-destructive'
       }`}>{value}</span>
     </div>
-    <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+    <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden">
       <div 
         className={`h-full rounded-full transition-all ${
-          status === 'success' ? 'bg-emerald-500' : 
-          status === 'warning' ? 'bg-amber-500' : 'bg-destructive'
+          status === 'success' ? 'bg-emerald-400' : 
+          status === 'warning' ? 'bg-amber-400' : 'bg-destructive'
         }`}
-        style={{ width: `${percent}%` }}
+        style={{ 
+          width: `${percent}%`,
+          boxShadow: status === 'success' ? '0 0 8px hsl(160, 84%, 55%, 0.5)' : 
+                     status === 'warning' ? '0 0 8px hsl(38, 92%, 60%, 0.5)' : 
+                     '0 0 8px hsl(0, 84%, 60%, 0.5)'
+        }}
       />
     </div>
   </div>

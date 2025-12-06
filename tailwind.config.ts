@@ -61,6 +61,14 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))'
         },
+        // Atlas AI specific colors
+        atlas: {
+          bg: 'hsl(var(--atlas-bg))',
+          glass: 'hsl(var(--atlas-glass))',
+          'neon-blue': 'hsl(var(--atlas-neon-blue))',
+          'neon-purple': 'hsl(var(--atlas-neon-purple))',
+          muted: 'hsl(var(--atlas-muted))'
+        },
         ai: {
           primary: 'hsl(var(--ai-primary))',
           secondary: 'hsl(var(--ai-secondary))',
@@ -79,6 +87,9 @@ export default {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)'
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
       keyframes: {
         'accordion-down': {
           from: { height: '0' },
@@ -89,7 +100,7 @@ export default {
           to: { height: '0' }
         },
         'fade-in': {
-          '0%': { opacity: '0', transform: 'translateY(4px)' },
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' }
         },
         'pulse-soft': {
@@ -106,17 +117,26 @@ export default {
         },
         'float': {
           '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-5px)' }
+          '50%': { transform: 'translateY(-8px)' }
+        },
+        'glow-pulse': {
+          '0%, 100%': { 
+            boxShadow: '0 0 20px hsl(var(--atlas-neon-blue) / 0.3), 0 0 40px hsl(var(--atlas-neon-purple) / 0.2)'
+          },
+          '50%': { 
+            boxShadow: '0 0 30px hsl(var(--atlas-neon-blue) / 0.5), 0 0 60px hsl(var(--atlas-neon-purple) / 0.3)'
+          }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-in': 'fade-in 0.3s ease-out',
+        'fade-in': 'fade-in 0.4s ease-out',
         'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
         'blink': 'blink 1s step-end infinite',
         'shimmer': 'shimmer 2s linear infinite',
-        'float': 'float 3s ease-in-out infinite'
+        'float': 'float 3s ease-in-out infinite',
+        'glow-pulse': 'glow-pulse 2s ease-in-out infinite'
       }
     }
   },

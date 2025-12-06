@@ -1,334 +1,292 @@
-import { ArrowUpRight, ArrowDownRight, AlertCircle, Sparkles, ChevronRight } from "lucide-react";
+import { Sparkles, ChevronRight, Activity, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Zap, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Area, AreaChart } from "recharts";
+import { useState } from "react";
 
-const revenueData = [
-  { day: "Mon", value: 42000 },
-  { day: "Tue", value: 48000 },
-  { day: "Wed", value: 45000 },
-  { day: "Thu", value: 52000 },
-  { day: "Fri", value: 49000 },
-  { day: "Sat", value: 44000 },
-  { day: "Sun", value: 41000 },
+// AI Insights data - cross-module intelligence
+const aiInsights = [
+  {
+    id: 1,
+    type: "critical",
+    title: "Revenue below target by 6%",
+    description: "Tier 2 stores showing consistent decline over the past week. Immediate attention required.",
+    module: "Atlas Prime",
+    action: "Analyze root cause",
+    trend: "down",
+  },
+  {
+    id: 2,
+    type: "opportunity",
+    title: "Premium Shoppers segment grew 8%",
+    description: "High-value customer segment expanding. Consider targeted campaigns to maximize conversion.",
+    module: "Segcon",
+    action: "View segment",
+    trend: "up",
+  },
+  {
+    id: 3,
+    type: "warning",
+    title: "Fraud attempts increased 18%",
+    description: "Unusual pattern detected in online transactions. Review flagged transactions.",
+    module: "Fraud",
+    action: "Review alerts",
+    trend: "up",
+  },
 ];
 
-const categoryData = [
-  { name: "Sarees", value: 34 },
-  { name: "Blouses", value: 22 },
-  { name: "Traditional", value: 17 },
-  { name: "Designer", value: 15 },
-  { name: "Other", value: 12 },
+// Priority queue items
+const priorityQueue = [
+  { id: 1, title: "Review 12 flagged transactions", module: "Fraud", priority: "critical" },
+  { id: 2, title: "3 stores need inventory restock", module: "Atlas Neo", priority: "warning" },
+  { id: 3, title: "Customer satisfaction dip in Delhi region", module: "Insights", priority: "warning" },
+  { id: 4, title: "New loyalty tier candidates identified", module: "Loyalty", priority: "info" },
+  { id: 5, title: "Campaign performance report ready", module: "Clickrev", priority: "info" },
 ];
 
-const alerts = [
-  { id: 1, title: "Revenue below target", module: "Atlas", severity: "warning" },
-  { id: 2, title: "Fraud spike detected", module: "Fraud", severity: "error" },
-  { id: 3, title: "New segment identified", module: "Segcon", severity: "info" },
+// Quick action chips
+const quickActions = [
+  "Show all alerts",
+  "Revenue summary",
+  "Fraud check",
+  "Top segments",
 ];
 
 const Dashboard = () => {
-  const chartColor = "hsl(199, 89%, 55%)";
-  const mutedColor = "hsl(215, 20%, 45%)";
+  const [aiChatOpen, setAiChatOpen] = useState(false);
 
   return (
     <main className="flex-1 p-6 pt-20 overflow-auto bg-background">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-foreground">Good afternoon</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">Here's your business overview</p>
-          </div>
-          <Link to="/ai-chat">
-            <Button size="sm" className="gap-2 gradient-primary hover:opacity-90 ai-glow">
-              <Sparkles className="h-3.5 w-3.5" />
-              Ask AI
-            </Button>
-          </Link>
-        </div>
-
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard 
-            label="Revenue Today"
-            value="₹12.4L"
-            change="+8.2%"
-            positive={true}
-            sparkData={[40, 45, 42, 48, 52, 49, 55]}
-          />
-          <MetricCard 
-            label="Store Visits"
-            value="2,847"
-            change="-3.1%"
-            positive={false}
-            sparkData={[50, 48, 45, 47, 44, 42, 40]}
-          />
-          <MetricCard 
-            label="Conversion"
-            value="3.4%"
-            change="+0.2%"
-            positive={true}
-            sparkData={[30, 32, 31, 33, 34, 33, 35]}
-          />
-          <MetricCard 
-            label="Active Alerts"
-            value="7"
-            change="+2"
-            positive={false}
-            isAlert
-          />
-        </div>
-
-        {/* AI Insight Banner */}
-        <Card className="glass border-primary/20 ai-glow">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-4">
-              <div className="p-2.5 rounded-xl gradient-primary flex-shrink-0">
-                <Sparkles className="h-5 w-5 text-primary-foreground" />
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* AI Status Banner */}
+        <div className="glass border-primary/20 rounded-xl p-4 ai-glow">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="p-3 rounded-xl gradient-primary">
+                  <Sparkles className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-background animate-pulse" />
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-primary">AI Insight</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Revenue is 6% below target. Tier 2 stores showing consistent decline. 
-                  <Link to="/ai-chat" className="text-primary hover:underline ml-1 font-medium">Analyze →</Link>
+              <div>
+                <p className="text-sm font-semibold text-foreground">Oliver AI is monitoring 9 modules</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Last scan: 2 minutes ago • <span className="text-emerald-400">All systems operational</span>
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+            <Link to="/ai-chat">
+              <Button size="sm" className="gap-2 gradient-primary hover:opacity-90">
+                <MessageSquare className="h-3.5 w-3.5" />
+                Open AI Chat
+              </Button>
+            </Link>
+          </div>
+        </div>
 
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Revenue Chart */}
-          <Card className="lg:col-span-2 glass border-border/50">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-medium text-foreground">Revenue Trend</CardTitle>
-                <span className="text-xs text-muted-foreground">Last 7 days</span>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="h-[200px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={revenueData}>
-                    <defs>
-                      <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={chartColor} stopOpacity={0.3} />
-                        <stop offset="100%" stopColor={chartColor} stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <XAxis 
-                      dataKey="day" 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{ fill: mutedColor, fontSize: 11 }}
-                    />
-                    <YAxis 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{ fill: mutedColor, fontSize: 11 }}
-                      tickFormatter={(v) => `₹${v/1000}K`}
-                    />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(222, 47%, 10%)', 
-                        border: '1px solid hsl(222, 47%, 20%)',
-                        borderRadius: '8px',
-                        color: 'hsl(210, 40%, 98%)'
-                      }}
-                      formatter={(value: number) => [`₹${(value/1000).toFixed(1)}K`, 'Revenue']}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="value" 
-                      stroke={chartColor} 
-                      strokeWidth={2}
-                      fill="url(#revenueGradient)"
-                      style={{ filter: 'drop-shadow(0 0 8px hsl(199, 89%, 55%, 0.3))' }}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Cross-Module AI Insights */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-foreground">AI Insights</h2>
+            <Link to="/ai-insights" className="text-xs text-primary hover:underline">View all insights →</Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {aiInsights.map((insight) => (
+              <AIInsightCard key={insight.id} insight={insight} />
+            ))}
+          </div>
+        </div>
 
-          {/* Alerts */}
+        {/* Two Column Layout: Priority Queue + Quick Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* AI Priority Queue */}
           <Card className="glass border-border/50">
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-medium text-foreground">Recent Alerts</CardTitle>
-                <Link to="/ai-insights" className="text-xs text-primary hover:underline">View all</Link>
+                <CardTitle className="text-base font-medium text-foreground flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-primary" />
+                  Priority Queue
+                </CardTitle>
+                <span className="text-xs text-muted-foreground">AI-ranked</span>
               </div>
             </CardHeader>
             <CardContent className="pt-0 space-y-2">
-              {alerts.map((alert) => (
-                <div 
-                  key={alert.id}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors cursor-pointer border border-border/30"
+              {priorityQueue.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors cursor-pointer border border-border/30 group"
                 >
-                  <AlertCircle className={`h-4 w-4 flex-shrink-0 ${
-                    alert.severity === 'error' ? 'text-destructive' : 
-                    alert.severity === 'warning' ? 'text-amber-400' : 'text-primary'
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                    item.priority === 'critical' ? 'bg-destructive animate-pulse' :
+                    item.priority === 'warning' ? 'bg-amber-400' : 'bg-primary'
                   }`} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground truncate">{alert.title}</p>
-                    <p className="text-xs text-muted-foreground">{alert.module}</p>
+                    <p className="text-sm text-foreground truncate">{item.title}</p>
+                    <p className="text-xs text-muted-foreground">{item.module}</p>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
               ))}
             </CardContent>
           </Card>
-        </div>
 
-        {/* Secondary Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Category Performance */}
+          {/* Quick Stats with AI Annotations */}
           <Card className="glass border-border/50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-medium text-foreground">Category Performance</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="h-[180px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={categoryData} layout="vertical">
-                    <XAxis type="number" hide />
-                    <YAxis 
-                      type="category" 
-                      dataKey="name" 
-                      axisLine={false} 
-                      tickLine={false}
-                      tick={{ fill: mutedColor, fontSize: 11 }}
-                      width={80}
-                    />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(222, 47%, 10%)', 
-                        border: '1px solid hsl(222, 47%, 20%)',
-                        borderRadius: '8px',
-                        color: 'hsl(210, 40%, 98%)'
-                      }}
-                      formatter={(value: number) => [`${value}%`, 'Share']}
-                    />
-                    <Bar 
-                      dataKey="value" 
-                      fill={chartColor} 
-                      radius={[0, 4, 4, 0]}
-                      barSize={20}
-                      style={{ filter: 'drop-shadow(0 0 8px hsl(199, 89%, 55%, 0.3))' }}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base font-medium text-foreground flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-primary" />
+                  Performance Summary
+                </CardTitle>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Stats */}
-          <Card className="glass border-border/50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-medium text-foreground">Performance Summary</CardTitle>
             </CardHeader>
             <CardContent className="pt-0 space-y-4">
-              <StatRow label="Business Health" value="Good" status="success" percent={78} />
-              <StatRow label="Customer Satisfaction" value="4.2★" status="success" percent={84} />
-              <StatRow label="Fraud Risk" value="Medium" status="warning" percent={45} />
-              <StatRow label="Inventory" value="Optimal" status="success" percent={92} />
+              <StatRow 
+                label="Revenue Today" 
+                value="₹12.4L" 
+                annotation="↓6% vs target"
+                status="warning"
+              />
+              <StatRow 
+                label="Store Visits" 
+                value="2,847" 
+                annotation="↓3.1% vs yesterday"
+                status="warning"
+              />
+              <StatRow 
+                label="Conversion Rate" 
+                value="3.4%" 
+                annotation="↑0.2% improvement"
+                status="success"
+              />
+              <StatRow 
+                label="Active Alerts" 
+                value="7" 
+                annotation="2 critical, 5 warnings"
+                status="error"
+              />
+              <StatRow 
+                label="AI Health Score" 
+                value="92/100" 
+                annotation="Good standing"
+                status="success"
+              />
             </CardContent>
           </Card>
+        </div>
+
+        {/* Floating AI Chat Widget */}
+        <div className="fixed bottom-6 right-6 z-40">
+          {aiChatOpen && (
+            <div className="absolute bottom-16 right-0 w-80 glass border-primary/30 rounded-xl p-4 animate-fade-in ai-glow">
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <span className="text-sm font-medium text-foreground">Quick Actions</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {quickActions.map((action) => (
+                  <Link key={action} to="/ai-chat">
+                    <Button variant="outline" size="sm" className="text-xs h-8 border-border/50 hover:border-primary/50 hover:bg-primary/10">
+                      {action}
+                    </Button>
+                  </Link>
+                ))}
+              </div>
+              <Link to="/ai-chat" className="block mt-3">
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer">
+                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Ask Oliver AI anything...</span>
+                </div>
+              </Link>
+            </div>
+          )}
+          <Button
+            onClick={() => setAiChatOpen(!aiChatOpen)}
+            className="h-14 w-14 rounded-full gradient-primary shadow-lg hover:opacity-90 ai-glow animate-glow-pulse"
+          >
+            <Sparkles className="h-6 w-6" />
+          </Button>
         </div>
       </div>
     </main>
   );
 };
 
-// Metric Card Component
-const MetricCard = ({ 
-  label, 
-  value, 
-  change, 
-  positive, 
-  sparkData,
-  isAlert 
-}: { 
-  label: string; 
-  value: string; 
-  change: string; 
-  positive: boolean;
-  sparkData?: number[];
-  isAlert?: boolean;
-}) => {
-  const minVal = sparkData ? Math.min(...sparkData) : 0;
-  const maxVal = sparkData ? Math.max(...sparkData) : 100;
-  
+// AI Insight Card Component
+const AIInsightCard = ({ insight }: { insight: typeof aiInsights[0] }) => {
+  const typeStyles = {
+    critical: {
+      bg: "bg-destructive/10 border-destructive/30",
+      icon: AlertTriangle,
+      iconColor: "text-destructive",
+    },
+    opportunity: {
+      bg: "bg-emerald-400/10 border-emerald-400/30",
+      icon: CheckCircle,
+      iconColor: "text-emerald-400",
+    },
+    warning: {
+      bg: "bg-amber-400/10 border-amber-400/30",
+      icon: AlertTriangle,
+      iconColor: "text-amber-400",
+    },
+  };
+
+  const style = typeStyles[insight.type as keyof typeof typeStyles];
+  const Icon = style.icon;
+
   return (
-    <Card className="glass border-border/50 hover:border-primary/30 transition-colors">
+    <Card className={`glass border ${style.bg} hover:bg-secondary/30 transition-all cursor-pointer group`}>
       <CardContent className="p-4">
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <div className="flex items-end justify-between mt-2">
-          <div>
-            <p className="text-2xl font-semibold text-foreground">{value}</p>
-            <div className={`flex items-center gap-1 mt-1 text-xs ${
-              isAlert ? 'text-amber-400' : positive ? 'text-emerald-400' : 'text-destructive'
-            }`}>
-              {!isAlert && (positive ? 
-                <ArrowUpRight className="h-3 w-3" /> : 
-                <ArrowDownRight className="h-3 w-3" />
-              )}
-              <span>{change}</span>
-            </div>
+        <div className="flex items-start gap-3">
+          <div className={`p-2 rounded-lg bg-secondary/50 ${style.iconColor}`}>
+            <Icon className="h-4 w-4" />
           </div>
-          {sparkData && (
-            <div className="flex items-end gap-0.5 h-8">
-              {sparkData.map((val, i) => (
-                <div 
-                  key={i}
-                  className={`w-1.5 rounded-full ${positive ? 'bg-emerald-400/60' : 'bg-destructive/60'}`}
-                  style={{ height: `${((val - minVal) / (maxVal - minVal)) * 100}%`, minHeight: '4px' }}
-                />
-              ))}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs font-medium text-muted-foreground">{insight.module}</span>
+              {insight.trend === "up" ? (
+                <TrendingUp className="h-3 w-3 text-emerald-400" />
+              ) : (
+                <TrendingDown className="h-3 w-3 text-destructive" />
+              )}
             </div>
-          )}
+            <p className="text-sm font-medium text-foreground leading-tight">{insight.title}</p>
+            <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{insight.description}</p>
+            <Link to="/ai-chat">
+              <Button variant="ghost" size="sm" className="mt-2 h-7 px-2 text-xs text-primary hover:text-primary hover:bg-primary/10 group-hover:translate-x-1 transition-transform">
+                {insight.action} →
+              </Button>
+            </Link>
+          </div>
         </div>
       </CardContent>
     </Card>
   );
 };
 
-// Stat Row Component
+// Stat Row Component with AI annotation
 const StatRow = ({ 
   label, 
   value, 
-  status, 
-  percent 
+  annotation,
+  status 
 }: { 
   label: string; 
   value: string; 
+  annotation: string;
   status: 'success' | 'warning' | 'error';
-  percent: number;
 }) => (
-  <div>
-    <div className="flex items-center justify-between mb-1.5">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span className={`text-xs font-medium ${
-        status === 'success' ? 'text-emerald-400' : 
-        status === 'warning' ? 'text-amber-400' : 'text-destructive'
-      }`}>{value}</span>
+  <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 border border-border/30">
+    <div>
+      <p className="text-sm text-foreground font-medium">{value}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
     </div>
-    <div className="h-1.5 bg-secondary/50 rounded-full overflow-hidden">
-      <div 
-        className={`h-full rounded-full transition-all ${
-          status === 'success' ? 'bg-emerald-400' : 
-          status === 'warning' ? 'bg-amber-400' : 'bg-destructive'
-        }`}
-        style={{ 
-          width: `${percent}%`,
-          boxShadow: status === 'success' ? '0 0 8px hsl(160, 84%, 55%, 0.5)' : 
-                     status === 'warning' ? '0 0 8px hsl(38, 92%, 60%, 0.5)' : 
-                     '0 0 8px hsl(0, 84%, 60%, 0.5)'
-        }}
-      />
+    <div className={`flex items-center gap-1.5 text-xs font-medium ${
+      status === 'success' ? 'text-emerald-400' :
+      status === 'warning' ? 'text-amber-400' : 'text-destructive'
+    }`}>
+      <span>{annotation}</span>
     </div>
   </div>
 );

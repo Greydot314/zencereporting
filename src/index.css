@@ -142,6 +142,11 @@
     @apply bg-white/5 backdrop-blur-xl border border-white/10;
   }
 
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.08);
+    @apply backdrop-blur-2xl border border-white/10;
+  }
+
   .glass-hover {
     @apply hover:bg-white/10 hover:border-white/20 transition-all duration-300;
   }
@@ -157,6 +162,17 @@
     box-shadow: 0 0 20px hsl(var(--atlas-neon-purple) / 0.4),
                 0 0 40px hsl(var(--atlas-neon-purple) / 0.2),
                 0 0 60px hsl(var(--atlas-neon-purple) / 0.1);
+  }
+
+  /* AI glow effect */
+  .ai-glow {
+    box-shadow: 0 0 15px hsl(var(--ai-glow) / 0.15),
+                0 0 30px hsl(var(--ai-glow) / 0.1);
+  }
+
+  /* Gradient backgrounds */
+  .gradient-primary {
+    @apply bg-gradient-to-r from-[hsl(var(--atlas-neon-blue))] to-[hsl(var(--atlas-neon-purple))];
   }
 
   /* Gradient text */

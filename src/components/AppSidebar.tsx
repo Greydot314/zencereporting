@@ -39,16 +39,17 @@ const mainItems = [
   { title: "AI Insights", url: "/ai-insights", icon: Sparkles },
 ];
 
+// Modules with AI status indicators
 const modules = [
-  { title: "Atlas Prime", url: "/module/atlas-prime", icon: Gauge, badge: "PRIME" },
-  { title: "Atlas Neo", url: "/module/atlas-neo", icon: Gauge, badge: "NEW" },
-  { title: "Clickrev", url: "/module/clickrev", icon: FileBarChart },
-  { title: "Segcon", url: "/module/segcon", icon: TrendingUp },
-  { title: "KPI Alerts", url: "/module/kpi-alerts", icon: Bell },
-  { title: "Behavioural", url: "/module/behavioural-analytics", icon: UserCheck },
-  { title: "Insights", url: "/module/insights", icon: Lightbulb },
-  { title: "Fraud", url: "/module/fraud", icon: Shield },
-  { title: "Loyalty", url: "/module/loyalty-extension", icon: Users },
+  { title: "Atlas Prime", url: "/module/atlas-prime", icon: Gauge, badge: "PRIME", aiStatus: "warning" },
+  { title: "Atlas Neo", url: "/module/atlas-neo", icon: Gauge, badge: "NEW", aiStatus: "normal" },
+  { title: "Clickrev", url: "/module/clickrev", icon: FileBarChart, aiStatus: "normal" },
+  { title: "Segcon", url: "/module/segcon", icon: TrendingUp, aiStatus: "normal" },
+  { title: "KPI Alerts", url: "/module/kpi-alerts", icon: Bell, aiStatus: "warning" },
+  { title: "Behavioural", url: "/module/behavioural-analytics", icon: UserCheck, aiStatus: "normal" },
+  { title: "Insights", url: "/module/insights", icon: Lightbulb, aiStatus: "normal" },
+  { title: "Fraud", url: "/module/fraud", icon: Shield, aiStatus: "critical" },
+  { title: "Loyalty", url: "/module/loyalty-extension", icon: Users, aiStatus: "normal" },
 ];
 
 const otherItems = [
@@ -59,6 +60,14 @@ const otherItems = [
 export function AppSidebar() {
   const { open } = useSidebar();
   const [modulesOpen, setModulesOpen] = useState(true);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'critical': return 'bg-destructive';
+      case 'warning': return 'bg-amber-400';
+      default: return 'bg-emerald-400';
+    }
+  };
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border/50 bg-sidebar">
@@ -119,7 +128,15 @@ export function AppSidebar() {
                           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
                           activeClassName="bg-primary/10 text-primary border border-primary/20"
                         >
-                          <module.icon className="h-4 w-4 flex-shrink-0" />
+                          <div className="relative">
+                            <module.icon className="h-4 w-4 flex-shrink-0" />
+                            {/* AI Status Indicator */}
+                            <span className={cn(
+                              "absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full border border-sidebar",
+                              getStatusColor(module.aiStatus),
+                              module.aiStatus === 'critical' && "animate-pulse"
+                            )} />
+                          </div>
                           {open && (
                             <div className="flex items-center justify-between flex-1">
                               <span className="truncate">{module.title}</span>

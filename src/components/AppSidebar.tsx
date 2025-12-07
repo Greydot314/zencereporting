@@ -70,7 +70,7 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/50 bg-sidebar">
+    <Sidebar collapsible="icon" className="border-r border-border bg-card">
       <SidebarContent className="pt-16">
         {/* Main Navigation */}
         <SidebarGroup>

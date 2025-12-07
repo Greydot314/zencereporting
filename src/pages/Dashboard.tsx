@@ -57,26 +57,29 @@ const Dashboard = () => {
 
   return (
     <main className="flex-1 p-6 pt-20 overflow-auto bg-background">
-      <div className="max-w-6xl mx-auto space-y-6">
+      {/* Subtle background pattern */}
+      <div className="fixed inset-0 pattern-dots opacity-30 pointer-events-none" />
+      
+      <div className="max-w-6xl mx-auto space-y-8 relative">
         {/* AI Status Banner */}
-        <div className="glass border-primary/20 rounded-xl p-4 ai-glow">
+        <div className="surface-elevated p-5 accent-glow">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="p-3 rounded-xl gradient-primary">
-                  <Sparkles className="h-5 w-5 text-primary-foreground" />
+                <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
+                  <Sparkles className="h-5 w-5 text-primary" />
                 </div>
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-background animate-pulse" />
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-[hsl(var(--atlas-success))] rounded-full border-2 border-card animate-pulse-subtle" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">Oliver AI is monitoring 9 modules</p>
+                <p className="text-sm font-semibold text-foreground">Zence AI is monitoring 9 modules</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Last scan: 2 minutes ago • <span className="text-emerald-400">All systems operational</span>
+                  Last scan: 2 minutes ago • <span className="text-[hsl(var(--atlas-success))]">All systems operational</span>
                 </p>
               </div>
             </div>
             <Link to="/ai-chat">
-              <Button size="sm" className="gap-2 gradient-primary hover:opacity-90">
+              <Button size="sm" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm">
                 <MessageSquare className="h-3.5 w-3.5" />
                 Open AI Chat
               </Button>
@@ -100,38 +103,38 @@ const Dashboard = () => {
         {/* Two Column Layout: Priority Queue + Quick Stats */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* AI Priority Queue */}
-          <Card className="glass border-border/50">
+          <Card className="surface border shadow-sm">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-medium text-foreground flex items-center gap-2">
                   <Zap className="h-4 w-4 text-primary" />
                   Priority Queue
                 </CardTitle>
-                <span className="text-xs text-muted-foreground">AI-ranked</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-secondary px-2 py-0.5 rounded-full">AI-ranked</span>
               </div>
             </CardHeader>
             <CardContent className="pt-0 space-y-2">
               {priorityQueue.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors cursor-pointer border border-border/30 group"
+                  className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer group"
                 >
                   <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                    item.priority === 'critical' ? 'bg-destructive animate-pulse' :
-                    item.priority === 'warning' ? 'bg-amber-400' : 'bg-primary'
+                    item.priority === 'critical' ? 'bg-destructive animate-pulse-subtle' :
+                    item.priority === 'warning' ? 'bg-[hsl(var(--atlas-warning))]' : 'bg-primary'
                   }`} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-foreground truncate">{item.title}</p>
                     <p className="text-xs text-muted-foreground">{item.module}</p>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                 </div>
               ))}
             </CardContent>
           </Card>
 
           {/* Quick Stats with AI Annotations */}
-          <Card className="glass border-border/50">
+          <Card className="surface border shadow-sm">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-medium text-foreground flex items-center gap-2">
@@ -140,7 +143,7 @@ const Dashboard = () => {
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="pt-0 space-y-4">
+            <CardContent className="pt-0 space-y-3">
               <StatRow 
                 label="Revenue Today" 
                 value="₹12.4L" 
@@ -178,7 +181,7 @@ const Dashboard = () => {
         {/* Floating AI Chat Widget */}
         <div className="fixed bottom-6 right-6 z-40">
           {aiChatOpen && (
-            <div className="absolute bottom-16 right-0 w-80 glass border-primary/30 rounded-xl p-4 animate-fade-in ai-glow">
+            <div className="absolute bottom-16 right-0 w-80 surface-elevated p-4 animate-fade-in">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="h-4 w-4 text-primary" />
                 <span className="text-sm font-medium text-foreground">Quick Actions</span>
@@ -186,23 +189,23 @@ const Dashboard = () => {
               <div className="flex flex-wrap gap-2">
                 {quickActions.map((action) => (
                   <Link key={action} to="/ai-chat">
-                    <Button variant="outline" size="sm" className="text-xs h-8 border-border/50 hover:border-primary/50 hover:bg-primary/10">
+                    <Button variant="outline" size="sm" className="text-xs h-8 hover:border-primary hover:bg-primary/5">
                       {action}
                     </Button>
                   </Link>
                 ))}
               </div>
               <Link to="/ai-chat" className="block mt-3">
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer">
+                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors cursor-pointer">
                   <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">Ask Oliver AI anything...</span>
+                  <span className="text-xs text-muted-foreground">Ask Zence AI anything...</span>
                 </div>
               </Link>
             </div>
           )}
           <Button
             onClick={() => setAiChatOpen(!aiChatOpen)}
-            className="h-14 w-14 rounded-full gradient-primary shadow-lg hover:opacity-90 ai-glow animate-glow-pulse"
+            className="h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 hover:shadow-xl transition-all"
           >
             <Sparkles className="h-6 w-6" />
           </Button>
@@ -216,19 +219,22 @@ const Dashboard = () => {
 const AIInsightCard = ({ insight }: { insight: typeof aiInsights[0] }) => {
   const typeStyles = {
     critical: {
-      bg: "bg-destructive/10 border-destructive/30",
+      border: "border-l-destructive",
       icon: AlertTriangle,
       iconColor: "text-destructive",
+      iconBg: "bg-destructive/10",
     },
     opportunity: {
-      bg: "bg-emerald-400/10 border-emerald-400/30",
+      border: "border-l-[hsl(var(--atlas-success))]",
       icon: CheckCircle,
-      iconColor: "text-emerald-400",
+      iconColor: "text-[hsl(var(--atlas-success))]",
+      iconBg: "bg-[hsl(var(--atlas-success))]/10",
     },
     warning: {
-      bg: "bg-amber-400/10 border-amber-400/30",
+      border: "border-l-[hsl(var(--atlas-warning))]",
       icon: AlertTriangle,
-      iconColor: "text-amber-400",
+      iconColor: "text-[hsl(var(--atlas-warning))]",
+      iconBg: "bg-[hsl(var(--atlas-warning))]/10",
     },
   };
 
@@ -236,17 +242,17 @@ const AIInsightCard = ({ insight }: { insight: typeof aiInsights[0] }) => {
   const Icon = style.icon;
 
   return (
-    <Card className={`glass border ${style.bg} hover:bg-secondary/30 transition-all cursor-pointer group`}>
+    <Card className={`surface border-l-2 ${style.border} hover:shadow-md transition-all cursor-pointer group`}>
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <div className={`p-2 rounded-lg bg-secondary/50 ${style.iconColor}`}>
+          <div className={`p-2 rounded-lg ${style.iconBg} ${style.iconColor}`}>
             <Icon className="h-4 w-4" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-medium text-muted-foreground">{insight.module}</span>
+              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{insight.module}</span>
               {insight.trend === "up" ? (
-                <TrendingUp className="h-3 w-3 text-emerald-400" />
+                <TrendingUp className="h-3 w-3 text-[hsl(var(--atlas-success))]" />
               ) : (
                 <TrendingDown className="h-3 w-3 text-destructive" />
               )}
@@ -254,7 +260,7 @@ const AIInsightCard = ({ insight }: { insight: typeof aiInsights[0] }) => {
             <p className="text-sm font-medium text-foreground leading-tight">{insight.title}</p>
             <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{insight.description}</p>
             <Link to="/ai-chat">
-              <Button variant="ghost" size="sm" className="mt-2 h-7 px-2 text-xs text-primary hover:text-primary hover:bg-primary/10 group-hover:translate-x-1 transition-transform">
+              <Button variant="ghost" size="sm" className="mt-2 h-7 px-2 text-xs text-primary hover:text-primary hover:bg-primary/5 group-hover:translate-x-1 transition-transform">
                 {insight.action} →
               </Button>
             </Link>
@@ -277,14 +283,14 @@ const StatRow = ({
   annotation: string;
   status: 'success' | 'warning' | 'error';
 }) => (
-  <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 border border-border/30">
+  <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
     <div>
-      <p className="text-sm text-foreground font-medium">{value}</p>
+      <p className="text-sm text-foreground font-semibold">{value}</p>
       <p className="text-xs text-muted-foreground">{label}</p>
     </div>
     <div className={`flex items-center gap-1.5 text-xs font-medium ${
-      status === 'success' ? 'text-emerald-400' :
-      status === 'warning' ? 'text-amber-400' : 'text-destructive'
+      status === 'success' ? 'text-[hsl(var(--atlas-success))]' :
+      status === 'warning' ? 'text-[hsl(var(--atlas-warning))]' : 'text-destructive'
     }`}>
       <span>{annotation}</span>
     </div>

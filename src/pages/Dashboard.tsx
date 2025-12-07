@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { ExecutiveBriefing } from "@/components/ExecutiveBriefing";
+import { InterventionDeck } from "@/components/InterventionDeck";
+import { LoyaltyHealthMatrix } from "@/components/LoyaltyHealthMatrix";
 // AI Insights data - cross-module intelligence
 const aiInsights = [
   {
@@ -153,6 +155,12 @@ const Dashboard = () => {
               />
             </CardContent>
           </Card>
+        </div>
+
+        {/* Intervention Deck + Loyalty Health Matrix */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <InterventionDeck />
+          <LoyaltyHealthMatrix />
         </div>
 
         {/* Floating AI Chat Widget */}

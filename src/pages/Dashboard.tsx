@@ -79,82 +79,85 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Two Column Layout: Priority Queue + Quick Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* AI Priority Queue */}
-          <Card className="surface border shadow-sm">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-medium text-foreground flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-primary" />
-                  Priority Queue
-                </CardTitle>
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-secondary px-2 py-0.5 rounded-full">AI-ranked</span>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0 space-y-2">
-              {priorityQueue.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer group"
-                >
-                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+        {/* Performance Summary - Compact Grid */}
+        <Card className="surface border shadow-sm">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-medium text-foreground flex items-center gap-2">
+                <Activity className="h-4 w-4 text-primary" />
+                Performance Summary
+              </CardTitle>
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Today</span>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+              <StatCard 
+                label="Revenue" 
+                value="₹12.4L" 
+                change="-6%"
+                status="warning"
+              />
+              <StatCard 
+                label="Store Visits" 
+                value="2,847" 
+                change="-3.1%"
+                status="warning"
+              />
+              <StatCard 
+                label="Conversion" 
+                value="3.4%" 
+                change="+0.2%"
+                status="success"
+              />
+              <StatCard 
+                label="Active Alerts" 
+                value="7" 
+                change="2 critical"
+                status="error"
+              />
+              <StatCard 
+                label="AI Health" 
+                value="92" 
+                change="Good"
+                status="success"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Priority Queue - Horizontal Scrollable */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-primary" />
+              <h2 className="text-base font-medium text-foreground">Priority Queue</h2>
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-secondary px-2 py-0.5 rounded-full">AI-ranked</span>
+            </div>
+            <Link to="/ai-insights" className="text-xs text-primary hover:underline">View all →</Link>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
+            {priorityQueue.map((item) => (
+              <div
+                key={item.id}
+                className="flex-shrink-0 w-56 p-3 rounded-lg surface border hover:shadow-md transition-all cursor-pointer group"
+              >
+                <div className="flex items-start gap-2">
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ${
                     item.priority === 'critical' ? 'bg-destructive animate-pulse-subtle' :
                     item.priority === 'warning' ? 'bg-[hsl(var(--atlas-warning))]' : 'bg-primary'
                   }`} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground truncate">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">{item.module}</p>
+                    <p className="text-xs text-muted-foreground mb-0.5">{item.module}</p>
+                    <p className="text-sm text-foreground leading-tight line-clamp-2">{item.title}</p>
                   </div>
+                </div>
+                <div className="flex justify-end mt-2">
                   <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                 </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Quick Stats with AI Annotations */}
-          <Card className="surface border shadow-sm">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-medium text-foreground flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-primary" />
-                  Performance Summary
-                </CardTitle>
               </div>
-            </CardHeader>
-            <CardContent className="pt-0 space-y-3">
-              <StatRow 
-                label="Revenue Today" 
-                value="₹12.4L" 
-                annotation="↓6% vs target"
-                status="warning"
-              />
-              <StatRow 
-                label="Store Visits" 
-                value="2,847" 
-                annotation="↓3.1% vs yesterday"
-                status="warning"
-              />
-              <StatRow 
-                label="Conversion Rate" 
-                value="3.4%" 
-                annotation="↑0.2% improvement"
-                status="success"
-              />
-              <StatRow 
-                label="Active Alerts" 
-                value="7" 
-                annotation="2 critical, 5 warnings"
-                status="error"
-              />
-              <StatRow 
-                label="AI Health Score" 
-                value="92/100" 
-                annotation="Good standing"
-                status="success"
-              />
-            </CardContent>
-          </Card>
+            ))}
+          </div>
         </div>
 
         {/* Intervention Deck + Loyalty Health Matrix */}
@@ -256,29 +259,28 @@ const AIInsightCard = ({ insight }: { insight: typeof aiInsights[0] }) => {
   );
 };
 
-// Stat Row Component with AI annotation
-const StatRow = ({ 
+// Compact Stat Card Component
+const StatCard = ({ 
   label, 
   value, 
-  annotation,
+  change,
   status 
 }: { 
   label: string; 
   value: string; 
-  annotation: string;
+  change: string;
   status: 'success' | 'warning' | 'error';
 }) => (
-  <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
-    <div>
-      <p className="text-sm text-foreground font-semibold">{value}</p>
-      <p className="text-xs text-muted-foreground">{label}</p>
-    </div>
-    <div className={`flex items-center gap-1.5 text-xs font-medium ${
-      status === 'success' ? 'text-[hsl(var(--atlas-success))]' :
-      status === 'warning' ? 'text-[hsl(var(--atlas-warning))]' : 'text-destructive'
+  <div className="p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors text-center">
+    <p className="text-lg font-semibold text-foreground">{value}</p>
+    <p className="text-xs text-muted-foreground mb-1">{label}</p>
+    <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${
+      status === 'success' ? 'bg-[hsl(var(--atlas-success))]/10 text-[hsl(var(--atlas-success))]' :
+      status === 'warning' ? 'bg-[hsl(var(--atlas-warning))]/10 text-[hsl(var(--atlas-warning))]' : 
+      'bg-destructive/10 text-destructive'
     }`}>
-      <span>{annotation}</span>
-    </div>
+      {change}
+    </span>
   </div>
 );
 

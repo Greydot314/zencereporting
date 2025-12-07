@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-
+import { ExecutiveBriefing } from "@/components/ExecutiveBriefing";
 // AI Insights data - cross-module intelligence
 const aiInsights = [
   {
@@ -61,31 +61,8 @@ const Dashboard = () => {
       <div className="fixed inset-0 pattern-dots opacity-30 pointer-events-none" />
       
       <div className="max-w-6xl mx-auto space-y-8 relative">
-        {/* AI Status Banner */}
-        <div className="surface-elevated p-5 accent-glow">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                </div>
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-[hsl(var(--atlas-success))] rounded-full border-2 border-card animate-pulse-subtle" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">Zence AI is monitoring 9 modules</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Last scan: 2 minutes ago • <span className="text-[hsl(var(--atlas-success))]">All systems operational</span>
-                </p>
-              </div>
-            </div>
-            <Link to="/ai-chat">
-              <Button size="sm" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm">
-                <MessageSquare className="h-3.5 w-3.5" />
-                Open AI Chat
-              </Button>
-            </Link>
-          </div>
-        </div>
+        {/* Executive Morning Briefing */}
+        <ExecutiveBriefing />
 
         {/* Cross-Module AI Insights */}
         <div>

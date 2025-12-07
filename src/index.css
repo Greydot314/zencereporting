@@ -7,71 +7,74 @@
 
 @layer base {
   :root {
-    /* Atlas AI - Dark Glassmorphism Theme */
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
+    /* Atlas AI - Clean Light Minimalist Theme */
+    --background: 0 0% 99%;
+    --foreground: 222 47% 11%;
 
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
 
-    --popover: 222 47% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 199 89% 55%;
-    --primary-foreground: 222 47% 6%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 222 47% 12%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 222 47% 14%;
-    --muted-foreground: 215 20% 55%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 262 83% 58%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 252 100% 67%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 222 47% 14%;
-    --input: 222 47% 14%;
-    --ring: 199 89% 55%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 221 83% 53%;
 
     --radius: 0.75rem;
 
     /* Atlas AI specific tokens */
-    --atlas-bg: 222 47% 5%;
-    --atlas-glass: 222 47% 10% / 0.6;
-    --atlas-neon-blue: 199 89% 55%;
-    --atlas-neon-purple: 262 83% 58%;
-    --atlas-muted: 215 20% 50%;
+    --atlas-bg: 0 0% 98%;
+    --atlas-surface: 0 0% 100%;
+    --atlas-primary: 221 83% 53%;
+    --atlas-accent: 252 100% 67%;
+    --atlas-muted: 220 9% 46%;
+    --atlas-success: 142 76% 36%;
+    --atlas-warning: 38 92% 50%;
+    --atlas-error: 0 84% 60%;
 
     /* AI-specific tokens */
-    --ai-primary: 199 89% 55%;
-    --ai-secondary: 262 83% 58%;
-    --ai-glow: 199 89% 55%;
+    --ai-primary: 221 83% 53%;
+    --ai-secondary: 252 100% 67%;
+    --ai-glow: 221 83% 53%;
 
-    /* Shadows for dark mode */
-    --shadow-sm: 0 1px 2px 0 hsl(222 47% 3% / 0.3);
-    --shadow: 0 1px 3px 0 hsl(222 47% 3% / 0.4), 0 1px 2px -1px hsl(222 47% 3% / 0.4);
-    --shadow-md: 0 4px 6px -1px hsl(222 47% 3% / 0.4), 0 2px 4px -2px hsl(222 47% 3% / 0.4);
-    --shadow-lg: 0 10px 15px -3px hsl(222 47% 3% / 0.4), 0 4px 6px -4px hsl(222 47% 3% / 0.4);
+    /* Shadows for light mode */
+    --shadow-sm: 0 1px 2px 0 hsl(220 13% 91% / 0.5);
+    --shadow: 0 1px 3px 0 hsl(220 13% 91% / 0.6), 0 1px 2px -1px hsl(220 13% 91% / 0.6);
+    --shadow-md: 0 4px 6px -1px hsl(220 13% 91% / 0.5), 0 2px 4px -2px hsl(220 13% 91% / 0.5);
+    --shadow-lg: 0 10px 15px -3px hsl(220 13% 91% / 0.4), 0 4px 6px -4px hsl(220 13% 91% / 0.4);
 
     /* Sidebar */
-    --sidebar-background: 222 47% 7%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 199 89% 55%;
-    --sidebar-primary-foreground: 222 47% 6%;
-    --sidebar-accent: 222 47% 12%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 47% 14%;
-    --sidebar-ring: 199 89% 55%;
-    --sidebar: 222 47% 7%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 221 83% 53%;
+    --sidebar: 0 0% 100%;
 
     /* Charts */
-    --chart-1: 199 89% 55%;
-    --chart-2: 262 83% 58%;
-    --chart-3: 172 66% 50%;
-    --chart-4: 43 96% 56%;
+    --chart-1: 221 83% 53%;
+    --chart-2: 252 100% 67%;
+    --chart-3: 142 76% 36%;
+    --chart-4: 38 92% 50%;
     --chart-5: 340 75% 55%;
 
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -79,7 +82,6 @@
   }
 
   .dark {
-    /* Same as root - always dark for Atlas */
     --background: 222 47% 6%;
     --foreground: 210 40% 98%;
 
@@ -89,8 +91,8 @@
     --popover: 222 47% 8%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 199 89% 55%;
-    --primary-foreground: 222 47% 6%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 222 47% 12%;
     --secondary-foreground: 210 40% 98%;
@@ -98,7 +100,7 @@
     --muted: 222 47% 14%;
     --muted-foreground: 215 20% 55%;
 
-    --accent: 262 83% 58%;
+    --accent: 252 100% 67%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84% 60%;
@@ -106,22 +108,22 @@
 
     --border: 222 47% 14%;
     --input: 222 47% 14%;
-    --ring: 199 89% 55%;
+    --ring: 221 83% 53%;
 
     --sidebar-background: 222 47% 7%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 199 89% 55%;
-    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 222 47% 12%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 222 47% 14%;
-    --sidebar-ring: 199 89% 55%;
+    --sidebar-ring: 221 83% 53%;
     --sidebar: 222 47% 7%;
 
-    --chart-1: 199 89% 55%;
-    --chart-2: 262 83% 58%;
-    --chart-3: 172 66% 50%;
-    --chart-4: 43 96% 56%;
+    --chart-1: 221 83% 53%;
+    --chart-2: 252 100% 67%;
+    --chart-3: 142 76% 36%;
+    --chart-4: 38 92% 50%;
     --chart-5: 340 75% 55%;
   }
 }
@@ -137,64 +139,88 @@
 }
 
 @layer components {
-  /* Glass morphism effect */
-  .glass {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+  /* Clean card surfaces */
+  .surface {
+    @apply bg-card border border-border rounded-xl;
+    box-shadow: 0 1px 3px 0 hsl(220 13% 91% / 0.3);
   }
 
-  .glass-strong {
-    background: rgba(255, 255, 255, 0.08);
-    @apply backdrop-blur-2xl border border-white/10;
+  .surface-elevated {
+    @apply bg-card border border-border rounded-xl;
+    box-shadow: 0 4px 12px -2px hsl(220 13% 91% / 0.4), 0 2px 6px -2px hsl(220 13% 91% / 0.3);
   }
 
-  .glass-hover {
-    @apply hover:bg-white/10 hover:border-white/20 transition-all duration-300;
+  .surface-hover {
+    @apply hover:border-primary/20 hover:shadow-md transition-all duration-200;
   }
 
-  /* Neon glow effects */
-  .neon-blue-glow {
-    box-shadow: 0 0 20px hsl(var(--atlas-neon-blue) / 0.4),
-                0 0 40px hsl(var(--atlas-neon-blue) / 0.2),
-                0 0 60px hsl(var(--atlas-neon-blue) / 0.1);
+  /* Subtle accent styling */
+  .accent-glow {
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.1),
+                0 2px 8px -2px hsl(var(--primary) / 0.15);
   }
 
-  .neon-purple-glow {
-    box-shadow: 0 0 20px hsl(var(--atlas-neon-purple) / 0.4),
-                0 0 40px hsl(var(--atlas-neon-purple) / 0.2),
-                0 0 60px hsl(var(--atlas-neon-purple) / 0.1);
+  .accent-border {
+    @apply border-l-2 border-l-primary;
   }
 
-  /* AI glow effect */
-  .ai-glow {
-    box-shadow: 0 0 15px hsl(var(--ai-glow) / 0.15),
-                0 0 30px hsl(var(--ai-glow) / 0.1);
-  }
-
-  /* Gradient backgrounds */
+  /* Gradient backgrounds - subtle */
   .gradient-primary {
-    @apply bg-gradient-to-r from-[hsl(var(--atlas-neon-blue))] to-[hsl(var(--atlas-neon-purple))];
+    @apply bg-gradient-to-r from-primary to-accent;
+  }
+
+  .gradient-subtle {
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.05), hsl(var(--accent) / 0.05));
   }
 
   /* Gradient text */
   .gradient-text {
-    @apply bg-gradient-to-r from-[hsl(var(--atlas-neon-blue))] to-[hsl(var(--atlas-neon-purple))] bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
   }
 
-  /* AI-specific styles */
+  /* AI-specific styles - clean and minimal */
   .ai-message-bubble {
-    @apply bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4;
+    @apply bg-secondary/50 border border-border rounded-2xl p-4;
   }
 
   .ai-input-container {
-    @apply bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-3;
+    @apply bg-card border border-border rounded-xl px-4 py-3 shadow-sm;
+  }
+
+  /* Status indicators */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .status-success {
+    @apply bg-[hsl(var(--atlas-success))];
+  }
+
+  .status-warning {
+    @apply bg-[hsl(var(--atlas-warning))];
+  }
+
+  .status-error {
+    @apply bg-[hsl(var(--atlas-error))];
+  }
+
+  /* Divider with label */
+  .divider-label {
+    @apply flex items-center gap-3 text-xs text-muted-foreground uppercase tracking-wider;
+  }
+
+  .divider-label::before,
+  .divider-label::after {
+    content: '';
+    @apply flex-1 h-px bg-border;
   }
 }
 
 @layer utilities {
-  /* Custom scrollbar for dark theme */
+  /* Custom scrollbar - minimal */
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted)) transparent;
+    scrollbar-color: hsl(var(--border)) transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
@@ -207,7 +233,7 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--muted));
+    background-color: hsl(var(--border));
     border-radius: 3px;
   }
 
@@ -215,18 +241,50 @@
     background-color: hsl(var(--muted-foreground));
   }
 
-  /* Animation utilities */
-  .animate-glow {
-    animation: glow 2s ease-in-out infinite alternate;
+  /* Animation utilities - subtle */
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s ease-in-out infinite;
   }
 
-  @keyframes glow {
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+
+  @keyframes fade-in {
     from {
-      box-shadow: 0 0 20px hsl(var(--atlas-neon-blue) / 0.3);
+      opacity: 0;
+      transform: translateY(4px);
     }
     to {
-      box-shadow: 0 0 40px hsl(var(--atlas-neon-blue) / 0.5),
-                  0 0 60px hsl(var(--atlas-neon-purple) / 0.3);
+      opacity: 1;
+      transform: translateY(0);
     }
+  }
+
+  /* Text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Pattern backgrounds for subtle detail */
+  .pattern-dots {
+    background-image: radial-gradient(hsl(var(--border)) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .pattern-grid {
+    background-image: 
+      linear-gradient(hsl(var(--border)) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border)) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 }

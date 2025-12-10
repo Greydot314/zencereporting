@@ -2,6 +2,7 @@ import { AlertTriangle, TrendingUp, Lightbulb, Clock, Sparkles } from "lucide-re
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AISearchBar } from "./AISearchBar";
 
 interface CriticalAlert {
   type: string;
@@ -116,6 +117,11 @@ export const ExecutiveBriefing = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* AI Search Bar */}
+      <div className="mt-6 pt-4 border-t border-border/50">
+        <AISearchBar />
       </div>
 
       {/* Data Sources */}

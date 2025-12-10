@@ -6,6 +6,7 @@ import { ExecutiveBriefing } from "@/components/ExecutiveBriefing";
 import { AIInsightsLog } from "@/components/AIInsightsLog";
 import { InterventionDeck } from "@/components/InterventionDeck";
 import { LoyaltyHealthMatrix } from "@/components/LoyaltyHealthMatrix";
+import { PerformanceSummary } from "@/components/PerformanceSummary";
 
 // Quick action chips
 const quickActions = [
@@ -19,7 +20,7 @@ const Dashboard = () => {
   const [aiChatOpen, setAiChatOpen] = useState(false);
 
   return (
-    <main className="flex-1 p-6 pt-20 overflow-auto bg-background">
+    <main className="flex-1 p-6 pt-22 overflow-auto bg-background">
       {/* Subtle background pattern */}
       <div className="fixed inset-0 pattern-dots opacity-30 pointer-events-none" />
       
@@ -27,7 +28,10 @@ const Dashboard = () => {
         {/* Section 1: Executive Morning Briefing */}
         <ExecutiveBriefing />
 
-        {/* Section 2: AI Insight Log */}
+        {/* Section 2: Performance Summary */}
+        <PerformanceSummary />
+
+        {/* Section 3: AI Insight Log */}
         <AIInsightsLog />
 
         {/* Section 3 & 4: Intervention Deck + Loyalty Health Matrix */}

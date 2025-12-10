@@ -1,50 +1,11 @@
-import { Sparkles, ChevronRight, Activity, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Zap, MessageSquare } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Sparkles, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { ExecutiveBriefing } from "@/components/ExecutiveBriefing";
+import { AIInsightsLog } from "@/components/AIInsightsLog";
 import { InterventionDeck } from "@/components/InterventionDeck";
 import { LoyaltyHealthMatrix } from "@/components/LoyaltyHealthMatrix";
-// AI Insights data - cross-module intelligence
-const aiInsights = [
-  {
-    id: 1,
-    type: "critical",
-    title: "Revenue below target by 6%",
-    description: "Tier 2 stores showing consistent decline over the past week. Immediate attention required.",
-    module: "Atlas Prime",
-    action: "Analyze root cause",
-    trend: "down",
-  },
-  {
-    id: 2,
-    type: "opportunity",
-    title: "Premium Shoppers segment grew 8%",
-    description: "High-value customer segment expanding. Consider targeted campaigns to maximize conversion.",
-    module: "Segcon",
-    action: "View segment",
-    trend: "up",
-  },
-  {
-    id: 3,
-    type: "warning",
-    title: "Fraud attempts increased 18%",
-    description: "Unusual pattern detected in online transactions. Review flagged transactions.",
-    module: "Fraud",
-    action: "Review alerts",
-    trend: "up",
-  },
-];
-
-// Priority queue items
-const priorityQueue = [
-  { id: 1, title: "Review 12 flagged transactions", module: "Fraud", priority: "critical" },
-  { id: 2, title: "3 stores need inventory restock", module: "Atlas Neo", priority: "warning" },
-  { id: 3, title: "Customer satisfaction dip in Delhi region", module: "Insights", priority: "warning" },
-  { id: 4, title: "New loyalty tier candidates identified", module: "Loyalty", priority: "info" },
-  { id: 5, title: "Campaign performance report ready", module: "Clickrev", priority: "info" },
-];
 
 // Quick action chips
 const quickActions = [
@@ -62,107 +23,19 @@ const Dashboard = () => {
       {/* Subtle background pattern */}
       <div className="fixed inset-0 pattern-dots opacity-30 pointer-events-none" />
       
-      <div className="max-w-6xl mx-auto space-y-8 relative">
-        {/* Executive Morning Briefing */}
+      <div className="max-w-7xl mx-auto space-y-6 relative">
+        {/* Section 1: Executive Morning Briefing */}
         <ExecutiveBriefing />
 
-        {/* Cross-Module AI Insights */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-foreground">AI Insights</h2>
-            <Link to="/ai-insights" className="text-xs text-primary hover:underline">View all insights →</Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {aiInsights.map((insight) => (
-              <AIInsightCard key={insight.id} insight={insight} />
-            ))}
-          </div>
-        </div>
+        {/* Section 2: AI Insight Log */}
+        <AIInsightsLog />
 
-        {/* Performance Summary - Compact Grid */}
-        <Card className="surface border shadow-sm">
-          <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-medium text-foreground flex items-center gap-2">
-                <Activity className="h-4 w-4 text-primary" />
-                Performance Summary
-              </CardTitle>
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Today</span>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-              <StatCard 
-                label="Revenue" 
-                value="₹12.4L" 
-                change="-6%"
-                status="warning"
-              />
-              <StatCard 
-                label="Store Visits" 
-                value="2,847" 
-                change="-3.1%"
-                status="warning"
-              />
-              <StatCard 
-                label="Conversion" 
-                value="3.4%" 
-                change="+0.2%"
-                status="success"
-              />
-              <StatCard 
-                label="Active Alerts" 
-                value="7" 
-                change="2 critical"
-                status="error"
-              />
-              <StatCard 
-                label="AI Health" 
-                value="92" 
-                change="Good"
-                status="success"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Priority Queue - Horizontal Scrollable */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-primary" />
-              <h2 className="text-base font-medium text-foreground">Priority Queue</h2>
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-secondary px-2 py-0.5 rounded-full">AI-ranked</span>
-            </div>
-            <Link to="/ai-insights" className="text-xs text-primary hover:underline">View all →</Link>
-          </div>
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
-            {priorityQueue.map((item) => (
-              <div
-                key={item.id}
-                className="flex-shrink-0 w-56 p-3 rounded-lg surface border hover:shadow-md transition-all cursor-pointer group"
-              >
-                <div className="flex items-start gap-2">
-                  <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ${
-                    item.priority === 'critical' ? 'bg-destructive animate-pulse-subtle' :
-                    item.priority === 'warning' ? 'bg-[hsl(var(--atlas-warning))]' : 'bg-primary'
-                  }`} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-muted-foreground mb-0.5">{item.module}</p>
-                    <p className="text-sm text-foreground leading-tight line-clamp-2">{item.title}</p>
-                  </div>
-                </div>
-                <div className="flex justify-end mt-2">
-                  <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Intervention Deck + Loyalty Health Matrix */}
+        {/* Section 3 & 4: Intervention Deck + Loyalty Health Matrix */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Section 3: Intervention Deck (Aggregate Risk Pools) */}
           <InterventionDeck />
+          
+          {/* Section 4: Performance Summary (Loyalty Health Matrix) */}
           <LoyaltyHealthMatrix />
         </div>
 
@@ -202,86 +75,5 @@ const Dashboard = () => {
     </main>
   );
 };
-
-// AI Insight Card Component
-const AIInsightCard = ({ insight }: { insight: typeof aiInsights[0] }) => {
-  const typeStyles = {
-    critical: {
-      border: "border-l-destructive",
-      icon: AlertTriangle,
-      iconColor: "text-destructive",
-      iconBg: "bg-destructive/10",
-    },
-    opportunity: {
-      border: "border-l-[hsl(var(--atlas-success))]",
-      icon: CheckCircle,
-      iconColor: "text-[hsl(var(--atlas-success))]",
-      iconBg: "bg-[hsl(var(--atlas-success))]/10",
-    },
-    warning: {
-      border: "border-l-[hsl(var(--atlas-warning))]",
-      icon: AlertTriangle,
-      iconColor: "text-[hsl(var(--atlas-warning))]",
-      iconBg: "bg-[hsl(var(--atlas-warning))]/10",
-    },
-  };
-
-  const style = typeStyles[insight.type as keyof typeof typeStyles];
-  const Icon = style.icon;
-
-  return (
-    <Card className={`surface border-l-2 ${style.border} hover:shadow-md transition-all cursor-pointer group`}>
-      <CardContent className="p-4">
-        <div className="flex items-start gap-3">
-          <div className={`p-2 rounded-lg ${style.iconBg} ${style.iconColor}`}>
-            <Icon className="h-4 w-4" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{insight.module}</span>
-              {insight.trend === "up" ? (
-                <TrendingUp className="h-3 w-3 text-[hsl(var(--atlas-success))]" />
-              ) : (
-                <TrendingDown className="h-3 w-3 text-destructive" />
-              )}
-            </div>
-            <p className="text-sm font-medium text-foreground leading-tight">{insight.title}</p>
-            <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{insight.description}</p>
-            <Link to="/ai-chat">
-              <Button variant="ghost" size="sm" className="mt-2 h-7 px-2 text-xs text-primary hover:text-primary hover:bg-primary/5 group-hover:translate-x-1 transition-transform">
-                {insight.action} →
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-// Compact Stat Card Component
-const StatCard = ({ 
-  label, 
-  value, 
-  change,
-  status 
-}: { 
-  label: string; 
-  value: string; 
-  change: string;
-  status: 'success' | 'warning' | 'error';
-}) => (
-  <div className="p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors text-center">
-    <p className="text-lg font-semibold text-foreground">{value}</p>
-    <p className="text-xs text-muted-foreground mb-1">{label}</p>
-    <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${
-      status === 'success' ? 'bg-[hsl(var(--atlas-success))]/10 text-[hsl(var(--atlas-success))]' :
-      status === 'warning' ? 'bg-[hsl(var(--atlas-warning))]/10 text-[hsl(var(--atlas-warning))]' : 
-      'bg-destructive/10 text-destructive'
-    }`}>
-      {change}
-    </span>
-  </div>
-);
 
 export default Dashboard;

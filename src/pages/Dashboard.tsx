@@ -20,7 +20,7 @@ const Dashboard = () => {
   const [aiChatOpen, setAiChatOpen] = useState(false);
 
   return (
-    <main className="flex-1 p-6 pt-22 overflow-auto bg-background">
+    <main className="flex-1 p-6 pt-28 overflow-auto bg-background">
       {/* Subtle background pattern */}
       <div className="fixed inset-0 pattern-dots opacity-30 pointer-events-none" />
       

@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Bell, User, Search, Sparkles, TrendingUp, Users, AlertTriangle, BarChart3, ArrowRight } from "lucide-react";
+import { User, Search, Sparkles, TrendingUp, Users, AlertTriangle, BarChart3, ArrowRight, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { NotificationPanel } from "@/components/NotificationPanel";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface Suggestion {
   id: string;
@@ -145,14 +147,25 @@ export const Header = () => {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-1 flex-shrink-0">
-          <Button variant="ghost" size="icon" className="relative h-9 w-9 text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10 rounded-lg">
-            <Bell className="h-4 w-4" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-primary-foreground rounded-full ring-2 ring-primary" />
-          </Button>
+          <NotificationPanel />
 
-          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10">
-            <User className="h-4 w-4" />
-          </Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10">
+                <User className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-2" align="end">
+              <div className="p-2 border-b border-border mb-2">
+                <p className="text-sm font-medium text-foreground">Sarah Johnson</p>
+                <p className="text-xs text-muted-foreground">Loyalty Program Manager</p>
+              </div>
+              <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-destructive hover:text-destructive hover:bg-destructive/10">
+                <LogOut className="h-4 w-4" />
+                Log Out
+              </Button>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
     </header>

@@ -34,7 +34,7 @@ export const ExecutiveBriefing = () => {
   });
 
   return (
-    <Card className="p-6 bg-gradient-to-br from-primary/5 via-background to-accent/5 border-primary/10 relative overflow-hidden">
+      <Card className="p-6 bg-gradient-to-br from-primary/5 via-background to-accent/5 border-primary/10 relative">
       {/* Subtle decorative element */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
       
@@ -52,8 +52,8 @@ export const ExecutiveBriefing = () => {
             </p>
           </div>
         </div>
-        <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">
-          AI Synthesized
+        <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200 shrink-0">
+          Live Insights
         </Badge>
       </div>
 
@@ -66,7 +66,7 @@ export const ExecutiveBriefing = () => {
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
           <TrendingUp className="h-4 w-4 text-primary" />
-          <span className="text-sm font-medium text-foreground">Business Synthesis</span>
+          <span className="text-sm font-medium text-foreground">Performance Overview</span>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed pl-6">
           {briefingData.narrative_summary}

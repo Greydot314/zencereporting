@@ -8,12 +8,13 @@ import { InterventionDeck } from "@/components/InterventionDeck";
 import { LoyaltyHealthMatrix } from "@/components/LoyaltyHealthMatrix";
 import { PerformanceSummary } from "@/components/PerformanceSummary";
 
-// Quick action chips
+// Quick action chips with detailed descriptions
 const quickActions = [
-  "Show all alerts",
-  "Revenue summary",
-  "Fraud check",
-  "Top segments",
+  { label: "Critical Alerts", description: "View all fraud & risk alerts requiring attention" },
+  { label: "Revenue Analysis", description: "Loyalty program contribution & sales breakdown" },
+  { label: "Fraud Detection", description: "Real-time anomaly detection & suspicious activity" },
+  { label: "Segment Health", description: "Top performing customer segments & at-risk groups" },
+  { label: "Campaign ROI", description: "Active campaign performance & recommendations" },
 ];
 
 const Dashboard = () => {
@@ -53,9 +54,10 @@ const Dashboard = () => {
               </div>
               <div className="flex flex-wrap gap-2">
                 {quickActions.map((action) => (
-                  <Link key={action} to="/ai-chat">
-                    <Button variant="outline" size="sm" className="text-xs h-8 hover:border-primary hover:bg-primary/5">
-                      {action}
+                  <Link key={action.label} to="/ai-chat">
+                    <Button variant="outline" size="sm" className="text-xs h-auto py-2 px-3 hover:border-primary hover:bg-primary/5 flex flex-col items-start text-left">
+                      <span className="font-medium">{action.label}</span>
+                      <span className="text-[10px] text-muted-foreground font-normal">{action.description}</span>
                     </Button>
                   </Link>
                 ))}

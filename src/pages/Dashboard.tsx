@@ -1,4 +1,4 @@
-import { Sparkles, MessageSquare } from "lucide-react";
+import { Sparkles, MessageSquare, AlertTriangle, TrendingUp, Shield, Users, Target } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -10,11 +10,11 @@ import { PerformanceSummary } from "@/components/PerformanceSummary";
 
 // Quick action chips with detailed descriptions
 const quickActions = [
-  { label: "Critical Alerts", description: "View all fraud & risk alerts requiring attention" },
-  { label: "Revenue Analysis", description: "Loyalty program contribution & sales breakdown" },
-  { label: "Fraud Detection", description: "Real-time anomaly detection & suspicious activity" },
-  { label: "Segment Health", description: "Top performing customer segments & at-risk groups" },
-  { label: "Campaign ROI", description: "Active campaign performance & recommendations" },
+  { label: "Critical Alerts", description: "View all fraud & risk alerts", icon: AlertTriangle },
+  { label: "Revenue Analysis", description: "Loyalty contribution & sales", icon: TrendingUp },
+  { label: "Fraud Detection", description: "Anomaly & suspicious activity", icon: Shield },
+  { label: "Segment Health", description: "Top & at-risk segments", icon: Users },
+  { label: "Campaign ROI", description: "Performance & recommendations", icon: Target },
 ];
 
 const Dashboard = () => {
@@ -52,12 +52,15 @@ const Dashboard = () => {
                 <Sparkles className="h-4 w-4 text-primary" />
                 <span className="text-sm font-medium text-foreground">Quick Actions</span>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-1 gap-2">
                 {quickActions.map((action) => (
                   <Link key={action.label} to="/ai-chat">
-                    <Button variant="outline" size="sm" className="text-xs h-auto py-2 px-3 hover:border-primary hover:bg-primary/5 flex flex-col items-start text-left">
-                      <span className="font-medium">{action.label}</span>
-                      <span className="text-[10px] text-muted-foreground font-normal">{action.description}</span>
+                    <Button variant="outline" size="sm" className="w-full text-xs h-auto py-2 px-3 hover:border-primary hover:bg-primary/5 flex items-center gap-3 text-left justify-start">
+                      <action.icon className="h-4 w-4 text-primary shrink-0" />
+                      <div className="flex flex-col items-start">
+                        <span className="font-medium">{action.label}</span>
+                        <span className="text-[10px] text-muted-foreground font-normal">{action.description}</span>
+                      </div>
                     </Button>
                   </Link>
                 ))}

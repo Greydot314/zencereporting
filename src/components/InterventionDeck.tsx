@@ -40,11 +40,14 @@ const topCategories: ProductCategory[] = [
   { name: "Electronics", purchases: 12840, percentageOfTotal: 28, trend: 5.2 },
   { name: "Fashion", purchases: 9650, percentageOfTotal: 21, trend: -2.1 },
   { name: "Home & Living", purchases: 7320, percentageOfTotal: 16, trend: 8.4 },
+  { name: "Beauty & Care", purchases: 6180, percentageOfTotal: 14, trend: 3.8 },
 ];
 
 const trendingProducts: TrendingProduct[] = [
   { name: "Wireless Earbuds Pro", category: "Electronics", purchases: 1240, change: 34 },
   { name: "Premium Silk Scarf", category: "Fashion", purchases: 890, change: 22 },
+  { name: "Smart Home Hub", category: "Electronics", purchases: 756, change: 18 },
+  { name: "Organic Face Serum", category: "Beauty", purchases: 624, change: 28 },
 ];
 
 // Operational Metrics

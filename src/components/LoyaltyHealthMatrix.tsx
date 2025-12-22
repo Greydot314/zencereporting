@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Coins, Users, Repeat, Clock, ShoppingBag, Award, Crown } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Coins, Users, Repeat, Clock, ShoppingBag, Award, Crown, Ticket, BadgePercent, IndianRupee } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -221,6 +221,64 @@ export const LoyaltyHealthMatrix = () => {
           </div>
           <p className={`text-xs ${liabilityNarrative.color} pl-6 border-l-2 border-[hsl(var(--atlas-warning))]/20`}>
             {liabilityNarrative.text}
+          </p>
+        </div>
+
+        {/* Coupon & Sales KPIs Section */}
+        <div className="pt-4 border-t border-border/50">
+          <div className="flex items-center gap-2 mb-3">
+            <Ticket className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-medium text-foreground">Coupon & Sales Metrics</span>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="p-3 rounded-lg bg-secondary/50">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-1.5 rounded-md bg-primary/10">
+                  <Users className="h-3.5 w-3.5 text-primary" />
+                </div>
+              </div>
+              <p className="text-lg font-semibold text-foreground">18.4K</p>
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">Coupon Redeemers</p>
+                <div className="flex items-center gap-0.5">
+                  <ArrowUpRight className="h-3 w-3 text-[hsl(var(--atlas-success))]" />
+                  <span className="text-[10px] text-[hsl(var(--atlas-success))]">+12.3%</span>
+                </div>
+              </div>
+            </div>
+            <div className="p-3 rounded-lg bg-secondary/50">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-1.5 rounded-md bg-[hsl(var(--atlas-success))]/10">
+                  <IndianRupee className="h-3.5 w-3.5 text-[hsl(var(--atlas-success))]" />
+                </div>
+              </div>
+              <p className="text-lg font-semibold text-foreground">₹4.2Cr</p>
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">Coupon-Driven Sales</p>
+                <div className="flex items-center gap-0.5">
+                  <ArrowUpRight className="h-3 w-3 text-[hsl(var(--atlas-success))]" />
+                  <span className="text-[10px] text-[hsl(var(--atlas-success))]">+8.7%</span>
+                </div>
+              </div>
+            </div>
+            <div className="p-3 rounded-lg bg-secondary/50">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-1.5 rounded-md bg-[hsl(var(--atlas-warning))]/10">
+                  <BadgePercent className="h-3.5 w-3.5 text-[hsl(var(--atlas-warning))]" />
+                </div>
+              </div>
+              <p className="text-lg font-semibold text-foreground">₹38.5L</p>
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">Coupon Discount</p>
+                <div className="flex items-center gap-0.5">
+                  <ArrowDownRight className="h-3 w-3 text-destructive" />
+                  <span className="text-[10px] text-destructive">+15.2%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground mt-3 pl-6 border-l-2 border-primary/20">
+            Coupon redemptions driving ₹4.2Cr in sales. Monitor discount growth to maintain margin health.
           </p>
         </div>
       </CardContent>

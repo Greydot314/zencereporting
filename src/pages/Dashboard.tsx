@@ -36,12 +36,16 @@ const Dashboard = () => {
         <AIInsightsLog />
 
         {/* Section 3 & 4: Intervention Deck + Loyalty Health Matrix */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
           {/* Section 3: Intervention Deck (Aggregate Risk Pools) */}
-          <InterventionDeck />
+          <div className="flex flex-col h-full">
+            <InterventionDeck />
+          </div>
           
           {/* Section 4: Performance Summary (Loyalty Health Matrix) */}
-          <LoyaltyHealthMatrix />
+          <div className="flex flex-col h-full">
+            <LoyaltyHealthMatrix />
+          </div>
         </div>
 
         {/* Floating AI Chat Widget */}

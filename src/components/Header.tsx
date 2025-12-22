@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { User, Search, Sparkles, TrendingUp, Users, AlertTriangle, BarChart3, ArrowRight, LogOut, Mic } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { NotificationPanel } from "@/components/NotificationPanel";
@@ -33,6 +33,21 @@ export const Header = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    if (query.trim()) {
+      setIsFocused(false);
+      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearch();
+    }
+  };
 
   const { isListening, isSupported, transcript: liveTranscript, toggleListening } = useVoiceRecognition({
     onResult: (transcript) => {
@@ -74,8 +89,8 @@ export const Header = () => {
   }, []);
 
   const handleSuggestionClick = (suggestion: Suggestion) => {
-    setQuery(suggestion.text);
     setIsFocused(false);
+    navigate(`/search?q=${encodeURIComponent(suggestion.text)}`);
   };
 
   const showSuggestions = isFocused && filteredSuggestions.length > 0;
@@ -115,6 +130,7 @@ export const Header = () => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onFocus={() => setIsFocused(true)}
+              onKeyDown={handleKeyDown}
               className="flex-1 h-12 px-3 text-sm bg-transparent text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none"
             />
             {isSupported && (
@@ -132,7 +148,10 @@ export const Header = () => {
                 <Mic className="h-4 w-4" />
               </button>
             )}
-            <button className="flex items-center gap-2 px-4 py-2 mr-2 rounded-lg bg-primary-foreground text-primary text-sm font-medium hover:bg-primary-foreground/90 transition-colors">
+            <button
+              onClick={handleSearch}
+              className="flex items-center gap-2 px-4 py-2 mr-2 rounded-lg bg-primary-foreground text-primary text-sm font-medium hover:bg-primary-foreground/90 transition-colors"
+            >
               <Search className="h-4 w-4" />
               <span className="hidden sm:inline">Search</span>
             </button>

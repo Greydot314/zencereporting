@@ -34,7 +34,7 @@ export const Header = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  const { isListening, isSupported, toggleListening } = useVoiceRecognition({
+  const { isListening, isSupported, transcript: liveTranscript, toggleListening } = useVoiceRecognition({
     onResult: (transcript) => {
       setQuery(transcript);
       inputRef.current?.focus();
@@ -137,6 +137,21 @@ export const Header = () => {
               <span className="hidden sm:inline">Search</span>
             </button>
           </div>
+
+          {/* Live transcript preview */}
+          {isListening && liveTranscript && (
+            <div className="absolute top-full left-0 right-0 mt-2 px-4 py-2.5 bg-background/95 backdrop-blur border border-primary/30 rounded-xl shadow-lg z-50 animate-in fade-in-0 slide-in-from-top-2 duration-200">
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1">
+                  <span className="w-1.5 h-1.5 bg-destructive rounded-full animate-pulse" />
+                  <span className="w-1.5 h-1.5 bg-destructive rounded-full animate-pulse [animation-delay:0.2s]" />
+                  <span className="w-1.5 h-1.5 bg-destructive rounded-full animate-pulse [animation-delay:0.4s]" />
+                </div>
+                <span className="text-sm text-muted-foreground">Listening:</span>
+                <span className="text-sm text-foreground font-medium">{liveTranscript}</span>
+              </div>
+            </div>
+          )}
 
           {/* Suggestions Dropdown */}
           {showSuggestions && (

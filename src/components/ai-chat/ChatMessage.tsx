@@ -23,15 +23,15 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   const renderContent = () => {
     if (message.contentType === "rfm" && message.rfmData) {
-      return <RFMDashboard data={message.rfmData} />;
+      return <RFMDashboard data={message.rfmData} query={message.content} />;
     }
     
     if (message.contentType === "campaign" && message.campaignData) {
-      return <CampaignInsights data={message.campaignData} />;
+      return <CampaignInsights data={message.campaignData} query={message.content} />;
     }
     
     if (message.contentType === "dashboard" && message.dashboardData) {
-      return <DashboardCarousel data={message.dashboardData} />;
+      return <DashboardCarousel data={message.dashboardData} query={message.content} />;
     }
     
     // Default text content
@@ -42,50 +42,46 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     );
   };
 
-  return (
-    <div
-      className={cn(
-        "flex gap-3 animate-fade-in",
-        isUser ? "flex-row-reverse" : "flex-row"
-      )}
-    >
-      {/* Avatar */}
-      <div
-        className={cn(
-          "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center",
-          isUser
-            ? "bg-secondary"
-            : "bg-gradient-to-br from-primary to-accent"
-        )}
-      >
-        {isUser ? (
+  // User message - compact bubble style
+  if (isUser) {
+    return (
+      <div className="flex gap-3 flex-row-reverse animate-fade-in">
+        <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-secondary">
           <User className="h-4 w-4 text-muted-foreground" />
-        ) : (
-          <Sparkles className="h-4 w-4 text-primary-foreground" />
-        )}
+        </div>
+        <div className="flex flex-col gap-1 items-end">
+          <div className="rounded-2xl px-4 py-3 bg-primary text-primary-foreground rounded-br-md max-w-md">
+            <p className="text-sm leading-relaxed">{message.content}</p>
+          </div>
+          <span className="text-[10px] text-muted-foreground px-1">
+            {formatTime(message.timestamp)}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // Assistant message - full width open layout
+  return (
+    <div className="flex gap-4 animate-fade-in">
+      {/* Avatar */}
+      <div className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center bg-gradient-to-br from-primary to-accent shadow-lg">
+        <Sparkles className="h-4 w-4 text-primary-foreground" />
       </div>
 
-      {/* Message Content */}
-      <div
-        className={cn(
-          "flex flex-col gap-1 max-w-[85%]",
-          isUser ? "items-end" : "items-start"
-        )}
-      >
-        <div
-          className={cn(
-            "rounded-2xl px-4 py-3",
-            isUser
-              ? "bg-primary text-primary-foreground rounded-br-md"
-              : "bg-secondary/50 border border-border rounded-bl-md"
-          )}
-        >
-          {renderContent()}
+      {/* Content - Full width, no card container */}
+      <div className="flex-1 min-w-0 space-y-4">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-foreground">Oliver</span>
+          <span className="text-[10px] text-muted-foreground">
+            {formatTime(message.timestamp)}
+          </span>
         </div>
         
-        <span className="text-[10px] text-muted-foreground px-1">
-          {formatTime(message.timestamp)}
-        </span>
+        {/* Render visualization or text directly */}
+        <div className="w-full">
+          {renderContent()}
+        </div>
       </div>
     </div>
   );

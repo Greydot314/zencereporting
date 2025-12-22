@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { User, Search, Sparkles, TrendingUp, Users, AlertTriangle, BarChart3, ArrowRight, LogOut } from "lucide-react";
+import { User, Search, Sparkles, TrendingUp, Users, AlertTriangle, BarChart3, ArrowRight, LogOut, Mic } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { NotificationPanel } from "@/components/NotificationPanel";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-
+import { useVoiceRecognition } from "@/hooks/useVoiceRecognition";
+import { useToast } from "@/hooks/use-toast";
 interface Suggestion {
   id: string;
   text: string;
@@ -31,6 +32,21 @@ export const Header = () => {
   const [filteredSuggestions, setFilteredSuggestions] = useState<Suggestion[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
+
+  const { isListening, isSupported, toggleListening } = useVoiceRecognition({
+    onResult: (transcript) => {
+      setQuery(transcript);
+      inputRef.current?.focus();
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Voice Recognition Error",
+        description: error,
+      });
+    },
+  });
 
   useEffect(() => {
     if (query.length > 0) {
@@ -101,6 +117,21 @@ export const Header = () => {
               onFocus={() => setIsFocused(true)}
               className="flex-1 h-12 px-3 text-sm bg-transparent text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none"
             />
+            {isSupported && (
+              <button
+                onClick={toggleListening}
+                className={cn(
+                  "p-2 rounded-lg transition-all duration-200",
+                  isListening
+                    ? "bg-destructive/20 text-destructive animate-pulse"
+                    : "text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10"
+                )}
+                title={isListening ? "Stop listening" : "Voice search"}
+                type="button"
+              >
+                <Mic className="h-4 w-4" />
+              </button>
+            )}
             <button className="flex items-center gap-2 px-4 py-2 mr-2 rounded-lg bg-primary-foreground text-primary text-sm font-medium hover:bg-primary-foreground/90 transition-colors">
               <Search className="h-4 w-4" />
               <span className="hidden sm:inline">Search</span>

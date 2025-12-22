@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Coins, Users, Repeat, Clock, ShoppingBag, Award } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Coins, Users, Repeat, Clock, ShoppingBag, Award, Crown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -11,6 +11,13 @@ interface EngagementMetric {
   icon: React.ElementType;
 }
 
+interface TierData {
+  name: string;
+  members: number;
+  percentage: number;
+  color: string;
+}
+
 interface LiabilityData {
   earned: number;
   burned: number;
@@ -18,7 +25,20 @@ interface LiabilityData {
   status: "balanced" | "excess" | "bleeding";
 }
 
-// Engagement metrics for non-tier programs
+// Mock config - this would come from program settings
+const programConfig = {
+  isTierEnabled: true, // Toggle this to show/hide tier distribution
+};
+
+// Tier distribution data
+const tierData: TierData[] = [
+  { name: "Platinum", members: 12450, percentage: 8, color: "bg-[hsl(var(--chart-1))]" },
+  { name: "Gold", members: 34200, percentage: 22, color: "bg-[hsl(var(--chart-2))]" },
+  { name: "Silver", members: 58900, percentage: 38, color: "bg-[hsl(var(--chart-3))]" },
+  { name: "Bronze", members: 49650, percentage: 32, color: "bg-[hsl(var(--chart-4))]" },
+];
+
+// Engagement metrics for all programs
 const engagementMetrics: EngagementMetric[] = [
   { label: "Repeat Purchase Rate", value: "34.2%", change: 2.8, status: "healthy", icon: Repeat },
   { label: "Avg. Time Between Purchases", value: "18 days", change: -3.1, status: "healthy", icon: Clock },
@@ -28,8 +48,8 @@ const engagementMetrics: EngagementMetric[] = [
 
 // Mock liability data
 const liabilityData: LiabilityData = {
-  earned: 24500000, // 2.45Cr points earned
-  burned: 11200000, // 1.12Cr points burned
+  earned: 24500000,
+  burned: 11200000,
   ratio: 2.19,
   status: "excess",
 };
@@ -50,6 +70,12 @@ const getStatusStyle = (status: string) => {
 const formatPoints = (value: number) => {
   if (value >= 10000000) return `${(value / 10000000).toFixed(2)}Cr`;
   if (value >= 100000) return `${(value / 100000).toFixed(1)}L`;
+  return value.toLocaleString();
+};
+
+const formatMembers = (value: number) => {
+  if (value >= 100000) return `${(value / 1000).toFixed(0)}K`;
+  if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
   return value.toLocaleString();
 };
 
@@ -74,6 +100,7 @@ export const LoyaltyHealthMatrix = () => {
   };
 
   const liabilityNarrative = getLiabilityNarrative();
+  const totalMembers = tierData.reduce((sum, tier) => sum + tier.members, 0);
 
   return (
     <Card className="surface border shadow-sm">
@@ -89,8 +116,36 @@ export const LoyaltyHealthMatrix = () => {
         </div>
       </CardHeader>
       <CardContent className="pt-0 space-y-6">
+        {/* Tier Distribution Section - Only shown if tiers are enabled */}
+        {programConfig.isTierEnabled && (
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Crown className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium text-foreground">Tier Distribution</span>
+              <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/20">
+                {formatMembers(totalMembers)} members
+              </Badge>
+            </div>
+            <div className="space-y-2">
+              {tierData.map((tier) => (
+                <div key={tier.name} className="flex items-center gap-3">
+                  <span className="text-xs text-muted-foreground w-16">{tier.name}</span>
+                  <div className="flex-1">
+                    <Progress value={tier.percentage} className="h-2" />
+                  </div>
+                  <span className="text-xs font-medium text-foreground w-10 text-right">{tier.percentage}%</span>
+                  <span className="text-xs text-muted-foreground w-14 text-right">{formatMembers(tier.members)}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-3 pl-6 border-l-2 border-primary/20">
+              Platinum tier grew 12% MoM. Consider targeted upgrade campaigns for top Silver members.
+            </p>
+          </div>
+        )}
+
         {/* Member Engagement Section */}
-        <div>
+        <div className={programConfig.isTierEnabled ? "pt-4 border-t border-border/50" : ""}>
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium text-foreground">Member Engagement</span>

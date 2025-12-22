@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Coins, Users, Repeat, Clock, ShoppingBag, Award, Crown } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Coins, Users, Repeat, Clock, ShoppingBag, Award, Crown, Package, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -25,6 +25,20 @@ interface LiabilityData {
   status: "balanced" | "excess" | "bleeding";
 }
 
+interface ProductCategory {
+  name: string;
+  purchases: number;
+  percentageOfTotal: number;
+  trend: number;
+}
+
+interface TrendingProduct {
+  name: string;
+  category: string;
+  purchases: number;
+  change: number;
+}
+
 // Mock config - this would come from program settings
 const programConfig = {
   isTierEnabled: true, // Toggle this to show/hide tier distribution
@@ -36,6 +50,18 @@ const tierData: TierData[] = [
   { name: "Gold", members: 34200, percentage: 22, color: "bg-[hsl(var(--chart-2))]" },
   { name: "Silver", members: 58900, percentage: 38, color: "bg-[hsl(var(--chart-3))]" },
   { name: "Bronze", members: 49650, percentage: 32, color: "bg-[hsl(var(--chart-4))]" },
+];
+
+// Product purchase behavior data
+const topCategories: ProductCategory[] = [
+  { name: "Electronics", purchases: 12840, percentageOfTotal: 28, trend: 5.2 },
+  { name: "Fashion", purchases: 9650, percentageOfTotal: 21, trend: -2.1 },
+  { name: "Home & Living", purchases: 7320, percentageOfTotal: 16, trend: 8.4 },
+];
+
+const trendingProducts: TrendingProduct[] = [
+  { name: "Wireless Earbuds Pro", category: "Electronics", purchases: 1240, change: 34 },
+  { name: "Premium Silk Scarf", category: "Fashion", purchases: 890, change: 22 },
 ];
 
 // Engagement metrics for all programs
@@ -144,8 +170,65 @@ export const LoyaltyHealthMatrix = () => {
           </div>
         )}
 
-        {/* Member Engagement Section */}
+        {/* Product Purchase Behavior Section */}
         <div className={programConfig.isTierEnabled ? "pt-4 border-t border-border/50" : ""}>
+          <div className="flex items-center gap-2 mb-3">
+            <Package className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-medium text-foreground">Product Purchase Behavior</span>
+          </div>
+          
+          {/* Top Categories */}
+          <div className="space-y-2 mb-4">
+            <span className="text-xs text-muted-foreground">Top Categories</span>
+            {topCategories.map((category) => (
+              <div key={category.name} className="flex items-center gap-3">
+                <span className="text-xs text-foreground w-24 truncate">{category.name}</span>
+                <div className="flex-1">
+                  <Progress value={category.percentageOfTotal} className="h-1.5" />
+                </div>
+                <span className="text-xs font-medium text-foreground w-8 text-right">{category.percentageOfTotal}%</span>
+                <div className="flex items-center gap-0.5 w-12 justify-end">
+                  {category.trend > 0 ? (
+                    <ArrowUpRight className="h-3 w-3 text-[hsl(var(--atlas-success))]" />
+                  ) : (
+                    <ArrowDownRight className="h-3 w-3 text-destructive" />
+                  )}
+                  <span className={`text-[10px] ${category.trend > 0 ? "text-[hsl(var(--atlas-success))]" : "text-destructive"}`}>
+                    {category.trend > 0 ? "+" : ""}{category.trend}%
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Trending Products */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-1">
+              <Star className="h-3 w-3 text-[hsl(var(--atlas-warning))]" />
+              <span className="text-xs text-muted-foreground">Trending This Week</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {trendingProducts.map((product) => (
+                <div key={product.name} className="p-2 rounded-md bg-secondary/50">
+                  <p className="text-xs font-medium text-foreground truncate">{product.name}</p>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-[10px] text-muted-foreground">{product.purchases} purchases</span>
+                    <Badge variant="outline" className="text-[9px] bg-[hsl(var(--atlas-success))]/10 text-[hsl(var(--atlas-success))] border-[hsl(var(--atlas-success))]/20">
+                      +{product.change}%
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <p className="text-xs text-muted-foreground mt-3 pl-6 border-l-2 border-primary/20">
+            Electronics driving 28% of member purchases. Home & Living showing strongest growth at +8.4%.
+          </p>
+        </div>
+
+        {/* Member Engagement Section */}
+        <div className="pt-4 border-t border-border/50">
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium text-foreground">Member Engagement</span>

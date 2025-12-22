@@ -190,7 +190,7 @@ const SearchPage = () => {
       <div className="flex-1 flex flex-col min-h-0">
         {/* Messages Area */}
         <ScrollArea className="flex-1" ref={scrollRef}>
-          <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+          <div className="w-full px-6 lg:px-12 py-6 space-y-8">
             {/* Welcome message if no messages */}
             {messages.length === 0 && !isSearching && (
               <div className="text-center py-12 animate-fade-in">
@@ -232,8 +232,8 @@ const SearchPage = () => {
         </ScrollArea>
 
         {/* Input Area */}
-        <div className="border-t border-border bg-background">
-          <div className="max-w-4xl mx-auto">
+        <div className="border-t border-border bg-background/80 backdrop-blur-sm">
+          <div className="w-full px-6 lg:px-12">
             <ChatInput
               onSend={handleSend}
               disabled={isSearching || isTyping}

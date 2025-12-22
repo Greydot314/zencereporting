@@ -85,7 +85,7 @@ export function AppSidebar() {
                     <NavLink
                       to={item.url}
                       end={item.url === "/"}
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                       activeClassName="bg-primary/10 text-primary border border-primary/20"
                     >
                       <item.icon className="h-4 w-4 flex-shrink-0" />
@@ -125,7 +125,7 @@ export function AppSidebar() {
                       <SidebarMenuButton asChild tooltip={module.title}>
                         <NavLink
                           to={module.url}
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                           activeClassName="bg-primary/10 text-primary border border-primary/20"
                         >
                           <div className="relative">
@@ -169,7 +169,7 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild tooltip={item.title}>
                     <NavLink
                       to={item.url}
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                       activeClassName="bg-primary/10 text-primary border border-primary/20"
                     >
                       <item.icon className="h-4 w-4 flex-shrink-0" />

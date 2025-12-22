@@ -1,15 +1,14 @@
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Minus, Coins, Users } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Coins, Users, Repeat, Clock, ShoppingBag, Award } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
-interface TierData {
-  name: string;
-  members: number;
-  upgrades: number;
-  downgrades: number;
-  netMovement: number;
-  status: "healthy" | "stagnant" | "declining";
+interface EngagementMetric {
+  label: string;
+  value: string;
+  change: number;
+  status: "healthy" | "warning" | "critical";
+  icon: React.ElementType;
 }
 
 interface LiabilityData {
@@ -19,12 +18,12 @@ interface LiabilityData {
   status: "balanced" | "excess" | "bleeding";
 }
 
-// Mock tier movement data
-const tierData: TierData[] = [
-  { name: "Platinum", members: 1247, upgrades: 89, downgrades: 12, netMovement: 6.2, status: "healthy" },
-  { name: "Gold", members: 8432, upgrades: 156, downgrades: 203, netMovement: -0.6, status: "stagnant" },
-  { name: "Silver", members: 24891, upgrades: 312, downgrades: 487, netMovement: -0.7, status: "declining" },
-  { name: "Bronze", members: 67234, upgrades: 891, downgrades: 0, netMovement: 1.3, status: "healthy" },
+// Engagement metrics for non-tier programs
+const engagementMetrics: EngagementMetric[] = [
+  { label: "Repeat Purchase Rate", value: "34.2%", change: 2.8, status: "healthy", icon: Repeat },
+  { label: "Avg. Time Between Purchases", value: "18 days", change: -3.1, status: "healthy", icon: Clock },
+  { label: "Basket Size (Members)", value: "₹2,847", change: 5.4, status: "healthy", icon: ShoppingBag },
+  { label: "Reward Redemption Rate", value: "68.5%", change: -1.2, status: "warning", icon: Award },
 ];
 
 // Mock liability data
@@ -35,19 +34,13 @@ const liabilityData: LiabilityData = {
   status: "excess",
 };
 
-const getMovementIcon = (movement: number) => {
-  if (movement > 1) return <ArrowUpRight className="h-3 w-3 text-[hsl(var(--atlas-success))]" />;
-  if (movement < -1) return <ArrowDownRight className="h-3 w-3 text-destructive" />;
-  return <Minus className="h-3 w-3 text-muted-foreground" />;
-};
-
 const getStatusStyle = (status: string) => {
   switch (status) {
     case "healthy":
       return "bg-[hsl(var(--atlas-success))]/10 text-[hsl(var(--atlas-success))] border-[hsl(var(--atlas-success))]/20";
-    case "stagnant":
+    case "warning":
       return "bg-[hsl(var(--atlas-warning))]/10 text-[hsl(var(--atlas-warning))] border-[hsl(var(--atlas-warning))]/20";
-    case "declining":
+    case "critical":
       return "bg-destructive/10 text-destructive border-destructive/20";
     default:
       return "";
@@ -96,53 +89,47 @@ export const LoyaltyHealthMatrix = () => {
         </div>
       </CardHeader>
       <CardContent className="pt-0 space-y-6">
-        {/* Tier Movement Section */}
+        {/* Member Engagement Section */}
         <div>
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium text-foreground">Tier Flow</span>
+            <span className="text-sm font-medium text-foreground">Member Engagement</span>
           </div>
-          <div className="space-y-3">
-            {tierData.map((tier) => (
-              <div key={tier.name} className="flex items-center gap-4">
-                <div className="w-20">
-                  <span className="text-sm font-medium text-foreground">{tier.name}</span>
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs text-muted-foreground">
-                      {tier.members.toLocaleString()} members
-                    </span>
-                    <span className="text-xs text-muted-foreground">•</span>
-                    <span className="text-xs text-[hsl(var(--atlas-success))]">
-                      +{tier.upgrades} ↑
-                    </span>
-                    <span className="text-xs text-destructive">
-                      -{tier.downgrades} ↓
-                    </span>
+          <div className="grid grid-cols-2 gap-3">
+            {engagementMetrics.map((metric) => {
+              const Icon = metric.icon;
+              return (
+                <div key={metric.label} className="p-3 rounded-lg bg-secondary/50">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="p-1.5 rounded-md bg-primary/10">
+                      <Icon className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <Badge variant="outline" className={`text-[10px] ${getStatusStyle(metric.status)}`}>
+                      {metric.status}
+                    </Badge>
                   </div>
-                  <Progress 
-                    value={50 + tier.netMovement * 5} 
-                    className="h-1.5 bg-secondary"
-                  />
+                  <p className="text-lg font-semibold text-foreground mb-0.5">{metric.value}</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground">{metric.label}</p>
+                    <div className="flex items-center gap-1">
+                      {metric.change > 0 ? (
+                        <ArrowUpRight className="h-3 w-3 text-[hsl(var(--atlas-success))]" />
+                      ) : (
+                        <ArrowDownRight className="h-3 w-3 text-destructive" />
+                      )}
+                      <span className={`text-xs font-medium ${
+                        metric.change > 0 ? "text-[hsl(var(--atlas-success))]" : "text-destructive"
+                      }`}>
+                        {metric.change > 0 ? "+" : ""}{metric.change}%
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 w-24 justify-end">
-                  {getMovementIcon(tier.netMovement)}
-                  <span className={`text-xs font-medium ${
-                    tier.netMovement > 0 ? "text-[hsl(var(--atlas-success))]" : 
-                    tier.netMovement < 0 ? "text-destructive" : "text-muted-foreground"
-                  }`}>
-                    {tier.netMovement > 0 ? "+" : ""}{tier.netMovement}%
-                  </span>
-                  <Badge variant="outline" className={`text-[10px] ${getStatusStyle(tier.status)}`}>
-                    {tier.status}
-                  </Badge>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <p className="text-xs text-muted-foreground mt-3 pl-6 border-l-2 border-primary/20">
-            Silver-to-Gold conversion velocity has slowed by 15%. Gold Tier shows stagnation with 0.6% net decline.
+            Repeat purchase rate up 2.8%. Redemption rate slightly declining—consider targeted burn campaigns.
           </p>
         </div>
 

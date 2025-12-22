@@ -58,9 +58,9 @@ const stats: StatCardProps[] = [
     icon: CreditCard,
   },
   {
-    title: "Campaign ROI",
-    value: "3.4x",
-    change: "+0.3x",
+    title: "Redemption Rate",
+    value: "68.5%",
+    change: "+3.2%",
     changeType: "positive",
     icon: Target,
   },

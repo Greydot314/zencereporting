@@ -11,6 +11,7 @@ import AIInsights from "./pages/AIInsights";
 import AIChat from "./pages/AIChat";
 import ModuleDetail from "./pages/ModuleDetail";
 import AtlasLanding from "./pages/AtlasLanding";
+import SearchPage from "./pages/SearchPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
                       <Route path="/" element={<Dashboard />} />
                       <Route path="/ai-insights" element={<AIInsights />} />
                       <Route path="/ai-chat" element={<AIChat />} />
+                      <Route path="/search" element={<SearchPage />} />
                       <Route path="/module/:moduleId" element={<ModuleDetail />} />
                       <Route path="/settings" element={<Dashboard />} />
                       <Route path="/help" element={<Dashboard />} />

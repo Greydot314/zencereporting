@@ -1,0 +1,257 @@
+import { RFMData, CampaignData, DashboardData, KPICard } from "@/types/aiChat";
+
+export const mockRFMData: RFMData = {
+  totalCustomers: 156842,
+  period: "Last 90 Days",
+  segments: [
+    {
+      id: "vip",
+      name: "VIP Champions",
+      count: 12547,
+      percentage: 8,
+      avgMonetary: 45200,
+      avgRecency: 3,
+      avgFrequency: 12,
+      color: "hsl(var(--chart-3))",
+      campaignRecommendation: "Exclusive early access to new collections with personalized styling",
+      priority: "high",
+    },
+    {
+      id: "loyal",
+      name: "Loyal Customers",
+      count: 31368,
+      percentage: 20,
+      avgMonetary: 28500,
+      avgRecency: 7,
+      avgFrequency: 8,
+      color: "hsl(var(--chart-1))",
+      campaignRecommendation: "Loyalty tier upgrade incentives with bonus points",
+      priority: "medium",
+    },
+    {
+      id: "potential",
+      name: "Potential Loyalists",
+      count: 23526,
+      percentage: 15,
+      avgMonetary: 15800,
+      avgRecency: 14,
+      avgFrequency: 4,
+      color: "hsl(var(--chart-2))",
+      campaignRecommendation: "Cross-sell complementary products with time-limited offers",
+      priority: "medium",
+    },
+    {
+      id: "at-risk",
+      name: "At Risk",
+      count: 28231,
+      percentage: 18,
+      avgMonetary: 22100,
+      avgRecency: 45,
+      avgFrequency: 6,
+      color: "hsl(var(--chart-4))",
+      campaignRecommendation: "Win-back campaign with personalized discount based on past purchases",
+      priority: "high",
+    },
+    {
+      id: "churned",
+      name: "Churned",
+      count: 34505,
+      percentage: 22,
+      avgMonetary: 8900,
+      avgRecency: 120,
+      avgFrequency: 2,
+      color: "hsl(var(--chart-5))",
+      campaignRecommendation: "Re-activation with 'We miss you' messaging and significant incentive",
+      priority: "low",
+    },
+    {
+      id: "new",
+      name: "New Customers",
+      count: 26665,
+      percentage: 17,
+      avgMonetary: 4500,
+      avgRecency: 5,
+      avgFrequency: 1,
+      color: "hsl(var(--accent))",
+      campaignRecommendation: "Welcome series with product education and first repeat purchase incentive",
+      priority: "medium",
+    },
+  ],
+  chartData: [
+    { name: "VIP", value: 12547, color: "hsl(var(--chart-3))" },
+    { name: "Loyal", value: 31368, color: "hsl(var(--chart-1))" },
+    { name: "Potential", value: 23526, color: "hsl(var(--chart-2))" },
+    { name: "At Risk", value: 28231, color: "hsl(var(--chart-4))" },
+    { name: "Churned", value: 34505, color: "hsl(var(--chart-5))" },
+    { name: "New", value: 26665, color: "hsl(var(--accent))" },
+  ],
+};
+
+export const mockCampaignData: CampaignData = {
+  channels: [
+    {
+      name: "RCS",
+      icon: "MessageSquare",
+      deliveries: 245000,
+      clicks: 42350,
+      conversions: 8470,
+      revenue: 4235000,
+      roas: 4.2,
+      ctr: 17.3,
+      openRate: 89.2,
+      performance: "HIGH",
+      trend: 12.5,
+    },
+    {
+      name: "Push",
+      icon: "Bell",
+      deliveries: 890000,
+      clicks: 133500,
+      conversions: 22260,
+      revenue: 8904000,
+      roas: 3.8,
+      ctr: 15.0,
+      openRate: 45.6,
+      performance: "HIGH",
+      trend: 8.3,
+    },
+    {
+      name: "Email",
+      icon: "Mail",
+      deliveries: 1250000,
+      clicks: 162500,
+      conversions: 18750,
+      revenue: 9375000,
+      roas: 3.2,
+      ctr: 13.0,
+      openRate: 28.4,
+      performance: "MEDIUM",
+      trend: -2.1,
+    },
+    {
+      name: "SMS",
+      icon: "Smartphone",
+      deliveries: 450000,
+      clicks: 54000,
+      conversions: 9000,
+      revenue: 3600000,
+      roas: 2.8,
+      ctr: 12.0,
+      openRate: 94.8,
+      performance: "MEDIUM",
+      trend: 5.7,
+    },
+  ],
+  recommendations: [
+    {
+      type: "success",
+      message: "RCS shows 32% higher engagement than SMS. Consider shifting 20% of SMS budget to RCS.",
+    },
+    {
+      type: "success",
+      message: "Push notifications at 2-4 PM IST show 45% higher CTR. Schedule important campaigns in this window.",
+    },
+    {
+      type: "warning",
+      message: "Email open rates declined 8% MoM. Review subject line strategy and sender reputation.",
+    },
+    {
+      type: "warning",
+      message: "SMS costs increased 15% while ROAS dropped. Optimize audience targeting to improve efficiency.",
+    },
+  ],
+};
+
+export const mockDashboardData: DashboardData = {
+  kpis: [
+    {
+      id: "1",
+      title: "Total Revenue",
+      value: "₹12.4Cr",
+      trend: 8.5,
+      chartType: "line",
+      chartData: [42, 45, 48, 52, 55, 58, 62, 68, 72, 78, 82, 88],
+      insight: "Revenue up 8.5% driven by VIP segment spending increase",
+    },
+    {
+      id: "2",
+      title: "Active Members",
+      value: "2.34L",
+      trend: 12.3,
+      chartType: "bar",
+      chartData: [65, 72, 78, 82, 85, 88, 92, 95, 98, 102, 108, 115],
+      insight: "Member growth accelerating due to referral program",
+    },
+    {
+      id: "3",
+      title: "Redemption Rate",
+      value: "34.2%",
+      trend: -2.1,
+      chartType: "line",
+      chartData: [38, 37, 36, 35, 35, 34, 34, 34, 34, 34, 34, 34],
+      insight: "Slight decline - consider new reward categories",
+    },
+    {
+      id: "4",
+      title: "Points Liability",
+      value: "₹8.2Cr",
+      trend: 5.8,
+      chartType: "bar",
+      chartData: [72, 74, 75, 77, 78, 79, 80, 81, 82, 82, 82, 82],
+      insight: "Liability growth within acceptable range",
+    },
+    {
+      id: "5",
+      title: "Campaign ROI",
+      value: "3.8x",
+      trend: 15.2,
+      chartType: "line",
+      chartData: [28, 30, 32, 33, 34, 35, 36, 37, 38, 38, 38, 38],
+      insight: "Best performing quarter due to personalization",
+    },
+    {
+      id: "6",
+      title: "NPS Score",
+      value: "72",
+      trend: 4.5,
+      chartType: "bar",
+      chartData: [62, 64, 65, 66, 67, 68, 69, 70, 71, 71, 72, 72],
+      insight: "Customer satisfaction trending positively",
+    },
+  ],
+};
+
+export const dataSources = [
+  { name: "Atlas Prime", color: "bg-primary" },
+  { name: "Segcon", color: "bg-accent" },
+  { name: "Campaigns", color: "bg-chart-3" },
+  { name: "RFM Engine", color: "bg-chart-4" },
+];
+
+export const defaultFollowUpSuggestions = [
+  "Show RFM segmentation",
+  "Compare with last month",
+  "Top performing campaigns",
+  "Customer churn analysis",
+];
+
+export const rfmFollowUpSuggestions = [
+  "Create campaign for VIP segment",
+  "Show At-Risk customer details",
+  "Compare with previous quarter",
+  "Export segment data",
+];
+
+export const campaignFollowUpSuggestions = [
+  "Breakdown by campaign type",
+  "Show daily performance trend",
+  "Best performing content",
+  "Audience overlap analysis",
+];
+
+export const dashboardFollowUpSuggestions = [
+  "Drill into revenue by region",
+  "Show member acquisition funnel",
+  "Forecast next quarter",
+  "Export KPI report",
+];

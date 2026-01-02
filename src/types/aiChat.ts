@@ -1,4 +1,6 @@
-export type ContentType = "text" | "insight" | "dashboard" | "table" | "segment" | "campaign" | "rfm";
+import { ForecastData, ChurnData, WhatIfData } from "./predictions";
+
+export type ContentType = "text" | "insight" | "dashboard" | "table" | "segment" | "campaign" | "rfm" | "forecast" | "churn" | "whatif";
 
 export interface Message {
   id: string;
@@ -12,6 +14,9 @@ export interface Message {
   segmentData?: SegmentData;
   campaignData?: CampaignData;
   rfmData?: RFMData;
+  forecastData?: ForecastData;
+  churnData?: ChurnData;
+  whatIfData?: WhatIfData;
   followUpSuggestions?: string[];
 }
 

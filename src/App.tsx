@@ -9,6 +9,7 @@ import { Header } from "@/components/Header";
 import Dashboard from "./pages/Dashboard";
 import AIInsights from "./pages/AIInsights";
 import AIChat from "./pages/AIChat";
+import Predictions from "./pages/Predictions";
 import ModuleDetail from "./pages/ModuleDetail";
 import AtlasLanding from "./pages/AtlasLanding";
 import SearchPage from "./pages/SearchPage";
@@ -39,6 +40,7 @@ const App = () => (
                       <Route path="/" element={<Dashboard />} />
                       <Route path="/ai-insights" element={<AIInsights />} />
                       <Route path="/ai-chat" element={<AIChat />} />
+                      <Route path="/predictions" element={<Predictions />} />
                       <Route path="/search" element={<SearchPage />} />
                       <Route path="/module/:moduleId" element={<ModuleDetail />} />
                       <Route path="/settings" element={<Dashboard />} />

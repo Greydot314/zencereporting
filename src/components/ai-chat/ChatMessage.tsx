@@ -4,6 +4,9 @@ import { cn } from "@/lib/utils";
 import { RFMDashboard } from "./RFMDashboard";
 import { CampaignInsights } from "./CampaignInsights";
 import { DashboardCarousel } from "./DashboardCarousel";
+import { ForecastInsights } from "./ForecastInsights";
+import { ChurnInsights } from "./ChurnInsights";
+import { WhatIfInsights } from "./WhatIfInsights";
 
 interface ChatMessageProps {
   message: Message;
@@ -22,6 +25,18 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
   };
 
   const renderContent = () => {
+    if (message.contentType === "forecast" && message.forecastData) {
+      return <ForecastInsights data={message.forecastData} query={message.content} />;
+    }
+    
+    if (message.contentType === "churn" && message.churnData) {
+      return <ChurnInsights data={message.churnData} query={message.content} />;
+    }
+    
+    if (message.contentType === "whatif" && message.whatIfData) {
+      return <WhatIfInsights data={message.whatIfData} query={message.content} />;
+    }
+    
     if (message.contentType === "rfm" && message.rfmData) {
       return <RFMDashboard data={message.rfmData} query={message.content} />;
     }

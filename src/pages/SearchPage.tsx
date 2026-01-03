@@ -11,6 +11,14 @@ import {
   campaignFollowUpSuggestions,
   dashboardFollowUpSuggestions,
 } from "@/data/aiChatMockData";
+import {
+  mockForecastData,
+  mockChurnData,
+  mockWhatIfData,
+  forecastFollowUpSuggestions,
+  churnFollowUpSuggestions,
+  whatIfFollowUpSuggestions,
+} from "@/data/predictionsMockData";
 import { ChatMessage } from "@/components/ai-chat/ChatMessage";
 import { ChatInput } from "@/components/ai-chat/ChatInput";
 import { TypingIndicator } from "@/components/ai-chat/TypingIndicator";
@@ -29,6 +37,18 @@ const initialSearchSteps: SearchStep[] = [
 const detectContentType = (query: string): ContentType => {
   const lowerQuery = query.toLowerCase();
   
+  if (lowerQuery.includes("forecast") || lowerQuery.includes("predict revenue") || lowerQuery.includes("sales prediction") || lowerQuery.includes("revenue forecast")) {
+    return "forecast";
+  }
+  
+  if (lowerQuery.includes("churn") || lowerQuery.includes("at risk") || lowerQuery.includes("retention") || lowerQuery.includes("leaving")) {
+    return "churn";
+  }
+  
+  if (lowerQuery.includes("what if") || lowerQuery.includes("scenario") || lowerQuery.includes("simulate") || lowerQuery.includes("what-if")) {
+    return "whatif";
+  }
+  
   if (lowerQuery.includes("rfm") || lowerQuery.includes("customer segmentation") || lowerQuery.includes("segments")) {
     return "rfm";
   }
@@ -46,6 +66,12 @@ const detectContentType = (query: string): ContentType => {
 
 const getFollowUpSuggestions = (contentType: ContentType): string[] => {
   switch (contentType) {
+    case "forecast":
+      return forecastFollowUpSuggestions;
+    case "churn":
+      return churnFollowUpSuggestions;
+    case "whatif":
+      return whatIfFollowUpSuggestions;
     case "rfm":
       return rfmFollowUpSuggestions;
     case "campaign":
@@ -59,6 +85,27 @@ const getFollowUpSuggestions = (contentType: ContentType): string[] => {
 
 const generateResponse = (query: string, contentType: ContentType): Partial<Message> => {
   switch (contentType) {
+    case "forecast":
+      return {
+        content: "Here's your sales and revenue forecast with confidence intervals:",
+        contentType: "forecast",
+        forecastData: mockForecastData,
+        followUpSuggestions: forecastFollowUpSuggestions,
+      };
+    case "churn":
+      return {
+        content: "Here's your customer churn prediction analysis with at-risk segments:",
+        contentType: "churn",
+        churnData: mockChurnData,
+        followUpSuggestions: churnFollowUpSuggestions,
+      };
+    case "whatif":
+      return {
+        content: "Here's the what-if scenario simulator to model different outcomes:",
+        contentType: "whatif",
+        whatIfData: mockWhatIfData,
+        followUpSuggestions: whatIfFollowUpSuggestions,
+      };
     case "rfm":
       return {
         content: "Here's your RFM segmentation analysis based on the last 90 days of customer data:",

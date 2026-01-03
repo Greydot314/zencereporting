@@ -12,7 +12,8 @@ import {
   UserCheck,
   Lightbulb,
   Shield,
-  Users
+  Users,
+  LineChart
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { cn } from "@/lib/utils";
@@ -37,6 +38,7 @@ import {
 const mainItems = [
   { title: "Overview", url: "/", icon: LayoutDashboard },
   { title: "AI Insights", url: "/ai-insights", icon: Sparkles },
+  { title: "Predictions", url: "/predictions", icon: LineChart },
 ];
 
 // Modules with AI status indicators

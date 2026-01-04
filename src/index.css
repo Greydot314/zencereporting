@@ -38,7 +38,7 @@
     --input: 220 13% 91%;
     --ring: 221 83% 53%;
 
-    --radius: 0.625rem;
+    --radius: 0.75rem;
 
     /* Atlas AI specific tokens */
     --atlas-bg: 0 0% 98%;
@@ -56,10 +56,10 @@
     --ai-glow: 221 83% 53%;
 
     /* Shadows for light mode */
-    --shadow-sm: 2px 2px 50px 2px hsl(210, 40%, 98%);
-    --shadow: 2px 2px 100px 2px hsl(210, 40%, 98%);
-    --shadow-md: 2px 2px 150px 2px hsl(210, 40%, 98%);
-    --shadow-lg: 2px 2px 250px 2px hsl(210, 40%, 98%);
+    --shadow-sm: 0 1px 2px 0 hsl(220 13% 91% / 0.5);
+    --shadow: 0 1px 3px 0 hsl(220 13% 91% / 0.6), 0 1px 2px -1px hsl(220 13% 91% / 0.6);
+    --shadow-md: 0 4px 6px -1px hsl(220 13% 91% / 0.5), 0 2px 4px -2px hsl(220 13% 91% / 0.5);
+    --shadow-lg: 0 10px 15px -3px hsl(220 13% 91% / 0.4), 0 4px 6px -4px hsl(220 13% 91% / 0.4);
 
     /* Sidebar */
     --sidebar-background: 0 0% 100%;

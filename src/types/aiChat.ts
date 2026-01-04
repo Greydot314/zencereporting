@@ -1,6 +1,6 @@
-import { ForecastData, ChurnData, WhatIfData } from "./predictions";
+import { ForecastData, ChurnData, WhatIfData, CLVData } from "./predictions";
 
-export type ContentType = "text" | "insight" | "dashboard" | "table" | "segment" | "campaign" | "rfm" | "forecast" | "churn" | "whatif";
+export type ContentType = "text" | "insight" | "dashboard" | "table" | "segment" | "campaign" | "rfm" | "forecast" | "churn" | "whatif" | "clv";
 
 export interface Message {
   id: string;
@@ -17,6 +17,7 @@ export interface Message {
   forecastData?: ForecastData;
   churnData?: ChurnData;
   whatIfData?: WhatIfData;
+  clvData?: CLVData;
   followUpSuggestions?: string[];
 }
 

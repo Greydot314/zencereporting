@@ -15,9 +15,11 @@ import {
   mockForecastData,
   mockChurnData,
   mockWhatIfData,
+  mockCLVData,
   forecastFollowUpSuggestions,
   churnFollowUpSuggestions,
   whatIfFollowUpSuggestions,
+  clvFollowUpSuggestions,
 } from "@/data/predictionsMockData";
 import { ChatMessage } from "@/components/ai-chat/ChatMessage";
 import { ChatInput } from "@/components/ai-chat/ChatInput";
@@ -49,6 +51,10 @@ const detectContentType = (query: string): ContentType => {
     return "whatif";
   }
   
+  if (lowerQuery.includes("clv") || lowerQuery.includes("lifetime value") || lowerQuery.includes("customer value") || lowerQuery.includes("ltv")) {
+    return "clv";
+  }
+  
   if (lowerQuery.includes("rfm") || lowerQuery.includes("customer segmentation") || lowerQuery.includes("segments")) {
     return "rfm";
   }
@@ -72,6 +78,8 @@ const getFollowUpSuggestions = (contentType: ContentType): string[] => {
       return churnFollowUpSuggestions;
     case "whatif":
       return whatIfFollowUpSuggestions;
+    case "clv":
+      return clvFollowUpSuggestions;
     case "rfm":
       return rfmFollowUpSuggestions;
     case "campaign":
@@ -105,6 +113,13 @@ const generateResponse = (query: string, contentType: ContentType): Partial<Mess
         contentType: "whatif",
         whatIfData: mockWhatIfData,
         followUpSuggestions: whatIfFollowUpSuggestions,
+      };
+    case "clv":
+      return {
+        content: "Here's your Customer Lifetime Value prediction analysis:",
+        contentType: "clv",
+        clvData: mockCLVData,
+        followUpSuggestions: clvFollowUpSuggestions,
       };
     case "rfm":
       return {

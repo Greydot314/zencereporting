@@ -7,6 +7,7 @@ import { DashboardCarousel } from "./DashboardCarousel";
 import { ForecastInsights } from "./ForecastInsights";
 import { ChurnInsights } from "./ChurnInsights";
 import { WhatIfInsights } from "./WhatIfInsights";
+import { CLVInsights } from "./CLVInsights";
 
 interface ChatMessageProps {
   message: Message;
@@ -35,6 +36,10 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     
     if (message.contentType === "whatif" && message.whatIfData) {
       return <WhatIfInsights data={message.whatIfData} query={message.content} />;
+    }
+    
+    if (message.contentType === "clv" && message.clvData) {
+      return <CLVInsights data={message.clvData} query={message.content} />;
     }
     
     if (message.contentType === "rfm" && message.rfmData) {

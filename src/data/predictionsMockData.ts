@@ -282,3 +282,10 @@ export const whatIfFollowUpSuggestions = [
   "Compare all three scenarios side by side",
   "Which scenario minimizes churn the most?"
 ];
+
+export const clvFollowUpSuggestions = [
+  "Which tier has the highest growth potential?",
+  "What's causing Silver tier CLV decline?",
+  "Show me CLV trends over the last 6 months",
+  "How can we accelerate Gold tier CLV?"
+];

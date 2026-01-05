@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { DollarSign, TrendingUp, TrendingDown, Target, RefreshCw, Lightbulb, Users } from "lucide-react";
 import { CLVData } from "@/types/predictions";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { AnimatedCurrency, AnimatedPercentage, AnimatedNumber } from "@/components/ui/animated-number";
 
 interface CLVPredictionCardProps {
   data: CLVData;
@@ -58,11 +59,15 @@ export const CLVPredictionCard = ({ data }: CLVPredictionCardProps) => {
         <div className="grid grid-cols-2 gap-4">
           <div className="p-3 rounded-lg border bg-muted/30">
             <div className="text-xs text-muted-foreground mb-1">Total Predicted Revenue</div>
-            <div className="text-xl font-bold">{formatCurrency(data.totalPredictedRevenue)}</div>
+            <div className="text-xl font-bold">
+              <AnimatedCurrency value={data.totalPredictedRevenue} />
+            </div>
           </div>
           <div className="p-3 rounded-lg border bg-red-50/50">
             <div className="text-xs text-red-600 mb-1">Revenue at Risk</div>
-            <div className="text-xl font-bold text-red-700">{formatCurrency(data.revenueAtRisk)}</div>
+            <div className="text-xl font-bold text-red-700">
+              <AnimatedCurrency value={data.revenueAtRisk} />
+            </div>
           </div>
         </div>
 
@@ -103,7 +108,7 @@ export const CLVPredictionCard = ({ data }: CLVPredictionCardProps) => {
                   <span className="font-medium">{tier.tier}</span>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Users className="h-3 w-3" />
-                    {tier.customerCount.toLocaleString()} customers
+                    <AnimatedNumber value={tier.customerCount} /> customers
                   </div>
                 </div>
               </div>
@@ -115,7 +120,7 @@ export const CLVPredictionCard = ({ data }: CLVPredictionCardProps) => {
                     <TrendingDown className="h-4 w-4 text-red-500" />
                   )}
                   <span className={`text-sm font-medium ${tier.change >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                    {tier.change >= 0 ? '+' : ''}{tier.change}%
+                    <AnimatedPercentage value={tier.change} />
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground">

@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { UserMinus, AlertTriangle, Shield, Clock, Target, RefreshCw, ArrowRight } from "lucide-react";
 import { ChurnData } from "@/types/predictions";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
+import { AnimatedNumber, AnimatedCurrency } from "@/components/ui/animated-number";
 
 interface ChurnPredictionCardProps {
   data: ChurnData;
@@ -58,25 +59,33 @@ export const ChurnPredictionCard = ({ data }: ChurnPredictionCardProps) => {
               <AlertTriangle className="h-4 w-4 text-red-500" />
               <span className="text-xs text-red-600 font-medium">High Risk</span>
             </div>
-            <div className="text-xl font-bold text-red-700">{data.summary.highRisk.toLocaleString()}</div>
+            <div className="text-xl font-bold text-red-700">
+              <AnimatedNumber value={data.summary.highRisk} />
+            </div>
           </div>
           <div className="p-3 rounded-lg border bg-amber-50/50">
             <div className="flex items-center gap-2 mb-1">
               <Clock className="h-4 w-4 text-amber-500" />
               <span className="text-xs text-amber-600 font-medium">Medium Risk</span>
             </div>
-            <div className="text-xl font-bold text-amber-700">{data.summary.mediumRisk.toLocaleString()}</div>
+            <div className="text-xl font-bold text-amber-700">
+              <AnimatedNumber value={data.summary.mediumRisk} />
+            </div>
           </div>
           <div className="p-3 rounded-lg border bg-emerald-50/50">
             <div className="flex items-center gap-2 mb-1">
               <Shield className="h-4 w-4 text-emerald-500" />
               <span className="text-xs text-emerald-600 font-medium">Low Risk</span>
             </div>
-            <div className="text-xl font-bold text-emerald-700">{data.summary.lowRisk.toLocaleString()}</div>
+            <div className="text-xl font-bold text-emerald-700">
+              <AnimatedNumber value={data.summary.lowRisk} />
+            </div>
           </div>
           <div className="p-3 rounded-lg border bg-muted/50">
             <div className="text-xs text-muted-foreground font-medium mb-1">Revenue at Risk</div>
-            <div className="text-xl font-bold text-foreground">{formatCurrency(data.summary.revenueAtRisk)}</div>
+            <div className="text-xl font-bold text-foreground">
+              <AnimatedCurrency value={data.summary.revenueAtRisk} />
+            </div>
           </div>
         </div>
 

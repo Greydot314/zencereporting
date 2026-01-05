@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Target, Calendar, Lightbulb, RefreshCw } from "lucide-react";
 import { ForecastData } from "@/types/predictions";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { AnimatedCurrency, AnimatedPercentage, AnimatedNumber } from "@/components/ui/animated-number";
 
 interface SalesForecastCardProps {
   data: ForecastData;
@@ -56,7 +57,7 @@ export const SalesForecastCard = ({ data }: SalesForecastCardProps) => {
                 </Badge>
               </div>
               <div className="text-2xl font-bold text-foreground mb-1">
-                {formatCurrency(prediction.predicted)}
+                <AnimatedCurrency value={prediction.predicted} />
               </div>
               <div className="flex items-center gap-2 text-sm">
                 {prediction.growth >= 0 ? (
@@ -65,7 +66,7 @@ export const SalesForecastCard = ({ data }: SalesForecastCardProps) => {
                   <TrendingDown className="h-4 w-4 text-red-500" />
                 )}
                 <span className={prediction.growth >= 0 ? "text-emerald-600" : "text-red-600"}>
-                  {prediction.growth >= 0 ? "+" : ""}{prediction.growth}% vs last period
+                  <AnimatedPercentage value={prediction.growth} /> vs last period
                 </span>
               </div>
               <div className="text-xs text-muted-foreground mt-2">

@@ -2,6 +2,7 @@ import { AlertTriangle, TrendingUp, Lightbulb, Clock, Sparkles } from "lucide-re
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AnimatedText, FadeInText } from "@/components/ui/animated-text";
 
 interface CriticalAlert {
   type: string;
@@ -59,7 +60,7 @@ export const ExecutiveBriefing = () => {
 
       {/* Greeting */}
       <p className="text-xl font-medium text-foreground mb-4">
-        {briefingData.greeting}
+        <AnimatedText text={briefingData.greeting} delay={200} speed={30} />
       </p>
 
       {/* Narrative Summary */}
@@ -69,7 +70,7 @@ export const ExecutiveBriefing = () => {
           <span className="text-sm font-medium text-foreground">Performance Overview</span>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed pl-6">
-          {briefingData.narrative_summary}
+          <AnimatedText text={briefingData.narrative_summary} delay={1500} speed={15} />
         </p>
       </div>
 

@@ -34,15 +34,20 @@ const ImpactMetric = ({
   value, 
   unit, 
   isPositive, 
-  icon: Icon 
+  icon: Icon,
+  delay = 0
 }: { 
   label: string; 
   value: number; 
   unit: string; 
   isPositive: boolean; 
   icon: React.ElementType;
+  delay?: number;
 }) => (
-  <div className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
+  <div 
+    className="flex items-center justify-between py-2 border-b border-border/50 last:border-0 animate-fade-in"
+    style={{ animationDelay: `${delay}ms`, animationFillMode: 'backwards' }}
+  >
     <div className="flex items-center gap-2 text-muted-foreground">
       <Icon className="h-4 w-4" />
       <span className="text-sm">{label}</span>
@@ -64,13 +69,16 @@ const ImpactMetric = ({
   </div>
 );
 
-const StrategyCard = ({ strategy, isPrimary = false }: { strategy: Strategy; isPrimary?: boolean }) => {
+const StrategyCard = ({ strategy, isPrimary = false, delay = 0 }: { strategy: Strategy; isPrimary?: boolean; delay?: number }) => {
   const { predicted_impact, confidence } = strategy;
   
   return (
-    <div className={`rounded-xl border ${isPrimary ? 'border-primary/50 bg-primary/5' : 'border-border bg-card/50'} p-4 space-y-3`}>
+    <div 
+      className={`rounded-xl border ${isPrimary ? 'border-primary/50 bg-primary/5' : 'border-border bg-card/50'} p-4 space-y-3 animate-fade-in`}
+      style={{ animationDelay: `${delay}ms`, animationFillMode: 'backwards' }}
+    >
       {isPrimary && (
-        <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-0 gap-1.5 mb-2">
+        <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-0 gap-1.5 mb-2 animate-scale-in" style={{ animationDelay: `${delay + 100}ms`, animationFillMode: 'backwards' }}>
           <Crown className="h-3 w-3" />
           Primary Recommendation
         </Badge>
@@ -107,6 +115,7 @@ const StrategyCard = ({ strategy, isPrimary = false }: { strategy: Strategy; isP
           unit={predicted_impact.revenue.unit}
           isPositive={predicted_impact.revenue.value > 0}
           icon={TrendingUp}
+          delay={delay + 150}
         />
         <ImpactMetric 
           label="Churn Reduction" 
@@ -114,6 +123,7 @@ const StrategyCard = ({ strategy, isPrimary = false }: { strategy: Strategy; isP
           unit={predicted_impact.churn_rate.unit}
           isPositive={predicted_impact.churn_rate.value < 0}
           icon={TrendingDown}
+          delay={delay + 200}
         />
         <ImpactMetric 
           label="Engagement Lift" 
@@ -121,6 +131,7 @@ const StrategyCard = ({ strategy, isPrimary = false }: { strategy: Strategy; isP
           unit={predicted_impact.engagement.unit}
           isPositive={predicted_impact.engagement.value > 0}
           icon={Zap}
+          delay={delay + 250}
         />
       </div>
       
@@ -171,19 +182,19 @@ export const DecisionImpactRadar = ({ data }: DecisionImpactRadarProps) => {
       
       <CardContent className="space-y-4">
         {/* Primary Recommendation */}
-        <StrategyCard strategy={data.primary_recommendation} isPrimary />
+        <StrategyCard strategy={data.primary_recommendation} isPrimary delay={100} />
         
         {/* Alternative Strategies */}
         <div className="space-y-3">
-          <h4 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+          <h4 className="text-sm font-medium text-muted-foreground flex items-center gap-2 animate-fade-in" style={{ animationDelay: '400ms', animationFillMode: 'backwards' }}>
             <span className="h-px flex-1 bg-border" />
             Alternative Strategies
             <span className="h-px flex-1 bg-border" />
           </h4>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {data.alternative_strategies.map((strategy) => (
-              <StrategyCard key={strategy.strategy_id} strategy={strategy} />
+            {data.alternative_strategies.map((strategy, index) => (
+              <StrategyCard key={strategy.strategy_id} strategy={strategy} delay={500 + index * 150} />
             ))}
           </div>
         </div>

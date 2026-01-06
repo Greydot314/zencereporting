@@ -5,13 +5,13 @@ import { ChurnPredictionCard } from "@/components/predictions/ChurnPredictionCar
 import { CLVPredictionCard } from "@/components/predictions/CLVPredictionCard";
 import { CustomerActivityCard } from "@/components/predictions/CustomerActivityCard";
 import { ProductDemandCard } from "@/components/predictions/ProductDemandCard";
-import { WhatIfSimulator } from "@/components/predictions/WhatIfSimulator";
+import { DecisionImpactRadar } from "@/components/predictions/DecisionImpactRadar";
 import {
   mockForecastData,
   mockChurnData,
   mockCLVData,
   mockProductDemandData,
-  mockWhatIfData
+  mockDecisionImpactRadarData
 } from "@/data/predictionsMockData";
 
 const Predictions = () => {
@@ -52,8 +52,8 @@ const Predictions = () => {
           <ProductDemandCard data={mockProductDemandData} />
         </div>
 
-        {/* What-If Simulator - Full Width */}
-        <WhatIfSimulator data={mockWhatIfData} />
+        {/* Decision Impact Radar - Full Width */}
+        <DecisionImpactRadar data={mockDecisionImpactRadarData} />
       </div>
     </main>
   );

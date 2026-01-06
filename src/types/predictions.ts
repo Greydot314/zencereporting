@@ -142,3 +142,26 @@ export interface WhatIfData {
   };
   scenarios: WhatIfScenario[];
 }
+
+// Decision Impact Radar Types
+export interface PredictedImpact {
+  revenue: { value: number; unit: string; delta_percent?: number };
+  churn_rate: { value: number; unit: string };
+  engagement: { value: number; unit: string };
+}
+
+export interface Strategy {
+  strategy_id: string;
+  title: string;
+  target_segments?: string[];
+  time_horizon_days?: number;
+  predicted_impact: PredictedImpact;
+  confidence: number;
+}
+
+export interface DecisionImpactRadarData {
+  widget_type: string;
+  last_updated: string;
+  primary_recommendation: Strategy;
+  alternative_strategies: Strategy[];
+}

@@ -4,7 +4,8 @@ import {
   CLVData, 
   TierMigrationData, 
   ProductDemandData, 
-  WhatIfData 
+  WhatIfData,
+  DecisionImpactRadarData 
 } from "@/types/predictions";
 
 export const mockForecastData: ForecastData = {
@@ -257,6 +258,49 @@ export const mockWhatIfData: WhatIfData = {
         engagement: 71.5,
         engagementChange: 4.4
       }
+    }
+  ]
+};
+
+export const mockDecisionImpactRadarData: DecisionImpactRadarData = {
+  widget_type: "decision_impact_radar",
+  last_updated: "2026-01-06T14:30:00Z",
+  primary_recommendation: {
+    strategy_id: "electronics_rewards_boost",
+    title: "Boost Electronics Rewards",
+    target_segments: ["Growing Engaged", "High-Value Regulars"],
+    time_horizon_days: 30,
+    predicted_impact: {
+      revenue: { value: 1.2, unit: "Cr", delta_percent: 7.4 },
+      churn_rate: { value: -0.6, unit: "%" },
+      engagement: { value: 8.9, unit: "%" }
+    },
+    confidence: 86
+  },
+  alternative_strategies: [
+    {
+      strategy_id: "silver_reactivation",
+      title: "Reactivate Dormant Silver Members",
+      target_segments: ["Dormant Silver"],
+      time_horizon_days: 45,
+      predicted_impact: {
+        revenue: { value: 0.85, unit: "Cr" },
+        churn_rate: { value: -1.1, unit: "%" },
+        engagement: { value: 12.4, unit: "%" }
+      },
+      confidence: 82
+    },
+    {
+      strategy_id: "tier_threshold_optimization",
+      title: "Reduce Gold Tier Threshold",
+      target_segments: ["Near-Threshold Silver"],
+      time_horizon_days: 60,
+      predicted_impact: {
+        revenue: { value: 0.6, unit: "Cr" },
+        churn_rate: { value: -0.4, unit: "%" },
+        engagement: { value: 5.1, unit: "%" }
+      },
+      confidence: 78
     }
   ]
 };

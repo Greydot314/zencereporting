@@ -76,14 +76,14 @@ export const CustomerActivityCard = ({ data = mockCustomerActivityData }: Partia
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+    <section className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-blue-100">
             <Users className="h-5 w-5 text-blue-600" />
           </div>
           <div>
-            <CardTitle className="text-lg">Customer Activity Forecast</CardTitle>
+            <h2 className="text-lg font-semibold text-foreground">Customer Activity Forecast</h2>
             <p className="text-sm text-muted-foreground">Registration & transaction predictions</p>
           </div>
         </div>
@@ -91,8 +91,8 @@ export const CustomerActivityCard = ({ data = mockCustomerActivityData }: Partia
           <RefreshCw className="h-3 w-3 mr-1" />
           {data.lastUpdated}
         </Badge>
-      </CardHeader>
-      <CardContent className="space-y-6">
+      </div>
+      <div className="space-y-6">
         {/* Key Metrics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="p-3 rounded-lg border bg-blue-50/50">
@@ -204,7 +204,7 @@ export const CustomerActivityCard = ({ data = mockCustomerActivityData }: Partia
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 };

@@ -29,14 +29,14 @@ export const ProductDemandCard = ({ data }: ProductDemandCardProps) => {
   }));
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+    <section className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-indigo-100">
             <Package className="h-5 w-5 text-indigo-600" />
           </div>
           <div>
-            <CardTitle className="text-lg">Product Demand Forecast</CardTitle>
+            <h2 className="text-lg font-semibold text-foreground">Product Demand Forecast</h2>
             <p className="text-sm text-muted-foreground">Category-wise redemption predictions</p>
           </div>
         </div>
@@ -44,8 +44,8 @@ export const ProductDemandCard = ({ data }: ProductDemandCardProps) => {
           <RefreshCw className="h-3 w-3 mr-1" />
           {data.lastUpdated}
         </Badge>
-      </CardHeader>
-      <CardContent className="space-y-6">
+      </div>
+      <div className="space-y-6">
         {/* Demand Chart */}
         <div className="h-48">
           <ResponsiveContainer width="100%" height="100%">
@@ -132,7 +132,7 @@ export const ProductDemandCard = ({ data }: ProductDemandCardProps) => {
           </div>
           <p className="text-sm text-muted-foreground">{data.recommendations[0]}</p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 };

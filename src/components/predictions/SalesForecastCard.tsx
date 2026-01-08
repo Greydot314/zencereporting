@@ -17,14 +17,14 @@ export const SalesForecastCard = ({ data }: SalesForecastCardProps) => {
   };
 
   return (
-    <Card className="col-span-full">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+    <section className="col-span-full space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/10">
             <TrendingUp className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <CardTitle className="text-lg">Sales & Revenue Forecast</CardTitle>
+            <h2 className="text-lg font-semibold text-foreground">Sales & Revenue Forecast</h2>
             <p className="text-sm text-muted-foreground">30/60/90-day projections with confidence intervals</p>
           </div>
         </div>
@@ -38,8 +38,8 @@ export const SalesForecastCard = ({ data }: SalesForecastCardProps) => {
             {data.lastUpdated}
           </Badge>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
+      </div>
+      <div className="space-y-6">
         {/* Forecast Period Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {data.predictions.map((prediction, index) => (
@@ -146,7 +146,7 @@ export const SalesForecastCard = ({ data }: SalesForecastCardProps) => {
             <p className="text-sm text-muted-foreground">{data.seasonality}</p>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 };

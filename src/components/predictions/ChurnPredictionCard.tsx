@@ -29,14 +29,14 @@ export const ChurnPredictionCard = ({ data }: ChurnPredictionCardProps) => {
   };
 
   return (
-    <Card className="col-span-full lg:col-span-2">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+    <section className="col-span-full lg:col-span-2 space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-red-100">
             <UserMinus className="h-5 w-5 text-red-600" />
           </div>
           <div>
-            <CardTitle className="text-lg">Churn Prediction Engine</CardTitle>
+            <h2 className="text-lg font-semibold text-foreground">Churn Prediction Engine</h2>
             <p className="text-sm text-muted-foreground">Early warning system for customer retention</p>
           </div>
         </div>
@@ -50,8 +50,8 @@ export const ChurnPredictionCard = ({ data }: ChurnPredictionCardProps) => {
             {data.lastUpdated}
           </Badge>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
+      </div>
+      <div className="space-y-6">
         {/* Summary Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="p-3 rounded-lg border bg-red-50/50">
@@ -179,7 +179,7 @@ export const ChurnPredictionCard = ({ data }: ChurnPredictionCardProps) => {
             ))}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 };

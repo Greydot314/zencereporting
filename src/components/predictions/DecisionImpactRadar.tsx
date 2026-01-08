@@ -160,27 +160,25 @@ export const DecisionImpactRadar = ({ data }: DecisionImpactRadarProps) => {
   });
 
   return (
-    <Card className="border-border/50 bg-gradient-to-br from-card to-card/80">
-      <CardHeader className="pb-4">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20">
-              <Target className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <CardTitle className="text-lg">Decision Impact Radar</CardTitle>
-              <CardDescription>
-                AI-recommended strategies with predicted business impact
-              </CardDescription>
-            </div>
+    <section className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20">
+            <Target className="h-5 w-5 text-primary" />
           </div>
-          <Badge variant="outline" className="text-xs text-muted-foreground">
-            Updated {lastUpdated}
-          </Badge>
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">Decision Impact Radar</h2>
+            <p className="text-sm text-muted-foreground">
+              AI-recommended strategies with predicted business impact
+            </p>
+          </div>
         </div>
-      </CardHeader>
+        <Badge variant="outline" className="text-xs text-muted-foreground">
+          Updated {lastUpdated}
+        </Badge>
+      </div>
       
-      <CardContent className="space-y-4">
+      <div className="space-y-4">
         {/* Primary Recommendation */}
         <StrategyCard strategy={data.primary_recommendation} isPrimary delay={100} />
         
@@ -198,7 +196,7 @@ export const DecisionImpactRadar = ({ data }: DecisionImpactRadarProps) => {
             ))}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 };

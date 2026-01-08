@@ -32,14 +32,14 @@ export const CLVPredictionCard = ({ data }: CLVPredictionCardProps) => {
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+    <section className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-emerald-100">
             <DollarSign className="h-5 w-5 text-emerald-600" />
           </div>
           <div>
-            <CardTitle className="text-lg">CLV Predictions</CardTitle>
+            <h2 className="text-lg font-semibold text-foreground">CLV Predictions</h2>
             <p className="text-sm text-muted-foreground">12-month customer lifetime value forecast</p>
           </div>
         </div>
@@ -53,8 +53,8 @@ export const CLVPredictionCard = ({ data }: CLVPredictionCardProps) => {
             {data.lastUpdated}
           </Badge>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
+      </div>
+      <div className="space-y-6">
         {/* Summary Stats */}
         <div className="grid grid-cols-2 gap-4">
           <div className="p-3 rounded-lg border bg-muted/30">
@@ -146,7 +146,7 @@ export const CLVPredictionCard = ({ data }: CLVPredictionCardProps) => {
             ))}
           </ul>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 };

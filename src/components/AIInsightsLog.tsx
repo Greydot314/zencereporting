@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { AlertTriangle, CheckCircle, Clock, Database, ChevronRight, Store, MapPin, Users, TrendingDown, Calendar } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -152,7 +151,7 @@ export const AIInsightsLog = () => {
 
   return (
     <>
-      <div className="space-y-3">
+      <section className="space-y-3 animate-fade-in" style={{ animationDelay: '200ms', animationFillMode: 'backwards' }}>
         <div className="flex items-center justify-between">
           <h3 className="text-base font-medium text-foreground flex items-center gap-2">
             <CheckCircle className="h-4 w-4 text-primary" />
@@ -162,16 +161,17 @@ export const AIInsightsLog = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
-          {insightEntries.map((entry) => {
+          {insightEntries.map((entry, index) => {
             const type = typeConfig[entry.type];
             const status = statusConfig[entry.status];
             const Icon = type.icon;
 
             return (
-              <Card
+              <div
                 key={entry.id}
                 onClick={() => handleCardClick(entry)}
-                className={`p-4 hover:shadow-md transition-all cursor-pointer group border ${type.border} bg-gradient-to-br from-background to-secondary/30`}
+                className={`p-4 rounded-lg hover:shadow-md transition-all cursor-pointer group border ${type.border} bg-gradient-to-br from-background to-secondary/30 animate-fade-in`}
+                style={{ animationDelay: `${300 + index * 50}ms`, animationFillMode: 'backwards' }}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className={`p-2 rounded-lg ${type.bg}`}>
@@ -194,11 +194,11 @@ export const AIInsightsLog = () => {
                   <span className="text-[10px] text-muted-foreground">{entry.timestamp}</span>
                   <ChevronRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
-              </Card>
+              </div>
             );
           })}
         </div>
-      </div>
+      </section>
 
       {/* Detail Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

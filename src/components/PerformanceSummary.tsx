@@ -1,5 +1,4 @@
 import { TrendingUp, TrendingDown, Users, CreditCard, Target, Percent } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnimatedNumber, AnimatedPercentage, AnimatedCurrency } from "@/components/ui/animated-number";
 
 interface StatCardProps {
@@ -113,20 +112,16 @@ const stats: StatCardProps[] = [
 
 export const PerformanceSummary = () => {
   return (
-    <Card className="surface border shadow-sm">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base font-medium text-foreground flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-primary" />
-          Performance Summary
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-          {stats.map((stat, index) => (
-            <StatCard key={stat.title} {...stat} delay={index * 100} />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <section className="animate-fade-in" style={{ animationDelay: '100ms', animationFillMode: 'backwards' }}>
+      <div className="flex items-center gap-2 mb-4">
+        <TrendingUp className="h-4 w-4 text-primary" />
+        <h3 className="text-base font-medium text-foreground">Performance Summary</h3>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        {stats.map((stat, index) => (
+          <StatCard key={stat.title} {...stat} delay={index * 100} />
+        ))}
+      </div>
+    </section>
   );
 };

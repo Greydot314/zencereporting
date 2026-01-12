@@ -1,5 +1,4 @@
 import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Coins, Users, Repeat, Clock, ShoppingBag, Award, Crown, Ticket, BadgePercent, IndianRupee } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
@@ -103,185 +102,189 @@ export const LoyaltyHealthMatrix = () => {
   const totalMembers = tierData.reduce((sum, tier) => sum + tier.members, 0);
 
   return (
-    <Card className="surface border shadow-sm">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-medium text-foreground flex items-center gap-2">
-            <Users className="h-4 w-4 text-primary" />
-            Loyalty Health Matrix
-          </CardTitle>
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-secondary px-2 py-0.5 rounded-full">
-            Last 7 days
-          </span>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-0 space-y-6">
-        {/* Tier Distribution Section - Only shown if tiers are enabled */}
-        {programConfig.isTierEnabled && (
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <Crown className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium text-foreground">Tier Distribution</span>
-              <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/20">
-                {formatMembers(totalMembers)} members
-              </Badge>
-            </div>
-            <div className="space-y-2">
-              {tierData.map((tier) => (
-                <div key={tier.name} className="flex items-center gap-3">
-                  <span className="text-xs text-muted-foreground w-16">{tier.name}</span>
-                  <div className="flex-1">
-                    <Progress value={tier.percentage} className="h-2" />
-                  </div>
-                  <span className="text-xs font-medium text-foreground w-10 text-right">{tier.percentage}%</span>
-                  <span className="text-xs text-muted-foreground w-14 text-right">{formatMembers(tier.members)}</span>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between animate-fade-in" style={{ animationDelay: '300ms', animationFillMode: 'backwards' }}>
+        <h3 className="text-base font-medium text-foreground flex items-center gap-2">
+          <Users className="h-4 w-4 text-primary" />
+          Loyalty Health Matrix
+        </h3>
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-secondary px-2 py-0.5 rounded-full">
+          Last 7 days
+        </span>
+      </div>
+
+      {/* Tier Distribution Section - Only shown if tiers are enabled */}
+      {programConfig.isTierEnabled && (
+        <section className="animate-fade-in" style={{ animationDelay: '400ms', animationFillMode: 'backwards' }}>
+          <div className="flex items-center gap-2 mb-3">
+            <Crown className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-medium text-foreground">Tier Distribution</span>
+            <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/20">
+              {formatMembers(totalMembers)} members
+            </Badge>
+          </div>
+          <div className="space-y-2">
+            {tierData.map((tier) => (
+              <div key={tier.name} className="flex items-center gap-3">
+                <span className="text-xs text-muted-foreground w-16">{tier.name}</span>
+                <div className="flex-1">
+                  <Progress value={tier.percentage} className="h-2" />
                 </div>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground mt-3 pl-6 border-l-2 border-primary/20">
-              Platinum tier grew 12% MoM. Consider targeted upgrade campaigns for top Silver members.
+                <span className="text-xs font-medium text-foreground w-10 text-right">{tier.percentage}%</span>
+                <span className="text-xs text-muted-foreground w-14 text-right">{formatMembers(tier.members)}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground mt-3 pl-6 border-l-2 border-primary/20">
+            Platinum tier grew 12% MoM. Consider targeted upgrade campaigns for top Silver members.
+          </p>
+        </section>
+      )}
+
+      {programConfig.isTierEnabled && <div className="h-px bg-border" />}
+
+      {/* Member Engagement Section */}
+      <section className="animate-fade-in" style={{ animationDelay: '500ms', animationFillMode: 'backwards' }}>
+        <div className="flex items-center gap-2 mb-3">
+          <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-medium text-foreground">Member Engagement</span>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {engagementMetrics.map((metric) => {
+            const Icon = metric.icon;
+            return (
+              <div key={metric.label} className="p-3 rounded-lg bg-secondary/50">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="p-1.5 rounded-md bg-primary/10">
+                    <Icon className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <Badge variant="outline" className={`text-[10px] ${getStatusStyle(metric.status)}`}>
+                    {metric.status}
+                  </Badge>
+                </div>
+                <p className="text-lg font-semibold text-foreground mb-0.5">{metric.value}</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">{metric.label}</p>
+                  <div className="flex items-center gap-1">
+                    {metric.change > 0 ? (
+                      <ArrowUpRight className="h-3 w-3 text-[hsl(var(--atlas-success))]" />
+                    ) : (
+                      <ArrowDownRight className="h-3 w-3 text-destructive" />
+                    )}
+                    <span className={`text-xs font-medium ${
+                      metric.change > 0 ? "text-[hsl(var(--atlas-success))]" : "text-destructive"
+                    }`}>
+                      {metric.change > 0 ? "+" : ""}{metric.change}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <p className="text-xs text-muted-foreground mt-3 pl-6 border-l-2 border-primary/20">
+          Repeat purchase rate up 2.8%. Redemption rate slightly declining—consider targeted burn campaigns.
+        </p>
+      </section>
+
+      <div className="h-px bg-border" />
+
+      {/* Liability Section */}
+      <section className="animate-fade-in" style={{ animationDelay: '600ms', animationFillMode: 'backwards' }}>
+        <div className="flex items-center gap-2 mb-3">
+          <Coins className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-medium text-foreground">Points Liability</span>
+        </div>
+        <div className="grid grid-cols-3 gap-4 mb-3">
+          <div className="p-3 rounded-lg bg-secondary/50">
+            <p className="text-xs text-muted-foreground mb-1">Earned (7d)</p>
+            <p className="text-lg font-semibold text-foreground flex items-center gap-1">
+              <TrendingUp className="h-4 w-4 text-[hsl(var(--atlas-success))]" />
+              {formatPoints(liabilityData.earned)}
             </p>
           </div>
-        )}
-
-        {/* Member Engagement Section */}
-        <div className={programConfig.isTierEnabled ? "pt-4 border-t border-border/50" : ""}>
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium text-foreground">Member Engagement</span>
+          <div className="p-3 rounded-lg bg-secondary/50">
+            <p className="text-xs text-muted-foreground mb-1">Burned (7d)</p>
+            <p className="text-lg font-semibold text-foreground flex items-center gap-1">
+              <TrendingDown className="h-4 w-4 text-destructive" />
+              {formatPoints(liabilityData.burned)}
+            </p>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            {engagementMetrics.map((metric) => {
-              const Icon = metric.icon;
-              return (
-                <div key={metric.label} className="p-3 rounded-lg bg-secondary/50">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="p-1.5 rounded-md bg-primary/10">
-                      <Icon className="h-3.5 w-3.5 text-primary" />
-                    </div>
-                    <Badge variant="outline" className={`text-[10px] ${getStatusStyle(metric.status)}`}>
-                      {metric.status}
-                    </Badge>
-                  </div>
-                  <p className="text-lg font-semibold text-foreground mb-0.5">{metric.value}</p>
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs text-muted-foreground">{metric.label}</p>
-                    <div className="flex items-center gap-1">
-                      {metric.change > 0 ? (
-                        <ArrowUpRight className="h-3 w-3 text-[hsl(var(--atlas-success))]" />
-                      ) : (
-                        <ArrowDownRight className="h-3 w-3 text-destructive" />
-                      )}
-                      <span className={`text-xs font-medium ${
-                        metric.change > 0 ? "text-[hsl(var(--atlas-success))]" : "text-destructive"
-                      }`}>
-                        {metric.change > 0 ? "+" : ""}{metric.change}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="p-3 rounded-lg bg-secondary/50">
+            <p className="text-xs text-muted-foreground mb-1">Earn/Burn Ratio</p>
+            <p className={`text-lg font-semibold ${
+              liabilityData.ratio > 2.0 ? "text-[hsl(var(--atlas-warning))]" : 
+              liabilityData.ratio < 0.5 ? "text-destructive" : "text-[hsl(var(--atlas-success))]"
+            }`}>
+              {liabilityData.ratio.toFixed(2)}x
+            </p>
           </div>
-          <p className="text-xs text-muted-foreground mt-3 pl-6 border-l-2 border-primary/20">
-            Repeat purchase rate up 2.8%. Redemption rate slightly declining—consider targeted burn campaigns.
-          </p>
         </div>
+        <p className={`text-xs ${liabilityNarrative.color} pl-6 border-l-2 border-[hsl(var(--atlas-warning))]/20`}>
+          {liabilityNarrative.text}
+        </p>
+      </section>
 
-        {/* Liability Section */}
-        <div className="pt-4 border-t border-border/50">
-          <div className="flex items-center gap-2 mb-3">
-            <Coins className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium text-foreground">Points Liability</span>
-          </div>
-          <div className="grid grid-cols-3 gap-4 mb-3">
-            <div className="p-3 rounded-lg bg-secondary/50">
-              <p className="text-xs text-muted-foreground mb-1">Earned (7d)</p>
-              <p className="text-lg font-semibold text-foreground flex items-center gap-1">
-                <TrendingUp className="h-4 w-4 text-[hsl(var(--atlas-success))]" />
-                {formatPoints(liabilityData.earned)}
-              </p>
-            </div>
-            <div className="p-3 rounded-lg bg-secondary/50">
-              <p className="text-xs text-muted-foreground mb-1">Burned (7d)</p>
-              <p className="text-lg font-semibold text-foreground flex items-center gap-1">
-                <TrendingDown className="h-4 w-4 text-destructive" />
-                {formatPoints(liabilityData.burned)}
-              </p>
-            </div>
-            <div className="p-3 rounded-lg bg-secondary/50">
-              <p className="text-xs text-muted-foreground mb-1">Earn/Burn Ratio</p>
-              <p className={`text-lg font-semibold ${
-                liabilityData.ratio > 2.0 ? "text-[hsl(var(--atlas-warning))]" : 
-                liabilityData.ratio < 0.5 ? "text-destructive" : "text-[hsl(var(--atlas-success))]"
-              }`}>
-                {liabilityData.ratio.toFixed(2)}x
-              </p>
-            </div>
-          </div>
-          <p className={`text-xs ${liabilityNarrative.color} pl-6 border-l-2 border-[hsl(var(--atlas-warning))]/20`}>
-            {liabilityNarrative.text}
-          </p>
-        </div>
+      <div className="h-px bg-border" />
 
-        {/* Coupon & Sales KPIs Section */}
-        <div className="pt-4 border-t border-border/50">
-          <div className="flex items-center gap-2 mb-3">
-            <Ticket className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium text-foreground">Coupon & Sales Metrics</span>
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="p-3 rounded-lg bg-secondary/50">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-1.5 rounded-md bg-primary/10">
-                  <Users className="h-3.5 w-3.5 text-primary" />
-                </div>
-              </div>
-              <p className="text-lg font-semibold text-foreground">18.4K</p>
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">Coupon Redeemers</p>
-                <div className="flex items-center gap-0.5">
-                  <ArrowUpRight className="h-3 w-3 text-[hsl(var(--atlas-success))]" />
-                  <span className="text-[10px] text-[hsl(var(--atlas-success))]">+12.3%</span>
-                </div>
-              </div>
-            </div>
-            <div className="p-3 rounded-lg bg-secondary/50">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-1.5 rounded-md bg-[hsl(var(--atlas-success))]/10">
-                  <IndianRupee className="h-3.5 w-3.5 text-[hsl(var(--atlas-success))]" />
-                </div>
-              </div>
-              <p className="text-lg font-semibold text-foreground">₹4.2Cr</p>
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">Coupon-Driven Sales</p>
-                <div className="flex items-center gap-0.5">
-                  <ArrowUpRight className="h-3 w-3 text-[hsl(var(--atlas-success))]" />
-                  <span className="text-[10px] text-[hsl(var(--atlas-success))]">+8.7%</span>
-                </div>
-              </div>
-            </div>
-            <div className="p-3 rounded-lg bg-secondary/50">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-1.5 rounded-md bg-[hsl(var(--atlas-warning))]/10">
-                  <BadgePercent className="h-3.5 w-3.5 text-[hsl(var(--atlas-warning))]" />
-                </div>
-              </div>
-              <p className="text-lg font-semibold text-foreground">₹38.5L</p>
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">Coupon Discount</p>
-                <div className="flex items-center gap-0.5">
-                  <ArrowDownRight className="h-3 w-3 text-destructive" />
-                  <span className="text-[10px] text-destructive">+15.2%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <p className="text-xs text-muted-foreground mt-3 pl-6 border-l-2 border-primary/20">
-            Coupon redemptions driving ₹4.2Cr in sales. Monitor discount growth to maintain margin health.
-          </p>
+      {/* Coupon & Sales KPIs Section */}
+      <section className="animate-fade-in" style={{ animationDelay: '700ms', animationFillMode: 'backwards' }}>
+        <div className="flex items-center gap-2 mb-3">
+          <Ticket className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-medium text-foreground">Coupon & Sales Metrics</span>
         </div>
-      </CardContent>
-    </Card>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="p-3 rounded-lg bg-secondary/50">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-1.5 rounded-md bg-primary/10">
+                <Users className="h-3.5 w-3.5 text-primary" />
+              </div>
+            </div>
+            <p className="text-lg font-semibold text-foreground">18.4K</p>
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">Coupon Redeemers</p>
+              <div className="flex items-center gap-0.5">
+                <ArrowUpRight className="h-3 w-3 text-[hsl(var(--atlas-success))]" />
+                <span className="text-[10px] text-[hsl(var(--atlas-success))]">+12.3%</span>
+              </div>
+            </div>
+          </div>
+          <div className="p-3 rounded-lg bg-secondary/50">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-1.5 rounded-md bg-[hsl(var(--atlas-success))]/10">
+                <IndianRupee className="h-3.5 w-3.5 text-[hsl(var(--atlas-success))]" />
+              </div>
+            </div>
+            <p className="text-lg font-semibold text-foreground">₹4.2Cr</p>
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">Coupon-Driven Sales</p>
+              <div className="flex items-center gap-0.5">
+                <ArrowUpRight className="h-3 w-3 text-[hsl(var(--atlas-success))]" />
+                <span className="text-[10px] text-[hsl(var(--atlas-success))]">+8.7%</span>
+              </div>
+            </div>
+          </div>
+          <div className="p-3 rounded-lg bg-secondary/50">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-1.5 rounded-md bg-[hsl(var(--atlas-warning))]/10">
+                <BadgePercent className="h-3.5 w-3.5 text-[hsl(var(--atlas-warning))]" />
+              </div>
+            </div>
+            <p className="text-lg font-semibold text-foreground">₹38.5L</p>
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">Coupon Discount</p>
+              <div className="flex items-center gap-0.5">
+                <ArrowDownRight className="h-3 w-3 text-destructive" />
+                <span className="text-[10px] text-destructive">+15.2%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground mt-3 pl-6 border-l-2 border-primary/20">
+          Coupon redemptions driving ₹4.2Cr in sales. Monitor discount growth to maintain margin health.
+        </p>
+      </section>
+    </div>
   );
 };

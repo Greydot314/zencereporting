@@ -1,5 +1,4 @@
 import { AlertTriangle, TrendingUp, Lightbulb, Clock, Sparkles } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AnimatedText, FadeInText } from "@/components/ui/animated-text";
@@ -35,7 +34,7 @@ export const ExecutiveBriefing = () => {
   });
 
   return (
-      <Card className="p-6 bg-gradient-to-br from-primary/5 via-background to-accent/5 border-primary/10 relative">
+    <section className="relative animate-fade-in">
       {/* Subtle decorative element */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
       
@@ -130,6 +129,6 @@ export const ExecutiveBriefing = () => {
           ))}
         </div>
       </div>
-    </Card>
+    </section>
   );
 };

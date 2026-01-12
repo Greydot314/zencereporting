@@ -29,23 +29,25 @@ const Dashboard = () => {
         {/* Section 1: Executive Morning Briefing */}
         <ExecutiveBriefing />
 
+        <div className="h-px bg-border" />
+
         {/* Section 2: Performance Summary */}
         <PerformanceSummary />
+
+        <div className="h-px bg-border" />
 
         {/* Section 3: AI Insight Log */}
         <AIInsightsLog />
 
+        <div className="h-px bg-border" />
+
         {/* Section 3 & 4: Intervention Deck + Loyalty Health Matrix */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Section 3: Intervention Deck (Aggregate Risk Pools) */}
-          <div className="flex flex-col h-full">
-            <InterventionDeck />
-          </div>
+          <InterventionDeck />
           
           {/* Section 4: Performance Summary (Loyalty Health Matrix) */}
-          <div className="flex flex-col h-full">
-            <LoyaltyHealthMatrix />
-          </div>
+          <LoyaltyHealthMatrix />
         </div>
 
         {/* Floating AI Chat Widget */}

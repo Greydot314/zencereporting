@@ -22,7 +22,7 @@
     --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
+    --secondary: 0 0% 100%;
     --secondary-foreground: 222 47% 11%;
 
     --muted: 220 14% 96%;
@@ -41,7 +41,7 @@
     --radius: 0.75rem;
 
     /* Atlas AI specific tokens */
-    --atlas-bg: 0 0% 98%;
+    --atlas-bg: 0 0% 100%;
     --atlas-surface: 0 0% 100%;
     --atlas-primary: 221 83% 53%;
     --atlas-accent: 252 100% 67%;
@@ -66,8 +66,8 @@
     --sidebar-foreground: 222 47% 11%;
     --sidebar-primary: 221 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-accent: 221 83% 96%;
+    --sidebar-accent-foreground: 221 83% 53%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 221 83% 53%;
     --sidebar: 0 0% 100%;

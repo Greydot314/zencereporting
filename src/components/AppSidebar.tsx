@@ -181,7 +181,7 @@ const otherItems = [
 export function AppSidebar() {
   const { open } = useSidebar();
   const location = useLocation();
-  const [openPopover, setOpenPopover] = useState<string | null>(null);
+  const [hoveredModule, setHoveredModule] = useState<string | null>(null);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -210,8 +210,8 @@ export function AppSidebar() {
                     <NavLink
                       to={item.url}
                       end={item.url === "/"}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-colors"
-                      activeClassName="bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-normal text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                      activeClassName="text-primary"
                     >
                       <item.icon className="h-5 w-5 flex-shrink-0" />
                       {open && <span>{item.title}</span>}
@@ -233,26 +233,29 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {modules.map((module) => (
-                <SidebarMenuItem key={module.title}>
+                <SidebarMenuItem 
+                  key={module.title}
+                  onMouseEnter={() => setHoveredModule(module.title)}
+                  onMouseLeave={() => setHoveredModule(null)}
+                >
                   {module.subItems && module.subItems.length > 0 ? (
                     <Popover 
-                      open={openPopover === module.title} 
-                      onOpenChange={(isOpen) => setOpenPopover(isOpen ? module.title : null)}
+                      open={hoveredModule === module.title} 
+                      onOpenChange={() => {}}
                     >
                       <PopoverTrigger asChild>
                         <button
                           className={cn(
-                            "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium w-full transition-colors",
+                            "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-normal w-full transition-colors group",
                             isModuleActive(module) 
-                              ? "bg-primary text-primary-foreground" 
-                              : "text-muted-foreground hover:text-foreground hover:bg-primary/10"
+                              ? "text-primary" 
+                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                           )}
                         >
                           <div className="relative">
                             <module.icon className="h-5 w-5 flex-shrink-0" />
                             <span className={cn(
-                              "absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full border-2",
-                              isModuleActive(module) ? "border-primary" : "border-card",
+                              "absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full border-2 border-card",
                               getStatusColor(module.aiStatus),
                               module.aiStatus === 'critical' && "animate-pulse"
                             )} />
@@ -261,8 +264,8 @@ export function AppSidebar() {
                             <>
                               <span className="flex-1 text-left truncate">{module.title}</span>
                               <ChevronRight className={cn(
-                                "h-4 w-4 transition-transform",
-                                openPopover === module.title && "rotate-90"
+                                "h-4 w-4 transition-all opacity-0 group-hover:opacity-100",
+                                hoveredModule === module.title && "rotate-90 opacity-100"
                               )} />
                             </>
                           )}
@@ -273,6 +276,8 @@ export function AppSidebar() {
                         align="start" 
                         sideOffset={8}
                         className="w-64 p-2 bg-card border border-border shadow-lg"
+                        onMouseEnter={() => setHoveredModule(module.title)}
+                        onMouseLeave={() => setHoveredModule(null)}
                       >
                         <div className="space-y-1">
                           <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -282,13 +287,13 @@ export function AppSidebar() {
                             <NavLink
                               key={subItem.url}
                               to={subItem.url}
-                              className="flex items-center justify-between px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                              activeClassName="bg-primary/10 text-primary font-medium"
-                              onClick={() => setOpenPopover(null)}
+                              className="flex items-center justify-between px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                              activeClassName="text-primary"
+                              onClick={() => setHoveredModule(null)}
                             >
                               <span>{subItem.title}</span>
                               {subItem.badge && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-primary/20 text-primary">
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-primary/10 text-primary">
                                   {subItem.badge}
                                 </span>
                               )}
@@ -301,8 +306,8 @@ export function AppSidebar() {
                     <SidebarMenuButton asChild tooltip={module.title}>
                       <NavLink
                         to={module.url}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-colors"
-                        activeClassName="bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-normal text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                        activeClassName="text-primary"
                       >
                         <div className="relative">
                           <module.icon className="h-5 w-5 flex-shrink-0" />
@@ -336,8 +341,8 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild tooltip={item.title}>
                     <NavLink
                       to={item.url}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-colors"
-                      activeClassName="bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-normal text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                      activeClassName="text-primary"
                     >
                       <item.icon className="h-5 w-5 flex-shrink-0" />
                       {open && <span>{item.title}</span>}

@@ -102,13 +102,10 @@ export const LoyaltyHealthMatrix = () => {
   const totalMembers = tierData.reduce((sum, tier) => sum + tier.members, 0);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between animate-fade-in" style={{ animationDelay: '300ms', animationFillMode: 'backwards' }}>
-        <h3 className="text-base font-medium text-foreground flex items-center gap-2">
-          <Users className="h-4 w-4 text-primary" />
-          Loyalty Health Matrix
-        </h3>
+    <div className="space-y-4">
+      {/* Section Header */}
+      <div className="flex items-center justify-between pb-2 border-b border-border animate-fade-in" style={{ animationDelay: '300ms', animationFillMode: 'backwards' }}>
+        <h2 className="text-lg font-semibold text-foreground">Loyalty Health Matrix</h2>
         <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-secondary px-2 py-0.5 rounded-full">
           Last 7 days
         </span>

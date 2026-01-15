@@ -38,28 +38,40 @@ const Predictions = () => {
         </div>
 
         {/* Sales Forecast - Full Width */}
-        <SalesForecastCard data={mockForecastData} />
+        <div className="p-6 rounded-xl bg-secondary/10 border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
+          <SalesForecastCard data={mockForecastData} />
+        </div>
 
         <div className="h-px bg-border" />
 
         {/* Churn & CLV Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          <ChurnPredictionCard data={mockChurnData} />
-          <CLVPredictionCard data={mockCLVData} />
+          <div className="lg:col-span-2 p-6 rounded-xl bg-secondary/10 border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
+            <ChurnPredictionCard data={mockChurnData} />
+          </div>
+          <div className="p-6 rounded-xl bg-secondary/10 border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
+            <CLVPredictionCard data={mockCLVData} />
+          </div>
         </div>
 
         <div className="h-px bg-border" />
 
         {/* Customer Activity & Product Demand Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <CustomerActivityCard />
-          <ProductDemandCard data={mockProductDemandData} />
+          <div className="p-6 rounded-xl bg-secondary/10 border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
+            <CustomerActivityCard />
+          </div>
+          <div className="p-6 rounded-xl bg-secondary/10 border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
+            <ProductDemandCard data={mockProductDemandData} />
+          </div>
         </div>
 
         <div className="h-px bg-border" />
 
         {/* Decision Impact Radar - Full Width */}
-        <DecisionImpactRadar data={mockDecisionImpactRadarData} />
+        <div className="p-6 rounded-xl bg-secondary/10 border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
+          <DecisionImpactRadar data={mockDecisionImpactRadarData} />
+        </div>
       </div>
     </main>
   );

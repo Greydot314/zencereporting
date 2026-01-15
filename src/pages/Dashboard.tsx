@@ -44,12 +44,12 @@ const Dashboard = () => {
         {/* Section 3 & 4: Intervention Deck + Loyalty Health Matrix */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Section 3: Intervention Deck (Aggregate Risk Pools) */}
-          <div className="p-5 rounded-xl bg-secondary/20 border border-border/50">
+          <div className="p-5 rounded-xl bg-secondary/20 border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
             <InterventionDeck />
           </div>
           
           {/* Section 4: Performance Summary (Loyalty Health Matrix) */}
-          <div className="p-5 rounded-xl bg-secondary/20 border border-border/50">
+          <div className="p-5 rounded-xl bg-secondary/20 border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
             <LoyaltyHealthMatrix />
           </div>
         </div>

@@ -105,7 +105,10 @@ export const LoyaltyHealthMatrix = () => {
     <div className="space-y-4">
       {/* Section Header */}
       <div className="flex items-center justify-between pb-2 border-b border-border animate-fade-in" style={{ animationDelay: '300ms', animationFillMode: 'backwards' }}>
-        <h2 className="text-lg font-semibold text-foreground">Loyalty Health Matrix</h2>
+        <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+          <TrendingUp className="h-5 w-5 text-primary" />
+          Loyalty Health Matrix
+        </h2>
         <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-secondary px-2 py-0.5 rounded-full">
           Last 7 days
         </span>

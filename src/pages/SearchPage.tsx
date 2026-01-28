@@ -21,6 +21,7 @@ import {
   whatIfFollowUpSuggestions,
   clvFollowUpSuggestions,
 } from "@/data/predictionsMockData";
+import { mockFraudData, fraudFollowUpSuggestions } from "@/data/fraudMockData";
 import { ChatMessage } from "@/components/ai-chat/ChatMessage";
 import { ChatInput } from "@/components/ai-chat/ChatInput";
 import { TypingIndicator } from "@/components/ai-chat/TypingIndicator";
@@ -38,6 +39,10 @@ const initialSearchSteps: SearchStep[] = [
 
 const detectContentType = (query: string): ContentType => {
   const lowerQuery = query.toLowerCase();
+  
+  if (lowerQuery.includes("fraud") || lowerQuery.includes("suspicious") || lowerQuery.includes("risk matrix") || lowerQuery.includes("fraudulent")) {
+    return "fraud";
+  }
   
   if (lowerQuery.includes("forecast") || lowerQuery.includes("predict revenue") || lowerQuery.includes("sales prediction") || lowerQuery.includes("revenue forecast")) {
     return "forecast";
@@ -72,6 +77,8 @@ const detectContentType = (query: string): ContentType => {
 
 const getFollowUpSuggestions = (contentType: ContentType): string[] => {
   switch (contentType) {
+    case "fraud":
+      return fraudFollowUpSuggestions;
     case "forecast":
       return forecastFollowUpSuggestions;
     case "churn":
@@ -93,6 +100,13 @@ const getFollowUpSuggestions = (contentType: ContentType): string[] => {
 
 const generateResponse = (query: string, contentType: ContentType): Partial<Message> => {
   switch (contentType) {
+    case "fraud":
+      return {
+        content: "Here's your fraud risk analysis with real-time detection insights:",
+        contentType: "fraud",
+        fraudData: mockFraudData,
+        followUpSuggestions: fraudFollowUpSuggestions,
+      };
     case "forecast":
       return {
         content: "Here's your sales and revenue forecast with confidence intervals:",

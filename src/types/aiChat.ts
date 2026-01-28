@@ -1,6 +1,7 @@
 import { ForecastData, ChurnData, WhatIfData, CLVData } from "./predictions";
+import { FraudData } from "./fraud";
 
-export type ContentType = "text" | "insight" | "dashboard" | "table" | "segment" | "campaign" | "rfm" | "forecast" | "churn" | "whatif" | "clv";
+export type ContentType = "text" | "insight" | "dashboard" | "table" | "segment" | "campaign" | "rfm" | "forecast" | "churn" | "whatif" | "clv" | "fraud";
 
 export interface Message {
   id: string;
@@ -18,6 +19,7 @@ export interface Message {
   churnData?: ChurnData;
   whatIfData?: WhatIfData;
   clvData?: CLVData;
+  fraudData?: FraudData;
   followUpSuggestions?: string[];
 }
 

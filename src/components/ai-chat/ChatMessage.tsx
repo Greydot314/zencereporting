@@ -8,6 +8,7 @@ import { ForecastInsights } from "./ForecastInsights";
 import { ChurnInsights } from "./ChurnInsights";
 import { WhatIfInsights } from "./WhatIfInsights";
 import { CLVInsights } from "./CLVInsights";
+import { FraudInsights } from "./FraudInsights";
 
 interface ChatMessageProps {
   message: Message;
@@ -40,6 +41,10 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     
     if (message.contentType === "clv" && message.clvData) {
       return <CLVInsights data={message.clvData} query={message.content} />;
+    }
+    
+    if (message.contentType === "fraud" && message.fraudData) {
+      return <FraudInsights data={message.fraudData} query={message.content} />;
     }
     
     if (message.contentType === "rfm" && message.rfmData) {

@@ -141,7 +141,9 @@ const typeConfig = {
     iconBg: "bg-white/25",
     border: "border-white/20",
     label: "Fraud Alert",
-    gradient: "from-[hsl(35,100%,55%)] via-[hsl(20,95%,50%)] to-[hsl(5,85%,45%)]",
+    gradient: "from-[hsl(280,70%,45%)] via-[hsl(320,65%,50%)] to-[hsl(350,75%,55%)]",
+    meshBlob1: "bg-[hsl(300,80%,60%)]",
+    meshBlob2: "bg-[hsl(260,70%,40%)]",
     statusBg: "bg-white/20 text-white border-white/30",
   },
   churn: {
@@ -151,7 +153,9 @@ const typeConfig = {
     iconBg: "bg-white/25",
     border: "border-white/20",
     label: "Churn Risk",
-    gradient: "from-[hsl(340,85%,60%)] via-[hsl(320,75%,50%)] to-[hsl(300,65%,40%)]",
+    gradient: "from-[hsl(220,75%,50%)] via-[hsl(260,70%,55%)] to-[hsl(300,65%,50%)]",
+    meshBlob1: "bg-[hsl(240,80%,65%)]",
+    meshBlob2: "bg-[hsl(280,70%,45%)]",
     statusBg: "bg-white/20 text-white border-white/30",
   },
   anomaly: {
@@ -161,7 +165,9 @@ const typeConfig = {
     iconBg: "bg-white/25",
     border: "border-white/20",
     label: "Data Anomaly",
-    gradient: "from-[hsl(210,90%,60%)] via-[hsl(230,85%,55%)] to-[hsl(260,75%,50%)]",
+    gradient: "from-[hsl(200,80%,45%)] via-[hsl(230,75%,55%)] to-[hsl(270,65%,50%)]",
+    meshBlob1: "bg-[hsl(210,85%,60%)]",
+    meshBlob2: "bg-[hsl(250,70%,45%)]",
     statusBg: "bg-white/20 text-white border-white/30",
   },
 };
@@ -281,10 +287,10 @@ export const AIInsightsLog = () => {
                       onClick={() => handleCardClick(entry)}
                       className={`relative p-3 rounded-xl hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer group bg-gradient-to-br ${type.gradient} text-white h-full flex flex-col min-h-0 overflow-hidden`}
                     >
-                      {/* Glassmorphism frosted overlay */}
-                      <div className="absolute inset-0 rounded-xl bg-white/10 backdrop-blur-[2px] pointer-events-none" />
-                      <div className="absolute top-0 left-0 w-1/2 h-1/2 rounded-full bg-white/15 blur-2xl -translate-x-1/4 -translate-y-1/4 pointer-events-none" />
-                      <div className="absolute bottom-0 right-0 w-1/3 h-1/3 rounded-full bg-black/10 blur-xl translate-x-1/4 translate-y-1/4 pointer-events-none" />
+                      {/* Mesh gradient blobs for smooth color blending */}
+                      <div className={`absolute -top-1/3 -left-1/4 w-3/4 h-3/4 rounded-full ${type.meshBlob1} opacity-50 blur-3xl pointer-events-none`} />
+                      <div className={`absolute -bottom-1/4 -right-1/4 w-2/3 h-2/3 rounded-full ${type.meshBlob2} opacity-40 blur-3xl pointer-events-none`} />
+                      <div className="absolute inset-0 rounded-xl bg-white/5 backdrop-blur-[1px] pointer-events-none" />
                       {/* Top row: icon + type label + status */}
                       <div className="relative z-10 flex items-center justify-between mb-2">
                         <div className="flex items-center gap-1.5">

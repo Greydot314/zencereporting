@@ -141,7 +141,7 @@ const typeConfig = {
     iconBg: "bg-white/25",
     border: "border-white/20",
     label: "Fraud Alert",
-    gradient: "from-[hsl(var(--atlas-warning))] via-[hsl(25,95%,55%)] to-[hsl(15,90%,50%)]",
+    gradient: "from-[hsl(35,100%,55%)] via-[hsl(20,95%,50%)] to-[hsl(5,85%,45%)]",
     statusBg: "bg-white/20 text-white border-white/30",
   },
   churn: {
@@ -151,7 +151,7 @@ const typeConfig = {
     iconBg: "bg-white/25",
     border: "border-white/20",
     label: "Churn Risk",
-    gradient: "from-destructive via-[hsl(350,80%,55%)] to-[hsl(340,75%,45%)]",
+    gradient: "from-[hsl(340,85%,60%)] via-[hsl(320,75%,50%)] to-[hsl(300,65%,40%)]",
     statusBg: "bg-white/20 text-white border-white/30",
   },
   anomaly: {
@@ -161,7 +161,7 @@ const typeConfig = {
     iconBg: "bg-white/25",
     border: "border-white/20",
     label: "Data Anomaly",
-    gradient: "from-primary via-[hsl(220,85%,55%)] to-[hsl(240,70%,50%)]",
+    gradient: "from-[hsl(210,90%,60%)] via-[hsl(230,85%,55%)] to-[hsl(260,75%,50%)]",
     statusBg: "bg-white/20 text-white border-white/30",
   },
 };
@@ -279,10 +279,14 @@ export const AIInsightsLog = () => {
                   <CarouselItem key={entry.id} className="pl-3 basis-full md:basis-1/2 lg:basis-1/4">
                     <div
                       onClick={() => handleCardClick(entry)}
-                      className={`p-3 rounded-xl hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer group bg-gradient-to-br ${type.gradient} text-white h-full flex flex-col min-h-0`}
+                      className={`relative p-3 rounded-xl hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer group bg-gradient-to-br ${type.gradient} text-white h-full flex flex-col min-h-0 overflow-hidden`}
                     >
+                      {/* Glassmorphism frosted overlay */}
+                      <div className="absolute inset-0 rounded-xl bg-white/10 backdrop-blur-[2px] pointer-events-none" />
+                      <div className="absolute top-0 left-0 w-1/2 h-1/2 rounded-full bg-white/15 blur-2xl -translate-x-1/4 -translate-y-1/4 pointer-events-none" />
+                      <div className="absolute bottom-0 right-0 w-1/3 h-1/3 rounded-full bg-black/10 blur-xl translate-x-1/4 translate-y-1/4 pointer-events-none" />
                       {/* Top row: icon + type label + status */}
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="relative z-10 flex items-center justify-between mb-2">
                         <div className="flex items-center gap-1.5">
                           <div className={`p-1 rounded-md ${type.iconBg}`}>
                             <Icon className="h-3 w-3 text-white" />
@@ -295,17 +299,17 @@ export const AIInsightsLog = () => {
                       </div>
 
                       {/* Title */}
-                      <h4 className="text-xs font-semibold text-white mb-1 line-clamp-1">
+                      <h4 className="relative z-10 text-xs font-semibold text-white mb-1 line-clamp-1">
                         {entry.title}
                       </h4>
 
                       {/* Detail */}
-                      <p className="text-[10px] text-white/75 line-clamp-1 mb-2">
+                      <p className="relative z-10 text-[10px] text-white/75 line-clamp-1 mb-2">
                         {entry.detail}
                       </p>
 
                       {/* Metrics row */}
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="relative z-10 flex items-center gap-3 mb-2">
                         <div className="flex items-center gap-1 text-[9px] text-white/90">
                           <Users className="h-2.5 w-2.5" />
                           <span>{entry.customersAffected.toLocaleString()}</span>
@@ -317,7 +321,7 @@ export const AIInsightsLog = () => {
                       </div>
 
                       {/* Footer */}
-                      <div className="flex items-center justify-between pt-1.5 border-t border-white/15 mt-auto">
+                      <div className="relative z-10 flex items-center justify-between pt-1.5 border-t border-white/15 mt-auto">
                         <div className="flex items-center gap-2">
                           <span className="text-[9px] font-medium text-white/80 truncate max-w-[100px]">{entry.programName}</span>
                           <span className="text-[9px] text-white/50">·</span>

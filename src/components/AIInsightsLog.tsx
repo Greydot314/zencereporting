@@ -136,24 +136,33 @@ type FilterType = "all" | "fraud" | "churn" | "anomaly";
 const typeConfig = {
   fraud: {
     icon: AlertTriangle,
-    color: "text-[hsl(var(--atlas-warning))]",
-    bg: "bg-[hsl(var(--atlas-warning))]/10",
-    border: "border-[hsl(var(--atlas-warning))]/20",
+    color: "text-white",
+    bg: "bg-white/20",
+    iconBg: "bg-white/25",
+    border: "border-white/20",
     label: "Fraud Alert",
+    gradient: "from-[hsl(var(--atlas-warning))] via-[hsl(25,95%,55%)] to-[hsl(15,90%,50%)]",
+    statusBg: "bg-white/20 text-white border-white/30",
   },
   churn: {
     icon: Clock,
-    color: "text-destructive",
-    bg: "bg-destructive/10",
-    border: "border-destructive/20",
+    color: "text-white",
+    bg: "bg-white/20",
+    iconBg: "bg-white/25",
+    border: "border-white/20",
     label: "Churn Risk",
+    gradient: "from-destructive via-[hsl(350,80%,55%)] to-[hsl(340,75%,45%)]",
+    statusBg: "bg-white/20 text-white border-white/30",
   },
   anomaly: {
     icon: Database,
-    color: "text-primary",
-    bg: "bg-primary/10",
-    border: "border-primary/20",
+    color: "text-white",
+    bg: "bg-white/20",
+    iconBg: "bg-white/25",
+    border: "border-white/20",
     label: "Data Anomaly",
+    gradient: "from-primary via-[hsl(220,85%,55%)] to-[hsl(240,70%,50%)]",
+    statusBg: "bg-white/20 text-white border-white/30",
   },
 };
 
@@ -267,50 +276,54 @@ export const AIInsightsLog = () => {
                 const Icon = type.icon;
 
                 return (
-                  <CarouselItem key={entry.id} className="pl-3 basis-full md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem key={entry.id} className="pl-3 basis-full md:basis-1/2 lg:basis-1/4">
                     <div
                       onClick={() => handleCardClick(entry)}
-                      className={`p-4 rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer group border ${type.border} bg-gradient-to-br from-background to-secondary/30 h-full flex flex-col`}
+                      className={`p-3 rounded-xl hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer group bg-gradient-to-br ${type.gradient} text-white h-full flex flex-col min-h-0`}
                     >
-                      {/* Top row: icon + status */}
-                      <div className="flex items-start justify-between mb-3">
-                        <div className={`p-2 rounded-lg ${type.bg}`}>
-                          <Icon className={`h-4 w-4 ${type.color}`} />
+                      {/* Top row: icon + type label + status */}
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-1.5">
+                          <div className={`p-1 rounded-md ${type.iconBg}`}>
+                            <Icon className="h-3 w-3 text-white" />
+                          </div>
+                          <span className="text-[9px] font-semibold uppercase tracking-wider text-white/80">{type.label}</span>
                         </div>
-                        <Badge variant="outline" className={`text-[9px] px-1.5 py-0 h-4 ${status.className}`}>
+                        <Badge variant="outline" className={`text-[8px] px-1.5 py-0 h-3.5 border ${type.statusBg}`}>
                           {status.label}
                         </Badge>
                       </div>
 
                       {/* Title */}
-                      <h4 className="text-sm font-medium text-foreground mb-1 line-clamp-2 min-h-[2.5rem]">
+                      <h4 className="text-xs font-semibold text-white mb-1 line-clamp-1">
                         {entry.title}
                       </h4>
 
                       {/* Detail */}
-                      <p className="text-xs text-muted-foreground line-clamp-2 mb-3 min-h-[2rem]">
+                      <p className="text-[10px] text-white/75 line-clamp-1 mb-2">
                         {entry.detail}
                       </p>
 
                       {/* Metrics row */}
-                      <div className="grid grid-cols-2 gap-2 mb-3">
-                        <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                          <Users className="h-3 w-3" />
-                          <span>{entry.customersAffected.toLocaleString()} affected</span>
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-1 text-[9px] text-white/90">
+                          <Users className="h-2.5 w-2.5" />
+                          <span>{entry.customersAffected.toLocaleString()}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-[10px] text-destructive">
-                          <TrendingDown className="h-3 w-3" />
+                        <div className="flex items-center gap-1 text-[9px] text-white/90">
+                          <TrendingDown className="h-2.5 w-2.5" />
                           <span>{entry.revenueAtRisk}</span>
                         </div>
                       </div>
 
                       {/* Footer */}
-                      <div className="flex items-center justify-between pt-2 border-t border-border/50 mt-auto">
-                        <div className="flex flex-col">
-                          <span className="text-[10px] font-medium text-foreground truncate max-w-[140px]">{entry.programName}</span>
-                          <span className="text-[10px] text-muted-foreground">{entry.timestamp}</span>
+                      <div className="flex items-center justify-between pt-1.5 border-t border-white/15 mt-auto">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[9px] font-medium text-white/80 truncate max-w-[100px]">{entry.programName}</span>
+                          <span className="text-[9px] text-white/50">·</span>
+                          <span className="text-[9px] text-white/60">{entry.timestamp}</span>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                        <ChevronRight className="h-3 w-3 text-white/50 group-hover:text-white transition-colors" />
                       </div>
                     </div>
                   </CarouselItem>

@@ -282,10 +282,10 @@ export const AIInsightsLog = () => {
                 const Icon = type.icon;
 
                 return (
-                  <CarouselItem key={entry.id} className="pl-3 basis-full md:basis-1/2 lg:basis-1/5">
+                  <CarouselItem key={entry.id} className="pl-3 basis-full md:basis-1/3 lg:basis-[13.5%]">
                     <div
                       onClick={() => handleCardClick(entry)}
-                      className={`relative p-3 rounded-xl hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer group bg-gradient-to-br ${type.gradient} text-white h-full flex flex-col min-h-0 overflow-hidden`}
+                      className={`relative p-3 rounded-xl hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer group bg-gradient-to-br ${type.gradient} text-white h-full flex flex-col min-h-[170px] overflow-hidden`}
                     >
                       {/* Mesh gradient blobs for smooth color blending */}
                       <div className={`absolute -top-1/3 -left-1/4 w-3/4 h-3/4 rounded-full ${type.meshBlob1} opacity-50 blur-3xl pointer-events-none`} />

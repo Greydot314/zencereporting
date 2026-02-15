@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { AlertTriangle, CheckCircle, Clock, Database, ChevronRight, Store, MapPin, Users, TrendingDown, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
+import { Progress } from "@/components/ui/progress";
 
 interface InsightEntry {
   id: number;
@@ -23,83 +25,113 @@ interface InsightEntry {
 
 const insightEntries: InsightEntry[] = [
   {
-    id: 1,
-    type: "fraud",
-    title: "Abnormal Redemption Velocity",
+    id: 1, type: "fraud", title: "Abnormal Redemption Velocity",
     detail: "Triggered by Store #405. Score: 0.92. Action: Freeze points.",
-    status: "resolved",
-    timestamp: "2h ago",
-    programName: "Levi's Loyalty Club",
-    region: "West Region",
-    storeId: "Store #405",
-    customersAffected: 47,
-    revenueAtRisk: "₹2.3L",
-    triggeredBy: "Fraud Sentinel AI",
-    recommendedAction: "Freeze SKU #5592 pending manual review. Contact store manager for verification.",
-    assignedTo: "Risk Team",
+    status: "resolved", timestamp: "2h ago", programName: "Levi's Loyalty Club", region: "West Region",
+    storeId: "Store #405", customersAffected: 47, revenueAtRisk: "₹2.3L",
+    triggeredBy: "Fraud Sentinel AI", recommendedAction: "Freeze SKU #5592 pending manual review. Contact store manager for verification.", assignedTo: "Risk Team",
   },
   {
-    id: 2,
-    type: "churn",
-    title: "Gold Tier Stagnation",
+    id: 2, type: "churn", title: "Gold Tier Stagnation",
     detail: "West region Gold members show a 12% drop in Recency. Action: Campaign pending.",
-    status: "active",
-    timestamp: "4h ago",
-    programName: "Max Fashion Rewards",
-    region: "North Region",
-    customersAffected: 1250,
-    revenueAtRisk: "₹8.5L",
-    triggeredBy: "Churn Prediction Model",
-    recommendedAction: "Launch 'Win-Back' campaign with 2x points offer. Target via SMS + Push.",
-    assignedTo: "Marketing Team",
+    status: "active", timestamp: "4h ago", programName: "Max Fashion Rewards", region: "North Region",
+    customersAffected: 1250, revenueAtRisk: "₹8.5L",
+    triggeredBy: "Churn Prediction Model", recommendedAction: "Launch 'Win-Back' campaign with 2x points offer. Target via SMS + Push.", assignedTo: "Marketing Team",
   },
   {
-    id: 3,
-    type: "anomaly",
-    title: "Invalid SKU in ETL",
+    id: 3, type: "anomaly", title: "Invalid SKU in ETL",
     detail: "Daily ETL flagged 5,000 transactions with unmapped SKUs.",
-    status: "investigating",
-    timestamp: "6h ago",
-    programName: "Shoppers Stop First Citizen",
-    region: "All Regions",
-    customersAffected: 5000,
-    revenueAtRisk: "₹0 (Data Quality)",
-    triggeredBy: "ETL Pipeline Monitor",
-    recommendedAction: "Review SKU mapping table. Cross-reference with POS system updates.",
-    assignedTo: "Data Engineering",
+    status: "investigating", timestamp: "6h ago", programName: "Shoppers Stop First Citizen", region: "All Regions",
+    customersAffected: 5000, revenueAtRisk: "₹0 (Data Quality)",
+    triggeredBy: "ETL Pipeline Monitor", recommendedAction: "Review SKU mapping table. Cross-reference with POS system updates.", assignedTo: "Data Engineering",
   },
   {
-    id: 4,
-    type: "fraud",
-    title: "Multi-Account Pattern",
+    id: 4, type: "fraud", title: "Multi-Account Pattern",
     detail: "3 accounts linked via device fingerprint. Potential points pooling.",
-    status: "active",
-    timestamp: "8h ago",
-    programName: "Levi's Loyalty Club",
-    region: "South Region",
-    storeId: "Online Channel",
-    customersAffected: 3,
-    revenueAtRisk: "₹45K",
-    triggeredBy: "Device Fingerprint Analysis",
-    recommendedAction: "Flag accounts for manual review. Consider temporary freeze pending verification.",
-    assignedTo: "Fraud Investigation",
+    status: "active", timestamp: "8h ago", programName: "Levi's Loyalty Club", region: "South Region",
+    storeId: "Online Channel", customersAffected: 3, revenueAtRisk: "₹45K",
+    triggeredBy: "Device Fingerprint Analysis", recommendedAction: "Flag accounts for manual review. Consider temporary freeze pending verification.", assignedTo: "Fraud Investigation",
   },
   {
-    id: 5,
-    type: "churn",
-    title: "Platinum Tier Attrition",
+    id: 5, type: "churn", title: "Platinum Tier Attrition",
     detail: "5 Platinum members triggered 'Lapsed' status. CLTV at risk: ₹8.2L",
-    status: "active",
-    timestamp: "12h ago",
-    programName: "Reliance Trends Circle",
-    region: "East Region",
-    customersAffected: 5,
-    revenueAtRisk: "₹8.2L",
-    triggeredBy: "Tier Health Monitor",
-    recommendedAction: "Personal outreach via Relationship Manager. Offer exclusive preview event invitation.",
-    assignedTo: "VIP Relations",
+    status: "active", timestamp: "12h ago", programName: "Reliance Trends Circle", region: "East Region",
+    customersAffected: 5, revenueAtRisk: "₹8.2L",
+    triggeredBy: "Tier Health Monitor", recommendedAction: "Personal outreach via Relationship Manager. Offer exclusive preview event invitation.", assignedTo: "VIP Relations",
+  },
+  {
+    id: 6, type: "fraud", title: "Coupon Stacking Exploit",
+    detail: "Unusual coupon combinations detected at checkout. 15 transactions flagged.",
+    status: "investigating", timestamp: "1h ago", programName: "Shoppers Stop First Citizen", region: "West Region",
+    storeId: "Store #218", customersAffected: 15, revenueAtRisk: "₹1.1L",
+    triggeredBy: "Promo Abuse Detector", recommendedAction: "Disable coupon combo for SKU group. Escalate to promotions team.", assignedTo: "Risk Team",
+  },
+  {
+    id: 7, type: "churn", title: "New Member Drop-off",
+    detail: "30% of members enrolled last month have zero activity since signup.",
+    status: "active", timestamp: "3h ago", programName: "Max Fashion Rewards", region: "South Region",
+    customersAffected: 820, revenueAtRisk: "₹3.2L",
+    triggeredBy: "Onboarding Health AI", recommendedAction: "Trigger welcome series with first-purchase incentive within 48 hours.", assignedTo: "CRM Team",
+  },
+  {
+    id: 8, type: "anomaly", title: "Points Balance Mismatch",
+    detail: "Ledger vs. wallet discrepancy detected for 200+ accounts after migration.",
+    status: "investigating", timestamp: "5h ago", programName: "Reliance Trends Circle", region: "North Region",
+    customersAffected: 215, revenueAtRisk: "₹0 (Reconciliation)",
+    triggeredBy: "Balance Reconciler", recommendedAction: "Run full reconciliation job. Compare pre/post migration snapshots.", assignedTo: "Data Engineering",
+  },
+  {
+    id: 9, type: "fraud", title: "Geo-Velocity Anomaly",
+    detail: "Same account redeemed points in Mumbai and Delhi within 30 minutes.",
+    status: "active", timestamp: "45m ago", programName: "Levi's Loyalty Club", region: "Multi-Region",
+    customersAffected: 1, revenueAtRisk: "₹12K",
+    triggeredBy: "Geo-Velocity Engine", recommendedAction: "Temporarily lock account. Request identity verification before next redemption.", assignedTo: "Fraud Investigation",
+  },
+  {
+    id: 10, type: "churn", title: "Silver Tier Engagement Dip",
+    detail: "Silver members' avg. visit frequency dropped 18% month-over-month.",
+    status: "active", timestamp: "7h ago", programName: "Shoppers Stop First Citizen", region: "East Region",
+    customersAffected: 3400, revenueAtRisk: "₹15L",
+    triggeredBy: "Engagement Tracker", recommendedAction: "Deploy personalized push notifications with category-specific offers.", assignedTo: "Marketing Team",
+  },
+  {
+    id: 11, type: "anomaly", title: "Duplicate Transaction Burst",
+    detail: "POS system sent duplicate entries for 340 transactions in batch #7821.",
+    status: "resolved", timestamp: "10h ago", programName: "Max Fashion Rewards", region: "West Region",
+    storeId: "Store #112", customersAffected: 340, revenueAtRisk: "₹0 (Data Quality)",
+    triggeredBy: "ETL Pipeline Monitor", recommendedAction: "Deduplicate batch. Notify POS vendor of integration defect.", assignedTo: "Data Engineering",
+  },
+  {
+    id: 12, type: "fraud", title: "Referral Ring Detected",
+    detail: "Cluster of 22 accounts with circular referral patterns. Bonus abuse suspected.",
+    status: "investigating", timestamp: "9h ago", programName: "Reliance Trends Circle", region: "South Region",
+    customersAffected: 22, revenueAtRisk: "₹68K",
+    triggeredBy: "Network Graph Analyzer", recommendedAction: "Suspend referral bonuses for flagged cluster. Review referral policy limits.", assignedTo: "Fraud Investigation",
+  },
+  {
+    id: 13, type: "churn", title: "High-Value Segment Decline",
+    detail: "Top 5% spenders showing 25% reduction in basket size over 8 weeks.",
+    status: "active", timestamp: "14h ago", programName: "Levi's Loyalty Club", region: "North Region",
+    customersAffected: 180, revenueAtRisk: "₹22L",
+    triggeredBy: "CLV Prediction Engine", recommendedAction: "Activate VIP concierge outreach. Offer exclusive early-access to new collection.", assignedTo: "VIP Relations",
+  },
+  {
+    id: 14, type: "anomaly", title: "API Rate Limit Breach",
+    detail: "Partner API exceeded 10K calls/min threshold. Potential scraping attempt.",
+    status: "resolved", timestamp: "16h ago", programName: "Shoppers Stop First Citizen", region: "All Regions",
+    customersAffected: 0, revenueAtRisk: "₹0 (Security)",
+    triggeredBy: "API Gateway Monitor", recommendedAction: "Throttle partner key. Review API usage agreement and implement stricter rate limits.", assignedTo: "Platform Team",
+  },
+  {
+    id: 15, type: "fraud", title: "Gift Card Laundering Signal",
+    detail: "Multiple gift card purchases followed by immediate redemption across 3 stores.",
+    status: "active", timestamp: "11h ago", programName: "Max Fashion Rewards", region: "West Region",
+    storeId: "Multi-Store", customersAffected: 8, revenueAtRisk: "₹3.5L",
+    triggeredBy: "Transaction Pattern AI", recommendedAction: "Flag gift card batch. Implement purchase-to-redeem cool-off period of 24 hours.", assignedTo: "Risk Team",
   },
 ];
+
+type FilterType = "all" | "fraud" | "churn" | "anomaly";
 
 const typeConfig = {
   fraud: {
@@ -140,9 +172,47 @@ const statusConfig = {
   },
 };
 
+const filterTabs: { key: FilterType; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "fraud", label: "Fraud" },
+  { key: "churn", label: "Churn" },
+  { key: "anomaly", label: "Anomaly" },
+];
+
 export const AIInsightsLog = () => {
   const [selectedInsight, setSelectedInsight] = useState<InsightEntry | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<FilterType>("all");
+  const [api, setApi] = useState<CarouselApi>();
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  const filteredEntries = activeFilter === "all"
+    ? insightEntries
+    : insightEntries.filter((e) => e.type === activeFilter);
+
+  const countByType = {
+    all: insightEntries.length,
+    fraud: insightEntries.filter((e) => e.type === "fraud").length,
+    churn: insightEntries.filter((e) => e.type === "churn").length,
+    anomaly: insightEntries.filter((e) => e.type === "anomaly").length,
+  };
+
+  const onScroll = useCallback(() => {
+    if (!api) return;
+    const progress = Math.max(0, Math.min(1, api.scrollProgress()));
+    setScrollProgress(progress * 100);
+  }, [api]);
+
+  useEffect(() => {
+    if (!api) return;
+    onScroll();
+    api.on("scroll", onScroll);
+    api.on("reInit", onScroll);
+    return () => {
+      api.off("scroll", onScroll);
+      api.off("reInit", onScroll);
+    };
+  }, [api, onScroll]);
 
   const handleCardClick = (entry: InsightEntry) => {
     setSelectedInsight(entry);
@@ -152,52 +222,108 @@ export const AIInsightsLog = () => {
   return (
     <>
       <section className="space-y-3 animate-fade-in" style={{ animationDelay: '200ms', animationFillMode: 'backwards' }}>
+        {/* Header */}
         <div className="flex items-center justify-between">
           <h3 className="text-base font-medium text-foreground flex items-center gap-2">
             <CheckCircle className="h-4 w-4 text-primary" />
             AI Insight Log
           </h3>
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Last 24h</span>
+          <span className="text-[10px] text-muted-foreground font-medium">
+            Showing {filteredEntries.length} of {insightEntries.length}
+          </span>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
-          {insightEntries.map((entry, index) => {
-            const type = typeConfig[entry.type];
-            const status = statusConfig[entry.status];
-            const Icon = type.icon;
 
-            return (
-              <div
-                key={entry.id}
-                onClick={() => handleCardClick(entry)}
-                className={`p-4 rounded-lg hover:shadow-md transition-all cursor-pointer group border ${type.border} bg-gradient-to-br from-background to-secondary/30 animate-fade-in`}
-                style={{ animationDelay: `${300 + index * 50}ms`, animationFillMode: 'backwards' }}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className={`p-2 rounded-lg ${type.bg}`}>
-                    <Icon className={`h-4 w-4 ${type.color}`} />
-                  </div>
-                  <Badge variant="outline" className={`text-[9px] px-1.5 py-0 h-4 ${status.className}`}>
-                    {status.label}
-                  </Badge>
-                </div>
-                
-                <h4 className="text-sm font-medium text-foreground mb-1 line-clamp-2 min-h-[2.5rem]">
-                  {entry.title}
-                </h4>
-                
-                <p className="text-xs text-muted-foreground line-clamp-2 mb-3 min-h-[2rem]">
-                  {entry.detail}
-                </p>
-                
-                <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                  <span className="text-[10px] text-muted-foreground">{entry.timestamp}</span>
-                  <ChevronRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
-                </div>
-              </div>
-            );
-          })}
+        {/* Filter Tabs */}
+        <div className="flex items-center gap-1.5">
+          {filterTabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveFilter(tab.key)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                activeFilter === tab.key
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {tab.label}
+              <span className={`ml-1.5 text-[10px] ${activeFilter === tab.key ? "opacity-80" : "opacity-60"}`}>
+                {countByType[tab.key]}
+              </span>
+            </button>
+          ))}
         </div>
+
+        {/* Carousel */}
+        <div className="px-10">
+          <Carousel
+            opts={{ align: "start", loop: false, dragFree: true }}
+            setApi={setApi}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-3">
+              {filteredEntries.map((entry) => {
+                const type = typeConfig[entry.type];
+                const status = statusConfig[entry.status];
+                const Icon = type.icon;
+
+                return (
+                  <CarouselItem key={entry.id} className="pl-3 basis-full md:basis-1/2 lg:basis-1/3">
+                    <div
+                      onClick={() => handleCardClick(entry)}
+                      className={`p-4 rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer group border ${type.border} bg-gradient-to-br from-background to-secondary/30 h-full flex flex-col`}
+                    >
+                      {/* Top row: icon + status */}
+                      <div className="flex items-start justify-between mb-3">
+                        <div className={`p-2 rounded-lg ${type.bg}`}>
+                          <Icon className={`h-4 w-4 ${type.color}`} />
+                        </div>
+                        <Badge variant="outline" className={`text-[9px] px-1.5 py-0 h-4 ${status.className}`}>
+                          {status.label}
+                        </Badge>
+                      </div>
+
+                      {/* Title */}
+                      <h4 className="text-sm font-medium text-foreground mb-1 line-clamp-2 min-h-[2.5rem]">
+                        {entry.title}
+                      </h4>
+
+                      {/* Detail */}
+                      <p className="text-xs text-muted-foreground line-clamp-2 mb-3 min-h-[2rem]">
+                        {entry.detail}
+                      </p>
+
+                      {/* Metrics row */}
+                      <div className="grid grid-cols-2 gap-2 mb-3">
+                        <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                          <Users className="h-3 w-3" />
+                          <span>{entry.customersAffected.toLocaleString()} affected</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[10px] text-destructive">
+                          <TrendingDown className="h-3 w-3" />
+                          <span>{entry.revenueAtRisk}</span>
+                        </div>
+                      </div>
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-between pt-2 border-t border-border/50 mt-auto">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-medium text-foreground truncate max-w-[140px]">{entry.programName}</span>
+                          <span className="text-[10px] text-muted-foreground">{entry.timestamp}</span>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                      </div>
+                    </div>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            <CarouselPrevious className="-left-8" />
+            <CarouselNext className="-right-8" />
+          </Carousel>
+        </div>
+
+        {/* Scroll progress bar */}
+        <Progress value={scrollProgress} className="h-1 w-full" />
       </section>
 
       {/* Detail Dialog */}
@@ -226,7 +352,6 @@ export const AIInsightsLog = () => {
               </DialogHeader>
 
               <div className="space-y-4 mt-2">
-                {/* Program & Region Info */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg bg-secondary/50">
                     <div className="flex items-center gap-2 mb-1">
@@ -244,7 +369,6 @@ export const AIInsightsLog = () => {
                   </div>
                 </div>
 
-                {/* Key Metrics */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg bg-secondary/50">
                     <div className="flex items-center gap-2 mb-1">
@@ -262,7 +386,6 @@ export const AIInsightsLog = () => {
                   </div>
                 </div>
 
-                {/* Store ID if available */}
                 {selectedInsight.storeId && (
                   <div className="p-3 rounded-lg bg-secondary/50">
                     <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Store / Channel</span>
@@ -270,13 +393,11 @@ export const AIInsightsLog = () => {
                   </div>
                 )}
 
-                {/* Detail Description */}
                 <div className="p-3 rounded-lg border border-border">
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Alert Details</p>
                   <p className="text-sm text-foreground">{selectedInsight.detail}</p>
                 </div>
 
-                {/* Triggered By & Assigned To */}
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <span className="text-[10px] uppercase tracking-wider text-muted-foreground block mb-1">Triggered By</span>
@@ -288,7 +409,6 @@ export const AIInsightsLog = () => {
                   </div>
                 </div>
 
-                {/* Recommended Action */}
                 <div className="p-3 rounded-lg bg-primary/5 border border-primary/10">
                   <div className="flex items-center gap-2 mb-2">
                     <CheckCircle className="h-3.5 w-3.5 text-primary" />
@@ -297,13 +417,11 @@ export const AIInsightsLog = () => {
                   <p className="text-sm text-foreground">{selectedInsight.recommendedAction}</p>
                 </div>
 
-                {/* Timestamp */}
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Calendar className="h-3.5 w-3.5" />
                   <span>Detected {selectedInsight.timestamp}</span>
                 </div>
 
-                {/* Actions */}
                 <div className="flex gap-2 pt-2">
                   <Button size="sm" className="flex-1">Take Action</Button>
                   <Button size="sm" variant="outline" className="flex-1">Dismiss</Button>

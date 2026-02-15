@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { AlertTriangle, CheckCircle, Clock, Database, ChevronRight, Store, MapPin, Users, TrendingDown, Calendar } from "lucide-react";
+import { AlertTriangle, CheckCircle, Clock, Database, ChevronRight, Store, MapPin, Users, TrendingDown, Calendar, ShieldAlert, Zap, BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 
 interface InsightEntry {
   id: number;
-  type: "fraud" | "churn" | "anomaly";
+  type: "fraud" | "churn" | "anomaly" | "security" | "performance" | "revenue";
   title: string;
   detail: string;
   status: "resolved" | "active" | "investigating";
@@ -129,9 +129,51 @@ const insightEntries: InsightEntry[] = [
     storeId: "Multi-Store", customersAffected: 8, revenueAtRisk: "₹3.5L",
     triggeredBy: "Transaction Pattern AI", recommendedAction: "Flag gift card batch. Implement purchase-to-redeem cool-off period of 24 hours.", assignedTo: "Risk Team",
   },
+  {
+    id: 16, type: "security", title: "Unauthorized API Access",
+    detail: "Multiple failed authentication attempts from suspicious IP range targeting member endpoints.",
+    status: "active", timestamp: "30m ago", programName: "Levi's Loyalty Club", region: "All Regions",
+    customersAffected: 0, revenueAtRisk: "₹0 (Security)",
+    triggeredBy: "WAF Monitor", recommendedAction: "Block IP range and rotate API keys. Review access logs for data exposure.", assignedTo: "Security Team",
+  },
+  {
+    id: 17, type: "performance", title: "Points Engine Latency Spike",
+    detail: "Average response time for points calculation exceeded 2s threshold during peak hours.",
+    status: "investigating", timestamp: "1h ago", programName: "Max Fashion Rewards", region: "North Region",
+    customersAffected: 3200, revenueAtRisk: "₹0 (Experience)",
+    triggeredBy: "APM Dashboard", recommendedAction: "Scale points calculation service. Investigate database query bottleneck.", assignedTo: "Platform Team",
+  },
+  {
+    id: 18, type: "revenue", title: "Promo ROI Below Threshold",
+    detail: "Weekend flash sale generated 40% less incremental revenue than projected. CAC exceeds LTV.",
+    status: "active", timestamp: "5h ago", programName: "Shoppers Stop First Citizen", region: "South Region",
+    customersAffected: 890, revenueAtRisk: "₹12L",
+    triggeredBy: "Revenue Intelligence", recommendedAction: "Pause campaign. A/B test with reduced discount tier before resuming.", assignedTo: "Marketing Team",
+  },
+  {
+    id: 19, type: "security", title: "Data Export Anomaly",
+    detail: "Bulk member data export initiated outside business hours by service account.",
+    status: "investigating", timestamp: "2h ago", programName: "Reliance Trends Circle", region: "All Regions",
+    customersAffected: 15000, revenueAtRisk: "₹0 (Compliance)",
+    triggeredBy: "DLP Monitor", recommendedAction: "Revoke service account token. Audit export logs and notify DPO.", assignedTo: "Security Team",
+  },
+  {
+    id: 20, type: "performance", title: "Reward Catalog Load Failure",
+    detail: "Catalog service returning 503 errors. 28% of reward browsing sessions affected.",
+    status: "active", timestamp: "15m ago", programName: "Levi's Loyalty Club", region: "West Region",
+    customersAffected: 1800, revenueAtRisk: "₹4.5L",
+    triggeredBy: "Uptime Monitor", recommendedAction: "Failover to cached catalog. Restart catalog microservice pods.", assignedTo: "Platform Team",
+  },
+  {
+    id: 21, type: "revenue", title: "Tier Upgrade Drop-off",
+    detail: "65% of Silver members within 500 points of Gold upgrade show declining purchase frequency.",
+    status: "active", timestamp: "8h ago", programName: "Max Fashion Rewards", region: "East Region",
+    customersAffected: 2100, revenueAtRisk: "₹18L",
+    triggeredBy: "CLV Prediction Engine", recommendedAction: "Send personalized 'almost there' nudge with bonus points offer for next purchase.", assignedTo: "CRM Team",
+  },
 ];
 
-type FilterType = "all" | "fraud" | "churn" | "anomaly";
+type FilterType = "all" | "fraud" | "churn" | "anomaly" | "security" | "performance" | "revenue";
 
 const typeConfig = {
   fraud: {
@@ -170,6 +212,42 @@ const typeConfig = {
     meshBlob2: "bg-[hsl(250,70%,45%)]",
     statusBg: "bg-white/20 text-white border-white/30",
   },
+  security: {
+    icon: ShieldAlert,
+    color: "text-white",
+    bg: "bg-white/20",
+    iconBg: "bg-white/25",
+    border: "border-white/20",
+    label: "Security",
+    gradient: "from-[hsl(0,75%,45%)] via-[hsl(15,80%,50%)] to-[hsl(35,85%,55%)]",
+    meshBlob1: "bg-[hsl(10,85%,55%)]",
+    meshBlob2: "bg-[hsl(30,80%,45%)]",
+    statusBg: "bg-white/20 text-white border-white/30",
+  },
+  performance: {
+    icon: Zap,
+    color: "text-white",
+    bg: "bg-white/20",
+    iconBg: "bg-white/25",
+    border: "border-white/20",
+    label: "Performance",
+    gradient: "from-[hsl(160,70%,40%)] via-[hsl(180,65%,45%)] to-[hsl(200,70%,50%)]",
+    meshBlob1: "bg-[hsl(170,75%,55%)]",
+    meshBlob2: "bg-[hsl(190,70%,40%)]",
+    statusBg: "bg-white/20 text-white border-white/30",
+  },
+  revenue: {
+    icon: BarChart3,
+    color: "text-white",
+    bg: "bg-white/20",
+    iconBg: "bg-white/25",
+    border: "border-white/20",
+    label: "Revenue",
+    gradient: "from-[hsl(40,90%,50%)] via-[hsl(30,85%,45%)] to-[hsl(15,80%,40%)]",
+    meshBlob1: "bg-[hsl(45,90%,60%)]",
+    meshBlob2: "bg-[hsl(20,85%,42%)]",
+    statusBg: "bg-white/20 text-white border-white/30",
+  },
 };
 
 const statusConfig = {
@@ -192,6 +270,9 @@ const filterTabs: { key: FilterType; label: string }[] = [
   { key: "fraud", label: "Fraud" },
   { key: "churn", label: "Churn" },
   { key: "anomaly", label: "Anomaly" },
+  { key: "security", label: "Security" },
+  { key: "performance", label: "Performance" },
+  { key: "revenue", label: "Revenue" },
 ];
 
 export const AIInsightsLog = () => {
@@ -210,6 +291,9 @@ export const AIInsightsLog = () => {
     fraud: insightEntries.filter((e) => e.type === "fraud").length,
     churn: insightEntries.filter((e) => e.type === "churn").length,
     anomaly: insightEntries.filter((e) => e.type === "anomaly").length,
+    security: insightEntries.filter((e) => e.type === "security").length,
+    performance: insightEntries.filter((e) => e.type === "performance").length,
+    revenue: insightEntries.filter((e) => e.type === "revenue").length,
   };
 
   const onScroll = useCallback(() => {

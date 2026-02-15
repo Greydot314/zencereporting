@@ -282,7 +282,7 @@ export const AIInsightsLog = () => {
                 const Icon = type.icon;
 
                 return (
-                  <CarouselItem key={entry.id} className="pl-3 basis-full md:basis-1/2 lg:basis-1/4">
+                  <CarouselItem key={entry.id} className="pl-3 basis-full md:basis-1/2 lg:basis-1/5">
                     <div
                       onClick={() => handleCardClick(entry)}
                       className={`relative p-3 rounded-xl hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer group bg-gradient-to-br ${type.gradient} text-white h-full flex flex-col min-h-0 overflow-hidden`}
@@ -305,12 +305,12 @@ export const AIInsightsLog = () => {
                       </div>
 
                       {/* Title */}
-                      <h4 className="relative z-10 text-xs font-semibold text-white mb-1 line-clamp-1">
+                      <h4 className="relative z-10 text-xs font-semibold text-white mb-1 line-clamp-2">
                         {entry.title}
                       </h4>
 
                       {/* Detail */}
-                      <p className="relative z-10 text-[10px] text-white/75 line-clamp-1 mb-2">
+                      <p className="relative z-10 text-[10px] text-white/75 line-clamp-2 mb-2">
                         {entry.detail}
                       </p>
 

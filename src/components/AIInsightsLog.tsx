@@ -360,73 +360,65 @@ export const AIInsightsLog = () => {
             className="w-full"
           >
             <CarouselContent className="-ml-3">
-              {(() => {
-                // Pair entries into groups of 2
-                const pairs: InsightEntry[][] = [];
-                for (let i = 0; i < filteredEntries.length; i += 2) {
-                  pairs.push(filteredEntries.slice(i, i + 2));
-                }
-                return pairs.map((pair, pairIdx) => {
-                  const primaryType = typeConfig[pair[0].type];
-                  return (
-                    <CarouselItem key={pairIdx} className="pl-3 basis-full md:basis-1/2 lg:basis-[27%]">
-                      <div className={`relative rounded-xl overflow-hidden bg-gradient-to-br ${primaryType.gradient} text-white h-full min-h-[190px]`}>
-                        {/* Mesh gradient blobs */}
-                        <div className={`absolute -top-1/3 -left-1/4 w-3/4 h-3/4 rounded-full ${primaryType.meshBlob1} opacity-50 blur-3xl pointer-events-none`} />
-                        <div className={`absolute -bottom-1/4 -right-1/4 w-2/3 h-2/3 rounded-full ${primaryType.meshBlob2} opacity-40 blur-3xl pointer-events-none`} />
-                        <div className="absolute inset-0 rounded-xl bg-white/5 backdrop-blur-[1px] pointer-events-none" />
-                        <div className="relative z-10 flex flex-col h-full divide-y divide-white/15">
-                          {pair.map((entry) => {
-                            const type = typeConfig[entry.type];
-                            const status = statusConfig[entry.status];
-                            const Icon = type.icon;
-                            return (
-                              <div
-                                key={entry.id}
-                                onClick={() => handleCardClick(entry)}
-                                className="p-3 cursor-pointer hover:bg-white/10 transition-colors group flex-1"
-                              >
-                                {/* Top row: icon + type label + status */}
-                                <div className="flex items-center justify-between mb-1.5">
-                                  <div className="flex items-center gap-1.5">
-                                    <div className={`p-1 rounded-md ${type.iconBg}`}>
-                                      <Icon className="h-3 w-3 text-white" />
-                                    </div>
-                                    <span className="text-[9px] font-semibold uppercase tracking-wider text-white/80">{type.label}</span>
-                                  </div>
-                                  <Badge variant="outline" className={`text-[8px] px-1.5 py-0 h-3.5 border ${type.statusBg}`}>
-                                    {status.label}
-                                  </Badge>
-                                </div>
-                                {/* Title + Detail */}
-                                <h4 className="text-xs font-semibold text-white mb-0.5 line-clamp-2">{entry.title}</h4>
-                                <p className="text-[10px] text-white/75 line-clamp-2 mb-1.5">{entry.detail}</p>
-                                {/* Metrics + footer */}
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                    <div className="flex items-center gap-1 text-[9px] text-white/90">
-                                      <Users className="h-2.5 w-2.5" />
-                                      <span>{entry.customersAffected.toLocaleString()}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1 text-[9px] text-white/90">
-                                      <TrendingDown className="h-2.5 w-2.5" />
-                                      <span>{entry.revenueAtRisk}</span>
-                                    </div>
-                                  </div>
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="text-[9px] text-white/60">{entry.timestamp}</span>
-                                    <ChevronRight className="h-3 w-3 text-white/50 group-hover:text-white transition-colors" />
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })}
+              {filteredEntries.map((entry) => {
+                const type = typeConfig[entry.type];
+                const status = statusConfig[entry.status];
+                const Icon = type.icon;
+                return (
+                  <CarouselItem key={entry.id} className="pl-3 basis-full md:basis-1/2 lg:basis-[27%]">
+                    <div
+                      onClick={() => handleCardClick(entry)}
+                      className={`relative p-4 rounded-xl overflow-hidden bg-gradient-to-br ${type.gradient} text-white h-full min-h-[190px] flex flex-col cursor-pointer hover:shadow-xl hover:-translate-y-0.5 transition-all group`}
+                    >
+                      {/* Mesh gradient blobs */}
+                      <div className={`absolute -top-1/3 -left-1/4 w-3/4 h-3/4 rounded-full ${type.meshBlob1} opacity-50 blur-3xl pointer-events-none`} />
+                      <div className={`absolute -bottom-1/4 -right-1/4 w-2/3 h-2/3 rounded-full ${type.meshBlob2} opacity-40 blur-3xl pointer-events-none`} />
+                      <div className="absolute inset-0 rounded-xl bg-white/5 backdrop-blur-[1px] pointer-events-none" />
+
+                      {/* Top row: icon + type label + status */}
+                      <div className="relative z-10 flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className={`p-1.5 rounded-md ${type.iconBg}`}>
+                            <Icon className="h-3.5 w-3.5 text-white" />
+                          </div>
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white/90">{type.label}</span>
+                        </div>
+                        <Badge variant="outline" className={`text-[10px] px-2 py-0.5 h-5 border ${type.statusBg}`}>
+                          {status.label}
+                        </Badge>
+                      </div>
+
+                      {/* Title */}
+                      <h4 className="relative z-10 text-sm font-bold text-white mb-1 line-clamp-2">{entry.title}</h4>
+
+                      {/* Detail */}
+                      <p className="relative z-10 text-xs text-white/80 line-clamp-2 mb-3 leading-relaxed">{entry.detail}</p>
+
+                      {/* Metrics row */}
+                      <div className="relative z-10 flex items-center gap-4 mb-3">
+                        <div className="flex items-center gap-1.5 text-[11px] text-white/90 font-medium">
+                          <Users className="h-3 w-3" />
+                          <span>{entry.customersAffected.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[11px] text-white/90 font-medium">
+                          <TrendingDown className="h-3 w-3" />
+                          <span>{entry.revenueAtRisk}</span>
                         </div>
                       </div>
-                    </CarouselItem>
-                  );
-                });
-              })()}
+
+                      {/* Footer */}
+                      <div className="relative z-10 flex items-center justify-between pt-2 border-t border-white/15 mt-auto">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-medium text-white/85 truncate max-w-[140px]">{entry.programName}</span>
+                          <span className="text-[11px] text-white/50">·</span>
+                          <span className="text-[11px] text-white/70">{entry.timestamp}</span>
+                        </div>
+                        <ChevronRight className="h-3.5 w-3.5 text-white/50 group-hover:text-white transition-colors" />
+                      </div>
+                    </div>
+                  </CarouselItem>
+                );
+              })}
             </CarouselContent>
             <CarouselPrevious className="-left-8" />
             <CarouselNext className="-right-8" />

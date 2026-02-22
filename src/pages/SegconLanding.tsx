@@ -190,25 +190,66 @@ const SegconLanding = () => {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="px-6 py-12 bg-muted/30">
-        <div className="max-w-5xl mx-auto space-y-8">
+      {/* How It Works — Infographic */}
+      <section className="px-6 py-16 bg-muted/30">
+        <div className="max-w-5xl mx-auto space-y-12">
           <div className="text-center space-y-2">
             <h2 className="text-2xl lg:text-3xl font-bold text-foreground">How Segcon Works</h2>
+            <p className="text-muted-foreground">From raw data to actionable segments in three steps</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { step: "01", title: "Ingest & Analyze", desc: "Connect your loyalty data sources. Segcon automatically processes transactions, engagement events, and profile data." },
-              { step: "02", title: "Segment & Score", desc: "AI creates dynamic segments using RFM analysis, behavioral clustering, and custom rules. Each segment gets a health score." },
-              { step: "03", title: "Act & Optimize", desc: "Export audiences, trigger campaigns, and track segment migration. Continuous AI recommendations optimize your strategy." },
-            ].map((s, i) => (
-              <div key={i} className="text-center space-y-3">
-                <div className="text-4xl font-bold text-primary/20">{s.step}</div>
-                <h3 className="font-semibold text-foreground">{s.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
-              </div>
-            ))}
+          <div className="relative">
+            {/* Connector line (desktop) */}
+            <div className="hidden md:block absolute top-16 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20" />
+
+            <div className="grid md:grid-cols-3 gap-8 md:gap-6">
+              {[
+                {
+                  step: "01",
+                  icon: <BarChart3 className="h-6 w-6" />,
+                  title: "Ingest & Analyze",
+                  desc: "Connect your loyalty data sources. Segcon automatically processes transactions, engagement events, and profile data.",
+                  details: ["CRM & POS integration", "Real-time event streaming", "Auto data cleansing"],
+                },
+                {
+                  step: "02",
+                  icon: <Layers className="h-6 w-6" />,
+                  title: "Segment & Score",
+                  desc: "AI creates dynamic segments using RFM analysis, behavioral clustering, and custom rules. Each segment gets a health score.",
+                  details: ["50+ attribute engine", "ML-powered clustering", "Health score per segment"],
+                },
+                {
+                  step: "03",
+                  icon: <Sparkles className="h-6 w-6" />,
+                  title: "Act & Optimize",
+                  desc: "Export audiences, trigger campaigns, and track segment migration. Continuous AI recommendations optimize your strategy.",
+                  details: ["1-click audience export", "Campaign auto-triggers", "AI strategy suggestions"],
+                },
+              ].map((s, i) => (
+                <div key={i} className="relative flex flex-col items-center text-center group">
+                  {/* Step circle */}
+                  <div className="relative z-10 h-14 w-14 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center text-primary mb-5 group-hover:bg-primary/20 group-hover:border-primary/50 transition-all duration-300 group-hover:scale-110">
+                    {s.icon}
+                  </div>
+                  {/* Step number */}
+                  <span className="text-xs font-bold text-primary/50 tracking-widest mb-1">STEP {s.step}</span>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">{s.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{s.desc}</p>
+                  {/* Detail chips */}
+                  <div className="flex flex-wrap justify-center gap-1.5">
+                    {s.details.map((d, j) => (
+                      <span key={j} className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-primary/8 text-primary/70 border border-primary/10">
+                        {d}
+                      </span>
+                    ))}
+                  </div>
+                  {/* Arrow between steps (mobile) */}
+                  {i < 2 && (
+                    <ChevronRight className="md:hidden h-5 w-5 text-primary/30 mt-4 rotate-90" />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

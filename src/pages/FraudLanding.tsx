@@ -190,25 +190,66 @@ const FraudLanding = () => {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="px-6 py-12 bg-muted/30">
-        <div className="max-w-5xl mx-auto space-y-8">
+      {/* How It Works — Infographic */}
+      <section className="px-6 py-16 bg-muted/30">
+        <div className="max-w-5xl mx-auto space-y-12">
           <div className="text-center space-y-2">
             <h2 className="text-2xl lg:text-3xl font-bold text-foreground">How Sentinel Works</h2>
+            <p className="text-muted-foreground">Three-stage pipeline from data ingestion to threat resolution</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { step: "01", title: "Monitor & Collect", desc: "Ingest transactions, device signals, and behavioral data across all channels in real-time with sub-50ms processing." },
-              { step: "02", title: "Detect & Score", desc: "ML models analyze 30+ risk signals per transaction. Each event gets a risk score with explainable AI reasoning." },
-              { step: "03", title: "Alert & Resolve", desc: "Smart alerts route to investigators with full context. Auto-block high-confidence threats while flagging edge cases for review." },
-            ].map((s, i) => (
-              <div key={i} className="text-center space-y-3">
-                <div className="text-4xl font-bold text-destructive/20">{s.step}</div>
-                <h3 className="font-semibold text-foreground">{s.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
-              </div>
-            ))}
+          <div className="relative">
+            {/* Connector line (desktop) */}
+            <div className="hidden md:block absolute top-16 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-destructive/20 via-destructive/40 to-destructive/20" />
+
+            <div className="grid md:grid-cols-3 gap-8 md:gap-6">
+              {[
+                {
+                  step: "01",
+                  icon: <Scan className="h-6 w-6" />,
+                  title: "Monitor & Collect",
+                  desc: "Ingest transactions, device signals, and behavioral data across all channels in real-time with sub-50ms processing.",
+                  details: ["Multi-channel ingestion", "Device fingerprinting", "<50ms latency"],
+                },
+                {
+                  step: "02",
+                  icon: <Cpu className="h-6 w-6" />,
+                  title: "Detect & Score",
+                  desc: "ML models analyze 30+ risk signals per transaction. Each event gets a risk score with explainable AI reasoning.",
+                  details: ["30+ risk signals", "Explainable AI scores", "94%+ accuracy"],
+                },
+                {
+                  step: "03",
+                  icon: <ShieldCheck className="h-6 w-6" />,
+                  title: "Alert & Resolve",
+                  desc: "Smart alerts route to investigators with full context. Auto-block high-confidence threats while flagging edge cases for review.",
+                  details: ["Priority-ranked alerts", "Auto-block threats", "Investigation paths"],
+                },
+              ].map((s, i) => (
+                <div key={i} className="relative flex flex-col items-center text-center group">
+                  {/* Step circle */}
+                  <div className="relative z-10 h-14 w-14 rounded-full bg-destructive/10 border-2 border-destructive/30 flex items-center justify-center text-destructive mb-5 group-hover:bg-destructive/20 group-hover:border-destructive/50 transition-all duration-300 group-hover:scale-110">
+                    {s.icon}
+                  </div>
+                  {/* Step number */}
+                  <span className="text-xs font-bold text-destructive/50 tracking-widest mb-1">STEP {s.step}</span>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">{s.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{s.desc}</p>
+                  {/* Detail chips */}
+                  <div className="flex flex-wrap justify-center gap-1.5">
+                    {s.details.map((d, j) => (
+                      <span key={j} className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-destructive/8 text-destructive/70 border border-destructive/10">
+                        {d}
+                      </span>
+                    ))}
+                  </div>
+                  {/* Arrow between steps (mobile) */}
+                  {i < 2 && (
+                    <ArrowRight className="md:hidden h-5 w-5 text-destructive/30 mt-4 rotate-90" />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

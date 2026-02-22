@@ -15,6 +15,8 @@ import AtlasLanding from "./pages/AtlasLanding";
 import SearchPage from "./pages/SearchPage";
 import SegconLanding from "./pages/SegconLanding";
 import FraudLanding from "./pages/FraudLanding";
+import KpiAlertsLanding from "./pages/KpiAlertsLanding";
+import BehavioralAnalyticsLanding from "./pages/BehavioralAnalyticsLanding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +49,8 @@ const App = () => (
                       <Route path="/module/:moduleId" element={<ModuleDetail />} />
                       <Route path="/module-info/segcon" element={<SegconLanding />} />
                       <Route path="/module-info/fraud" element={<FraudLanding />} />
+                      <Route path="/module-info/kpi-alerts" element={<KpiAlertsLanding />} />
+                      <Route path="/module-info/behavioral-analytics" element={<BehavioralAnalyticsLanding />} />
                       <Route path="/settings" element={<Dashboard />} />
                       <Route path="/help" element={<Dashboard />} />
                       <Route path="*" element={<NotFound />} />

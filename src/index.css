@@ -55,6 +55,11 @@
     --ai-secondary: 252 100% 67%;
     --ai-glow: 221 83% 53%;
 
+    /* Agent tokens */
+    --agent-data: 221 83% 53%;
+    --agent-campaign: 262 83% 58%;
+    --agent-product: 152 76% 36%;
+
     /* Shadows for light mode */
     --shadow-sm: 0 1px 2px 0 hsl(220 13% 91% / 0.5);
     --shadow: 0 1px 3px 0 hsl(220 13% 91% / 0.6), 0 1px 2px -1px hsl(220 13% 91% / 0.6);

@@ -95,11 +95,16 @@ export default {
   				'neon-purple': 'hsl(var(--atlas-neon-purple))',
   				muted: 'hsl(var(--atlas-muted))'
   			},
-  			ai: {
-  				primary: 'hsl(var(--ai-primary))',
-  				secondary: 'hsl(var(--ai-secondary))',
-  				glow: 'hsl(var(--ai-glow))'
-  			},
+			ai: {
+				primary: 'hsl(var(--ai-primary))',
+				secondary: 'hsl(var(--ai-secondary))',
+				glow: 'hsl(var(--ai-glow))'
+			},
+			agent: {
+				data: 'hsl(var(--agent-data))',
+				campaign: 'hsl(var(--agent-campaign))',
+				product: 'hsl(var(--agent-product))'
+			},
   			chart: {
   				'1': 'hsl(var(--chart-1))',
   				'2': 'hsl(var(--chart-2))',

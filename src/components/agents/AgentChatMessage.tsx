@@ -63,6 +63,7 @@ export const AgentChatMessage = ({ message }: AgentChatMessageProps) => {
 
   const Icon = agentIcons[message.agentId];
   const colorVar = agentColors[message.agentId];
+  const displayContent = message.isStreaming ? (message.streamedContent || "") : message.content;
 
   return (
     <div className="flex gap-3 animate-fade-in">
@@ -88,7 +89,10 @@ export const AgentChatMessage = ({ message }: AgentChatMessageProps) => {
 
         {/* Content */}
         <div className="text-sm leading-relaxed text-foreground whitespace-pre-wrap">
-          {renderText(message.content)}
+          {renderText(displayContent)}
+          {message.isStreaming && (
+            <span className="inline-block w-0.5 h-4 ml-0.5 bg-foreground animate-blink align-text-bottom" />
+          )}
         </div>
       </div>
     </div>

@@ -18,8 +18,9 @@ export interface AgentMessage {
   agentId: AgentId;
   content: string;
   timestamp: string;
-  toolAction?: string; // e.g. "Generating dashboard…"
+  toolAction?: string;
   isStreaming?: boolean;
+  streamedContent?: string; // partial content during streaming
   followUps?: string[];
 }
 

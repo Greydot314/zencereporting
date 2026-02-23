@@ -88,24 +88,55 @@ const AIChat = () => {
           setShowToolActions(false);
           setAgentStatus(agentId, "active");
 
-          // Add agent message
+          // Add streaming message (empty initially)
+          const newMsgId = `${agentId}-${Date.now()}`;
           const newMsg: AgentMessage = {
             ...agentResponse,
-            id: `${agentId}-${Date.now()}`,
+            id: newMsgId,
             timestamp: new Date().toISOString(),
+            isStreaming: true,
+            streamedContent: "",
+            followUps: agentResponse.followUps,
           };
           setConversations((prev) => ({
             ...prev,
             [agentId]: [...prev[agentId], newMsg],
           }));
 
-          // Load workspace
+          // Load workspace immediately
           setWorkspaces((prev) => ({
             ...prev,
             [agentId]: scenario.widgets,
           }));
 
-          setIsLoading(false);
+          // Stream words
+          const words = agentResponse.content.split(" ");
+          let wordIndex = 0;
+          const streamInterval = setInterval(() => {
+            wordIndex++;
+            if (wordIndex <= words.length) {
+              const partial = words.slice(0, wordIndex).join(" ");
+              setConversations((prev) => ({
+                ...prev,
+                [agentId]: prev[agentId].map((m) =>
+                  m.id === newMsgId
+                    ? { ...m, streamedContent: partial, isStreaming: wordIndex < words.length }
+                    : m
+                ),
+              }));
+            }
+            if (wordIndex >= words.length) {
+              clearInterval(streamInterval);
+              // Finalize
+              setConversations((prev) => ({
+                ...prev,
+                [agentId]: prev[agentId].map((m) =>
+                  m.id === newMsgId ? { ...m, isStreaming: false, streamedContent: undefined } : m
+                ),
+              }));
+              setIsLoading(false);
+            }
+          }, 30);
         }, 600);
       }
     }, 800);
@@ -222,7 +253,7 @@ const AIChat = () => {
                 )}
 
                 {/* Follow-up chips */}
-                {!isLoading && lastAgentMessage?.followUps && (
+                {!isLoading && lastAgentMessage?.followUps && !lastAgentMessage.isStreaming && (
                   <div className="pl-11">
                     <FollowUpSuggestions
                       suggestions={lastAgentMessage.followUps}

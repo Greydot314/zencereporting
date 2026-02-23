@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Package, TrendingUp, TrendingDown, Minus, Calendar, Star, RefreshCw, Lightbulb } from "lucide-react";
 import { ProductDemandData } from "@/types/predictions";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { ChartEmptyState } from "@/components/ui/chart-empty-state";
 
 interface ProductDemandCardProps {
   data: ProductDemandData;
@@ -47,6 +48,9 @@ export const ProductDemandCard = ({ data }: ProductDemandCardProps) => {
       </div>
       <div className="space-y-6">
         {/* Demand Chart */}
+        {(!chartData || chartData.length === 0) ? (
+          <ChartEmptyState variant="bar" title="No demand data" description="Product demand forecasts will appear here" className="h-48" />
+        ) : (
         <div className="h-48">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
@@ -68,6 +72,7 @@ export const ProductDemandCard = ({ data }: ProductDemandCardProps) => {
             </BarChart>
           </ResponsiveContainer>
         </div>
+        )}
 
         {/* Category Details */}
         <div className="space-y-2">

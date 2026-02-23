@@ -2,6 +2,7 @@ import { TrendingDown, TrendingUp, AlertTriangle, Sparkles, Star, ShoppingCart, 
 import { AIInsightCard } from "@/components/AIInsightCard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ChartEmptyState } from "@/components/ui/chart-empty-state";
 
 const insightFeed = [
   {
@@ -156,6 +157,9 @@ const AIInsights = () => {
       {/* Insight Feed (Timeline) */}
       <div>
         <h2 className="text-xl font-bold text-foreground mb-4">Insight Feed</h2>
+        {insightFeed.length === 0 ? (
+          <ChartEmptyState variant="general" title="No insights yet" description="AI-generated insights will appear here as they are detected" className="min-h-[200px]" />
+        ) : (
         <div className="space-y-3">
           {insightFeed.map((insight) => {
             const typeColors = {
@@ -245,6 +249,7 @@ const AIInsights = () => {
             );
           })}
         </div>
+        )}
       </div>
     </main>
   );

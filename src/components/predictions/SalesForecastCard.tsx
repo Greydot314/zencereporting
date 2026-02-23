@@ -4,6 +4,7 @@ import { TrendingUp, TrendingDown, Target, Calendar, Lightbulb, RefreshCw } from
 import { ForecastData } from "@/types/predictions";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { AnimatedCurrency, AnimatedPercentage, AnimatedNumber } from "@/components/ui/animated-number";
+import { ChartEmptyState } from "@/components/ui/chart-empty-state";
 
 interface SalesForecastCardProps {
   data: ForecastData;
@@ -77,6 +78,9 @@ export const SalesForecastCard = ({ data }: SalesForecastCardProps) => {
         </div>
 
         {/* Daily Forecast Chart */}
+        {(!data.dailyForecast || data.dailyForecast.length === 0) ? (
+          <ChartEmptyState variant="line" title="No forecast data" description="Daily forecast data will appear here once available" />
+        ) : (
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data.dailyForecast}>
@@ -118,9 +122,10 @@ export const SalesForecastCard = ({ data }: SalesForecastCardProps) => {
                 strokeWidth={2}
                 fill="url(#forecastGradient)" 
               />
-            </AreaChart>
+          </AreaChart>
           </ResponsiveContainer>
         </div>
+        )}
 
         {/* Drivers & Seasonality */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -4,6 +4,7 @@ import { DollarSign, TrendingUp, TrendingDown, Target, RefreshCw, Lightbulb, Use
 import { CLVData } from "@/types/predictions";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { AnimatedCurrency, AnimatedPercentage, AnimatedNumber } from "@/components/ui/animated-number";
+import { ChartEmptyState } from "@/components/ui/chart-empty-state";
 
 interface CLVPredictionCardProps {
   data: CLVData;
@@ -72,6 +73,9 @@ export const CLVPredictionCard = ({ data }: CLVPredictionCardProps) => {
         </div>
 
         {/* CLV by Tier Chart */}
+        {(!chartData || chartData.length === 0) ? (
+          <ChartEmptyState variant="bar" title="No CLV data" description="CLV tier predictions will appear here" className="h-48" />
+        ) : (
         <div className="h-48">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} layout="vertical">
@@ -94,6 +98,7 @@ export const CLVPredictionCard = ({ data }: CLVPredictionCardProps) => {
             </BarChart>
           </ResponsiveContainer>
         </div>
+        )}
 
         {/* Tier Details */}
         <div className="space-y-3">

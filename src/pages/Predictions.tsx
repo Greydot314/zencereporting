@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, TrendingUp } from "lucide-react";
+import { RefreshCw, TrendingUp, ToggleLeft, ToggleRight } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { SalesForecastCard } from "@/components/predictions/SalesForecastCard";
 import { ChurnPredictionCard } from "@/components/predictions/ChurnPredictionCard";
 import { CLVPredictionCard } from "@/components/predictions/CLVPredictionCard";
@@ -14,7 +16,15 @@ import {
   mockDecisionImpactRadarData
 } from "@/data/predictionsMockData";
 
+const emptyForecastData = { ...mockForecastData, dailyForecast: [], predictions: [] };
+const emptyChurnData = { ...mockChurnData, segments: [], riskDistribution: [] };
+const emptyCLVData = { ...mockCLVData, tiers: [] };
+const emptyProductDemandData = { ...mockProductDemandData, products: [] };
+const emptyRadarData = { ...mockDecisionImpactRadarData, scenarios: [] };
+
 const Predictions = () => {
+  const [showEmpty, setShowEmpty] = useState(false);
+
   return (
     <main className="flex-1 overflow-auto bg-background pt-20">
       <div className="p-6 md:p-8 pt-12 max-w-[1600px] mx-auto space-y-10">
@@ -31,15 +41,21 @@ const Predictions = () => {
               </p>
             </div>
           </div>
-          <Button variant="outline" size="sm" className="gap-2">
-            <RefreshCw className="h-4 w-4" />
-            Refresh All Predictions
-          </Button>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border bg-muted/30 text-xs">
+              <span className="text-muted-foreground">Empty States</span>
+              <Switch checked={showEmpty} onCheckedChange={setShowEmpty} />
+            </div>
+            <Button variant="outline" size="sm" className="gap-2">
+              <RefreshCw className="h-4 w-4" />
+              Refresh All Predictions
+            </Button>
+          </div>
         </div>
 
         {/* Sales Forecast - Full Width */}
         <div className="p-6 rounded-xl bg-secondary/10 border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
-          <SalesForecastCard data={mockForecastData} />
+          <SalesForecastCard data={showEmpty ? emptyForecastData : mockForecastData} />
         </div>
 
         <div className="h-px bg-border" />
@@ -47,10 +63,10 @@ const Predictions = () => {
         {/* Churn & CLV Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 p-6 rounded-xl bg-secondary/10 border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
-            <ChurnPredictionCard data={mockChurnData} />
+            <ChurnPredictionCard data={showEmpty ? emptyChurnData : mockChurnData} />
           </div>
           <div className="p-6 rounded-xl bg-secondary/10 border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
-            <CLVPredictionCard data={mockCLVData} />
+            <CLVPredictionCard data={showEmpty ? emptyCLVData : mockCLVData} />
           </div>
         </div>
 
@@ -62,7 +78,7 @@ const Predictions = () => {
             <CustomerActivityCard />
           </div>
           <div className="p-6 rounded-xl bg-secondary/10 border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
-            <ProductDemandCard data={mockProductDemandData} />
+            <ProductDemandCard data={showEmpty ? emptyProductDemandData : mockProductDemandData} />
           </div>
         </div>
 
@@ -70,7 +86,7 @@ const Predictions = () => {
 
         {/* Decision Impact Radar - Full Width */}
         <div className="p-6 rounded-xl bg-secondary/10 border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
-          <DecisionImpactRadar data={mockDecisionImpactRadarData} />
+          <DecisionImpactRadar data={showEmpty ? emptyRadarData : mockDecisionImpactRadarData} />
         </div>
       </div>
     </main>

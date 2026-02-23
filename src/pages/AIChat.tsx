@@ -297,7 +297,7 @@ const AIChat = () => {
       </div>
 
       {/* Right: Workspace */}
-      <div className="w-80 xl:w-96 flex flex-col bg-background shrink-0 hidden lg:flex">
+      <div className="w-80 xl:w-96 flex-col bg-background shrink-0 hidden xl:flex">
         <WorkspacePanel agentId={activeAgentId} widgets={activeWidgets} />
       </div>
     </div>

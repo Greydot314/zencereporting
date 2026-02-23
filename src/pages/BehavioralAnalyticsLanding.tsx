@@ -1,27 +1,13 @@
-import { useState } from "react";
 import {
-  MousePointerClick, Search, Eye, ShoppingCart, ArrowRight, CheckCircle2,
-  Send, BarChart3, Activity, Layers, Waypoints, Fingerprint,
+  MousePointerClick, Search, Eye, ShoppingCart, ArrowRight,
+  BarChart3, Activity, Layers, Waypoints, Fingerprint,
   TrendingUp, Filter, Globe, Plug
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
 
 const BehavioralAnalyticsLanding = () => {
-  const [requestSent, setRequestSent] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-
-  const handleRequestAccess = () => {
-    if (!formData.name || !formData.email) {
-      toast.error("Please fill in your name and email");
-      return;
-    }
-    setRequestSent(true);
-    toast.success("Access request submitted successfully! Our team will contact you within 24 hours.");
-  };
 
   const features = [
     {
@@ -111,11 +97,8 @@ const BehavioralAnalyticsLanding = () => {
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 pt-4">
-            <Button size="lg" className="gap-2 bg-[hsl(var(--atlas-primary))] hover:bg-[hsl(var(--atlas-primary))]/90 text-white" onClick={() => document.getElementById("request-form")?.scrollIntoView({ behavior: "smooth" })}>
-              Request Access <ArrowRight className="h-4 w-4" />
-            </Button>
-            <Button size="lg" variant="outline" className="gap-2" onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}>
-              Explore Features
+            <Button size="lg" className="gap-2 bg-[hsl(var(--atlas-primary))] hover:bg-[hsl(var(--atlas-primary))]/90 text-white" onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}>
+              Explore Features <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -262,51 +245,6 @@ const BehavioralAnalyticsLanding = () => {
         </div>
       </section>
 
-      {/* Request Access Form */}
-      <section id="request-form" className="px-6 py-16">
-        <div className="max-w-lg mx-auto">
-          <Card className="border-[hsl(var(--atlas-primary))]/20 shadow-lg">
-            <CardHeader className="text-center">
-              <div className="h-12 w-12 rounded-xl bg-[hsl(var(--atlas-primary))]/10 flex items-center justify-center text-[hsl(var(--atlas-primary))] mx-auto mb-2">
-                <Activity className="h-6 w-6" />
-              </div>
-              <CardTitle className="text-xl">Connect with Your Account Manager</CardTitle>
-              <CardDescription>
-                Reach out to your account manager to activate Behavioral Analytics and integrate with your e-commerce portal.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {requestSent ? (
-                <div className="text-center py-8 space-y-3">
-                  <CheckCircle2 className="h-12 w-12 text-[hsl(var(--atlas-success))] mx-auto" />
-                  <h3 className="font-semibold text-foreground">Request Submitted!</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Our team will review your request and contact you at <strong>{formData.email}</strong> within 24 hours to start integration.
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Full Name *</label>
-                    <Input placeholder="Enter your name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Work Email *</label>
-                    <Input type="email" placeholder="you@company.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">E-Commerce Platform</label>
-                    <Input placeholder="e.g. Shopify, Magento, Custom..." value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} />
-                  </div>
-                  <Button className="w-full gap-2 bg-[hsl(var(--atlas-primary))] hover:bg-[hsl(var(--atlas-primary))]/90 text-white" size="lg" onClick={handleRequestAccess}>
-                    <Send className="h-4 w-4" /> Submit Request
-                  </Button>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </section>
     </main>
   );
 };

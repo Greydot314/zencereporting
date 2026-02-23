@@ -4,6 +4,7 @@ import { UserMinus, AlertTriangle, Shield, Clock, Target, RefreshCw, ArrowRight 
 import { ChurnData } from "@/types/predictions";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 import { AnimatedNumber, AnimatedCurrency } from "@/components/ui/animated-number";
+import { ChartEmptyState } from "@/components/ui/chart-empty-state";
 
 interface ChurnPredictionCardProps {
   data: ChurnData;
@@ -93,39 +94,48 @@ export const ChurnPredictionCard = ({ data }: ChurnPredictionCardProps) => {
           {/* Risk Distribution Pie */}
           <div className="flex flex-col items-center">
             <h4 className="text-sm font-medium mb-2">Risk Distribution</h4>
-            <div className="h-40 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={riskDistribution}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={40}
-                    outerRadius={60}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
-                    {riskDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value: number) => value.toLocaleString()} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="flex gap-4 text-xs mt-2">
-              {riskDistribution.map((item) => (
-                <div key={item.name} className="flex items-center gap-1">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="text-muted-foreground">{item.name}</span>
+            {riskDistribution.every(r => r.value === 0) ? (
+              <ChartEmptyState variant="pie" title="No risk data" description="Risk distribution will appear here" className="h-40 w-full" />
+            ) : (
+              <>
+                <div className="h-40 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={riskDistribution}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={40}
+                        outerRadius={60}
+                        paddingAngle={2}
+                        dataKey="value"
+                      >
+                        {riskDistribution.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value: number) => value.toLocaleString()} />
+                    </PieChart>
+                  </ResponsiveContainer>
                 </div>
-              ))}
-            </div>
+                <div className="flex gap-4 text-xs mt-2">
+                  {riskDistribution.map((item) => (
+                    <div key={item.name} className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+                      <span className="text-muted-foreground">{item.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Churn Timeline */}
           <div className="lg:col-span-2">
             <h4 className="text-sm font-medium mb-2">Predicted Churn Timeline</h4>
+            {(!data.timeline || data.timeline.length === 0) ? (
+              <ChartEmptyState variant="bar" title="No timeline data" description="Churn timeline predictions will appear here" className="h-40" />
+            ) : (
             <div className="h-40">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data.timeline}>
@@ -143,6 +153,7 @@ export const ChurnPredictionCard = ({ data }: ChurnPredictionCardProps) => {
                 </BarChart>
               </ResponsiveContainer>
             </div>
+            )}
           </div>
         </div>
 

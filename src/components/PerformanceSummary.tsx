@@ -1,5 +1,6 @@
 import { TrendingUp, TrendingDown, Users, CreditCard, Target, Percent } from "lucide-react";
 import { AnimatedNumber, AnimatedPercentage, AnimatedCurrency } from "@/components/ui/animated-number";
+import { ChartEmptyState } from "@/components/ui/chart-empty-state";
 
 interface StatCardProps {
   title: string;
@@ -118,9 +119,15 @@ export const PerformanceSummary = () => {
         <h3 className="text-base font-medium text-foreground">Performance Summary</h3>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-        {stats.map((stat, index) => (
-          <StatCard key={stat.title} {...stat} delay={index * 100} />
-        ))}
+        {stats.length === 0 ? (
+          <div className="col-span-full">
+            <ChartEmptyState variant="bar" title="No performance data" description="KPI metrics will appear here once data is available" />
+          </div>
+        ) : (
+          stats.map((stat, index) => (
+            <StatCard key={stat.title} {...stat} delay={index * 100} />
+          ))
+        )}
       </div>
     </section>
   );

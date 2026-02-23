@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { UserPlus, Users, ShoppingCart, TrendingUp, TrendingDown, RefreshCw, Activity, Repeat } from "lucide-react";
 import { AnimatedNumber, AnimatedPercentage } from "@/components/ui/animated-number";
+import { ChartEmptyState } from "@/components/ui/chart-empty-state";
 
 interface CustomerActivityData {
   registrations: {
@@ -157,6 +158,9 @@ export const CustomerActivityCard = ({ data = mockCustomerActivityData }: Partia
             <Users className="h-4 w-4 text-primary" />
             Customer Segment Activity
           </h4>
+          {(!data.segments || data.segments.length === 0) ? (
+            <ChartEmptyState variant="table" title="No segment data" description="Customer segment activity will appear here" />
+          ) : (
           <div className="space-y-2">
             {data.segments.map((segment, index) => (
               <div 
@@ -187,6 +191,7 @@ export const CustomerActivityCard = ({ data = mockCustomerActivityData }: Partia
               </div>
             ))}
           </div>
+          )}
         </div>
 
         {/* Conversion Funnel Summary */}

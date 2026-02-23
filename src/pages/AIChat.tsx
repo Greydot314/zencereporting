@@ -11,20 +11,8 @@ import { FollowUpSuggestions } from "@/components/ai-chat/FollowUpSuggestions";
 import { Agent, AgentId, AgentMessage, WorkspaceWidget } from "@/types/agents";
 import {
   agents as defaultAgents,
-  dataAgentConversation,
-  dataWorkspaceWidgets,
-  campaignAgentConversation,
-  campaignWorkspaceWidgets,
-  productAgentConversation,
-  productWorkspaceWidgets,
-  toolActions,
+  matchScenario,
 } from "@/data/agentMockData";
-
-const scenarioMap: Record<AgentId, { messages: AgentMessage[]; widgets: WorkspaceWidget[] }> = {
-  data: { messages: dataAgentConversation, widgets: dataWorkspaceWidgets },
-  campaign: { messages: campaignAgentConversation, widgets: campaignWorkspaceWidgets },
-  product: { messages: productAgentConversation, widgets: productWorkspaceWidgets },
-};
 
 const agentColors: Record<AgentId, string> = {
   data: "agent-data",
@@ -49,6 +37,7 @@ const AIChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showToolActions, setShowToolActions] = useState(false);
   const [toolCompletedCount, setToolCompletedCount] = useState(0);
+  const [activeToolActions, setActiveToolActions] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const activeMessages = conversations[activeAgentId];
@@ -67,8 +56,8 @@ const AIChat = () => {
     setAgents((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
   };
 
-  const simulateAgentResponse = (agentId: AgentId) => {
-    const scenario = scenarioMap[agentId];
+  const simulateAgentResponse = (agentId: AgentId, userQuery: string) => {
+    const scenario = matchScenario(agentId, userQuery);
     const agentResponse = scenario.messages.find((m) => m.role === "agent");
     if (!agentResponse) return;
 
@@ -76,7 +65,8 @@ const AIChat = () => {
     setShowToolActions(true);
     setToolCompletedCount(0);
 
-    const actions = toolActions[agentId];
+    const actions = scenario.tools;
+    setActiveToolActions(actions);
     let step = 0;
 
     const toolInterval = setInterval(() => {
@@ -161,7 +151,7 @@ const AIChat = () => {
     setInput("");
     setIsLoading(true);
 
-    setTimeout(() => simulateAgentResponse(activeAgentId), 400);
+    setTimeout(() => simulateAgentResponse(activeAgentId, input), 400);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -183,9 +173,9 @@ const AIChat = () => {
 
   // Quick prompts per agent
   const quickPrompts: Record<AgentId, string[]> = {
-    data: ["Analyze last quarter revenue", "Show customer segments", "Top performing products"],
+    data: ["Analyze last quarter revenue", "Show fraud patterns", "Show customer segments", "Analyze customer sentiment"],
     campaign: ["Optimize Diwali campaign", "Compare channel ROI", "Audience segmentation insights"],
-    product: ["How does CRM integration work?", "Show API documentation", "Feature comparison"],
+    product: ["How does CRM integration work?", "Feature comparison", "Show API documentation"],
   };
 
   return (
@@ -239,7 +229,7 @@ const AIChat = () => {
                     <div className="w-8 h-8" /> {/* spacer for alignment */}
                     <div className="flex-1">
                       <ToolActionMessage
-                        actions={toolActions[activeAgentId]}
+                        actions={activeToolActions}
                         completedCount={toolCompletedCount}
                         colorVar={agentColors[activeAgentId]}
                       />

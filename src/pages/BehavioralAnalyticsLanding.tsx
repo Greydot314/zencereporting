@@ -270,9 +270,9 @@ const BehavioralAnalyticsLanding = () => {
               <div className="h-12 w-12 rounded-xl bg-[hsl(var(--atlas-primary))]/10 flex items-center justify-center text-[hsl(var(--atlas-primary))] mx-auto mb-2">
                 <Activity className="h-6 w-6" />
               </div>
-              <CardTitle className="text-xl">Request Module Activation</CardTitle>
+              <CardTitle className="text-xl">Connect with Your Account Manager</CardTitle>
               <CardDescription>
-                Submit your request and our team will help you integrate Behavioral Analytics with your e-commerce portal.
+                Reach out to your account manager to activate Behavioral Analytics and integrate with your e-commerce portal.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

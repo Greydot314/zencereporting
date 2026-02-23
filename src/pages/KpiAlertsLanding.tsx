@@ -254,9 +254,9 @@ const KpiAlertsLanding = () => {
               <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mx-auto mb-2">
                 <Bell className="h-6 w-6" />
               </div>
-              <CardTitle className="text-xl">Request Module Activation</CardTitle>
+              <CardTitle className="text-xl">Connect with Your Account Manager</CardTitle>
               <CardDescription>
-                Submit your request and our team will set up KPI Alerts for your organization within 24 hours.
+                Reach out to your account manager to activate KPI Alerts for your organization.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

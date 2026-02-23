@@ -262,9 +262,9 @@ const FraudLanding = () => {
               <div className="h-12 w-12 rounded-xl bg-destructive/10 flex items-center justify-center text-destructive mx-auto mb-2">
                 <ShieldCheck className="h-6 w-6" />
               </div>
-              <CardTitle className="text-xl">Request Module Activation</CardTitle>
+              <CardTitle className="text-xl">Connect with Your Account Manager</CardTitle>
               <CardDescription>
-                Submit your request and our team will get back to you within 24 hours to set up Fraud Sentinel for your organization.
+                Reach out to your account manager to activate Fraud Sentinel for your organization.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

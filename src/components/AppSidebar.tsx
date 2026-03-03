@@ -111,9 +111,13 @@ const modules: ModuleItem[] = [
     icon: TrendingUp, 
     aiStatus: "normal",
     subItems: [
-      { title: "Segment Builder", url: "/module/segcon/builder" },
-      { title: "Audience Insights", url: "/module/segcon/audience" },
-      { title: "Conversion Funnels", url: "/module/segcon/funnels" },
+      { title: "Home", url: "/module/segcon" },
+      { title: "Segment", url: "/module/segcon/segments" },
+      { title: "Import", url: "/module/segcon/import" },
+      { title: "Look-a-Like", url: "/module/segcon/lookalike" },
+      { title: "Archive", url: "/module/segcon/archive" },
+      { title: "Split Segment", url: "/module/segcon/split" },
+      { title: "Glossary", url: "/module/segcon/glossary" },
     ]
   },
   { 

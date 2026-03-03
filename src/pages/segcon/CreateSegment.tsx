@@ -5,14 +5,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
-  Plus, Trash2, Info, Users, ChevronDown, ChevronRight, Calendar, Hash, Type, ToggleLeft,
-  Loader2, Eye, Save, ArrowLeft, Filter, X
+  Plus, Trash2, Users, ChevronDown, ChevronRight, Calendar, Hash, Type, ToggleLeft,
+  Loader2, Eye, Save, ArrowLeft, Filter, X, UserRound, BarChart3, Wallet, RefreshCw,
+  Search
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+// ── Category Icons ──
+const categoryIcons: Record<string, React.ReactNode> = {
+  demographics: <UserRound className="h-4 w-4" />,
+  behavioral: <BarChart3 className="h-4 w-4" />,
+  transactional: <Wallet className="h-4 w-4" />,
+  lifecycle: <RefreshCw className="h-4 w-4" />,
+};
 
 // ── 3-Level Tag Hierarchy ──
 interface TagAttribute {
@@ -20,7 +28,7 @@ interface TagAttribute {
   name: string;
   definition: string;
   filterType: "dropdown" | "date" | "date_range" | "number_range" | "text" | "boolean" | "date_dropdown";
-  options?: string[]; // for dropdown/date_dropdown
+  options?: string[];
 }
 
 interface TagSubCategory {
@@ -120,16 +128,20 @@ const tagHierarchy: TagCategory[] = [
 ];
 
 // ── Filter Rule ──
+type ConditionType = "AND" | "OR" | "AND NOT";
+
 interface FilterRule {
   id: string;
   attributeId: string;
   attributeName: string;
+  categoryId: string;
   categoryName: string;
   filterType: TagAttribute["filterType"];
   operator: string;
   value: string;
-  valueTo?: string; // for ranges
+  valueTo?: string;
   options?: string[];
+  condition: ConditionType; // condition linking to previous rule
 }
 
 const operatorsByType: Record<string, string[]> = {
@@ -149,12 +161,12 @@ const CreateSegment = () => {
   const [segmentName, setSegmentName] = useState("");
   const [segmentDescription, setSegmentDescription] = useState("");
   const [rules, setRules] = useState<FilterRule[]>([]);
-  const [logicOperator, setLogicOperator] = useState<"AND" | "OR">("AND");
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [expandedSubCats, setExpandedSubCats] = useState<string[]>([]);
   const [isCountLoading, setIsCountLoading] = useState(false);
   const [estimatedCount, setEstimatedCount] = useState<number | null>(null);
   const [showAttributePicker, setShowAttributePicker] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const toggleCategory = (id: string) => {
     setExpandedCategories(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
@@ -164,19 +176,22 @@ const CreateSegment = () => {
     setExpandedSubCats(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
   };
 
-  const addRule = (attr: TagAttribute, catName: string) => {
+  const addRule = (attr: TagAttribute, cat: TagCategory) => {
     const newRule: FilterRule = {
       id: `rule_${++ruleIdCounter}`,
       attributeId: attr.id,
       attributeName: attr.name,
-      categoryName: catName,
+      categoryId: cat.id,
+      categoryName: cat.name,
       filterType: attr.filterType,
       operator: operatorsByType[attr.filterType]?.[0] || "is",
       value: "",
       options: attr.options,
+      condition: rules.length === 0 ? "AND" : "AND",
     };
     setRules(prev => [...prev, newRule]);
     setShowAttributePicker(false);
+    setSearchQuery("");
     setEstimatedCount(null);
   };
 
@@ -193,7 +208,6 @@ const CreateSegment = () => {
   const fetchRealtimeCount = useCallback(() => {
     if (rules.length === 0) return;
     setIsCountLoading(true);
-    // Simulated count fetch
     setTimeout(() => {
       const base = 151250;
       const variation = Math.floor(Math.random() * 80000) - 40000;
@@ -202,13 +216,44 @@ const CreateSegment = () => {
     }, 1500);
   }, [rules]);
 
+  const filterTypeIcon = (type: TagAttribute["filterType"]) => {
+    switch (type) {
+      case "dropdown": case "date_dropdown": return <Filter className="h-3.5 w-3.5" />;
+      case "date": case "date_range": return <Calendar className="h-3.5 w-3.5" />;
+      case "number_range": return <Hash className="h-3.5 w-3.5" />;
+      case "text": return <Type className="h-3.5 w-3.5" />;
+      case "boolean": return <ToggleLeft className="h-3.5 w-3.5" />;
+      default: return null;
+    }
+  };
+
+  const conditionColors: Record<ConditionType, string> = {
+    "AND": "bg-emerald-500/15 text-emerald-700 border-emerald-500/30",
+    "OR": "bg-amber-500/15 text-amber-700 border-amber-500/30",
+    "AND NOT": "bg-red-500/15 text-red-700 border-red-500/30",
+  };
+
+  // Filter hierarchy by search
+  const filteredHierarchy = searchQuery.trim()
+    ? tagHierarchy.map(cat => ({
+        ...cat,
+        subCategories: cat.subCategories.map(sub => ({
+          ...sub,
+          attributes: sub.attributes.filter(attr =>
+            attr.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            attr.definition.toLowerCase().includes(searchQuery.toLowerCase())
+          ),
+        })).filter(sub => sub.attributes.length > 0),
+      })).filter(cat => cat.subCategories.length > 0)
+    : tagHierarchy;
+
   const renderFilterInput = (rule: FilterRule) => {
     switch (rule.filterType) {
       case "dropdown":
       case "date_dropdown":
         return (
           <Select value={rule.value} onValueChange={(v) => updateRule(rule.id, { value: v })}>
-            <SelectTrigger className="h-9 text-sm min-w-[160px]">
+            <SelectTrigger className="h-9 text-sm min-w-[180px]">
               <SelectValue placeholder="Select value" />
             </SelectTrigger>
             <SelectContent>
@@ -220,42 +265,37 @@ const CreateSegment = () => {
         );
       case "date":
         return (
-          <Input
-            type="date"
-            value={rule.value}
-            onChange={(e) => updateRule(rule.id, { value: e.target.value })}
-            className="h-9 text-sm min-w-[160px]"
-          />
+          <Input type="date" value={rule.value} onChange={(e) => updateRule(rule.id, { value: e.target.value })} className="h-9 text-sm min-w-[180px]" />
         );
       case "date_range":
         return (
           <div className="flex items-center gap-2">
-            <Input type="date" value={rule.value} onChange={(e) => updateRule(rule.id, { value: e.target.value })} className="h-9 text-sm w-[140px]" />
-            <span className="text-xs text-muted-foreground">to</span>
-            <Input type="date" value={rule.valueTo || ""} onChange={(e) => updateRule(rule.id, { valueTo: e.target.value })} className="h-9 text-sm w-[140px]" />
+            <Input type="date" value={rule.value} onChange={(e) => updateRule(rule.id, { value: e.target.value })} className="h-9 text-sm w-[150px]" />
+            <span className="text-xs text-muted-foreground font-medium">to</span>
+            <Input type="date" value={rule.valueTo || ""} onChange={(e) => updateRule(rule.id, { valueTo: e.target.value })} className="h-9 text-sm w-[150px]" />
           </div>
         );
       case "number_range":
         if (rule.operator === "between") {
           return (
             <div className="flex items-center gap-2">
-              <Input type="number" placeholder="Min" value={rule.value} onChange={(e) => updateRule(rule.id, { value: e.target.value })} className="h-9 text-sm w-[100px]" />
-              <span className="text-xs text-muted-foreground">to</span>
-              <Input type="number" placeholder="Max" value={rule.valueTo || ""} onChange={(e) => updateRule(rule.id, { valueTo: e.target.value })} className="h-9 text-sm w-[100px]" />
+              <Input type="number" placeholder="Min" value={rule.value} onChange={(e) => updateRule(rule.id, { value: e.target.value })} className="h-9 text-sm w-[110px]" />
+              <span className="text-xs text-muted-foreground font-medium">to</span>
+              <Input type="number" placeholder="Max" value={rule.valueTo || ""} onChange={(e) => updateRule(rule.id, { valueTo: e.target.value })} className="h-9 text-sm w-[110px]" />
             </div>
           );
         }
         return (
-          <Input type="number" placeholder="Value" value={rule.value} onChange={(e) => updateRule(rule.id, { value: e.target.value })} className="h-9 text-sm min-w-[120px]" />
+          <Input type="number" placeholder="Value" value={rule.value} onChange={(e) => updateRule(rule.id, { value: e.target.value })} className="h-9 text-sm min-w-[140px]" />
         );
       case "text":
         return (
-          <Input placeholder="Enter value" value={rule.value} onChange={(e) => updateRule(rule.id, { value: e.target.value })} className="h-9 text-sm min-w-[160px]" />
+          <Input placeholder="Enter value" value={rule.value} onChange={(e) => updateRule(rule.id, { value: e.target.value })} className="h-9 text-sm min-w-[180px]" />
         );
       case "boolean":
         return (
           <Select value={rule.value || "true"} onValueChange={(v) => updateRule(rule.id, { value: v })}>
-            <SelectTrigger className="h-9 text-sm w-[100px]">
+            <SelectTrigger className="h-9 text-sm w-[110px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -266,17 +306,6 @@ const CreateSegment = () => {
         );
       default:
         return null;
-    }
-  };
-
-  const filterTypeIcon = (type: TagAttribute["filterType"]) => {
-    switch (type) {
-      case "dropdown": case "date_dropdown": return <Filter className="h-3 w-3" />;
-      case "date": case "date_range": return <Calendar className="h-3 w-3" />;
-      case "number_range": return <Hash className="h-3 w-3" />;
-      case "text": return <Type className="h-3 w-3" />;
-      case "boolean": return <ToggleLeft className="h-3 w-3" />;
-      default: return null;
     }
   };
 
@@ -322,116 +351,156 @@ const CreateSegment = () => {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base font-semibold">Segment Rules</CardTitle>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">Match</span>
-                <Select value={logicOperator} onValueChange={(v) => setLogicOperator(v as "AND" | "OR")}>
-                  <SelectTrigger className="h-8 w-[80px] text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="AND">ALL</SelectItem>
-                    <SelectItem value="OR">ANY</SelectItem>
-                  </SelectContent>
-                </Select>
-                <span className="text-xs text-muted-foreground">of the following rules</span>
-              </div>
+              <p className="text-xs text-muted-foreground">
+                {rules.length} {rules.length === 1 ? "rule" : "rules"} applied
+              </p>
             </div>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-0">
             {rules.length === 0 && (
-              <div className="text-center py-10 text-muted-foreground">
-                <Filter className="h-8 w-8 mx-auto mb-2 opacity-40" />
-                <p className="text-sm">No rules added yet. Click "Add Filter" to start building your segment.</p>
+              <div className="text-center py-12 text-muted-foreground">
+                <Filter className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                <p className="text-sm font-medium">No rules added yet</p>
+                <p className="text-xs mt-1">Click "Add Filter" to start building your segment.</p>
               </div>
             )}
 
             {rules.map((rule, idx) => (
-              <div key={rule.id} className="flex items-center gap-2 flex-wrap p-3 rounded-lg bg-muted/50 border border-border">
+              <div key={rule.id}>
+                {/* ── Condition Connector ── */}
                 {idx > 0 && (
-                  <Badge variant="secondary" className="text-[10px] font-semibold mr-1">{logicOperator}</Badge>
+                  <div className="flex items-center justify-center py-2">
+                    <div className="h-4 border-l border-border" />
+                    <Select
+                      value={rule.condition}
+                      onValueChange={(v) => updateRule(rule.id, { condition: v as ConditionType })}
+                    >
+                      <SelectTrigger className={`h-7 w-[110px] text-xs font-bold border rounded-full mx-2 ${conditionColors[rule.condition]}`}>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="AND">AND</SelectItem>
+                        <SelectItem value="OR">OR</SelectItem>
+                        <SelectItem value="AND NOT">AND NOT</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <div className="h-4 border-l border-border" />
+                  </div>
                 )}
-                <Badge variant="outline" className="text-[10px]">{rule.categoryName}</Badge>
-                <span className="text-sm font-medium text-foreground">{rule.attributeName}</span>
 
-                {/* Operator */}
-                <Select value={rule.operator} onValueChange={(v) => updateRule(rule.id, { operator: v, value: "", valueTo: "" })}>
-                  <SelectTrigger className="h-8 w-[130px] text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {operatorsByType[rule.filterType]?.map(op => (
-                      <SelectItem key={op} value={op}>{op}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {/* ── Rule Card ── */}
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-muted/40 border border-border hover:border-primary/20 transition-colors">
+                  {/* Category Icon */}
+                  <div className="flex-shrink-0 mt-0.5 h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                    {categoryIcons[rule.categoryId] || <Filter className="h-4 w-4" />}
+                  </div>
 
-                {/* Value input */}
-                {renderFilterInput(rule)}
+                  {/* Rule Content */}
+                  <div className="flex-1 min-w-0 space-y-2.5">
+                    {/* Top row: attribute info */}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-semibold text-foreground">{rule.attributeName}</span>
+                      <Badge variant="outline" className="text-[11px] font-normal px-2 py-0">
+                        {rule.categoryName}
+                      </Badge>
+                    </div>
 
-                {/* Remove */}
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive ml-auto" onClick={() => removeRule(rule.id)}>
-                  <X className="h-4 w-4" />
-                </Button>
+                    {/* Bottom row: operator + value */}
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <Select value={rule.operator} onValueChange={(v) => updateRule(rule.id, { operator: v, value: "", valueTo: "" })}>
+                        <SelectTrigger className="h-9 w-[150px] text-sm">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {operatorsByType[rule.filterType]?.map(op => (
+                            <SelectItem key={op} value={op}>{op}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {renderFilterInput(rule)}
+                    </div>
+                  </div>
+
+                  {/* Remove */}
+                  <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0 text-muted-foreground hover:text-destructive" onClick={() => removeRule(rule.id)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             ))}
 
-            {/* Add Filter Button with Attribute Picker */}
-            <Popover open={showAttributePicker} onOpenChange={setShowAttributePicker}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-1.5 mt-2">
-                  <Plus className="h-4 w-4" /> Add Filter
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[400px] p-0 max-h-[420px] overflow-auto" align="start">
-                <div className="p-3 border-b border-border">
-                  <p className="text-sm font-semibold text-foreground">Select Attribute</p>
-                  <p className="text-xs text-muted-foreground">Browse the hierarchy or search</p>
-                </div>
-                <div className="p-2 space-y-0.5">
-                  {tagHierarchy.map((cat) => (
-                    <Collapsible key={cat.id} open={expandedCategories.includes(cat.id)}>
-                      <CollapsibleTrigger
-                        className="flex items-center gap-2 w-full px-2 py-2 rounded-md hover:bg-muted text-left text-sm font-medium text-foreground"
-                        onClick={() => toggleCategory(cat.id)}
-                      >
-                        <span>{cat.icon}</span>
-                        <span className="flex-1">{cat.name}</span>
-                        {expandedCategories.includes(cat.id) ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="pl-6 space-y-0.5">
-                        {cat.subCategories.map((sub) => (
-                          <Collapsible key={sub.id} open={expandedSubCats.includes(sub.id)}>
-                            <CollapsibleTrigger
-                              className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md hover:bg-muted text-left text-xs font-medium text-muted-foreground"
-                              onClick={() => toggleSubCat(sub.id)}
-                            >
-                              <span className="flex-1">{sub.name}</span>
-                              {expandedSubCats.includes(sub.id) ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-                            </CollapsibleTrigger>
-                            <CollapsibleContent className="pl-4 space-y-0.5">
-                              {sub.attributes.map((attr) => (
-                                <button
-                                  key={attr.id}
-                                  className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md hover:bg-primary/10 text-left group"
-                                  onClick={() => addRule(attr, cat.name)}
-                                >
-                                  <span className="text-muted-foreground">{filterTypeIcon(attr.filterType)}</span>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-xs font-medium text-foreground">{attr.name}</p>
-                                    <p className="text-[10px] text-muted-foreground truncate">{attr.definition}</p>
-                                  </div>
-                                  <Plus className="h-3 w-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                                </button>
-                              ))}
-                            </CollapsibleContent>
-                          </Collapsible>
-                        ))}
-                      </CollapsibleContent>
-                    </Collapsible>
-                  ))}
-                </div>
-              </PopoverContent>
-            </Popover>
+            {/* Add Filter Button */}
+            <div className="pt-4">
+              <Popover open={showAttributePicker} onOpenChange={(open) => { setShowAttributePicker(open); if (!open) setSearchQuery(""); }}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-1.5">
+                    <Plus className="h-4 w-4" /> Add Filter
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[420px] p-0 max-h-[460px] flex flex-col" align="start">
+                  <div className="p-3 border-b border-border space-y-2">
+                    <p className="text-sm font-semibold text-foreground">Select Attribute</p>
+                    <div className="relative">
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                      <Input
+                        placeholder="Search attributes..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="h-8 pl-8 text-sm"
+                      />
+                    </div>
+                  </div>
+                  <div className="p-2 space-y-0.5 overflow-auto flex-1">
+                    {filteredHierarchy.length === 0 && (
+                      <p className="text-xs text-muted-foreground text-center py-6">No attributes match your search.</p>
+                    )}
+                    {filteredHierarchy.map((cat) => (
+                      <Collapsible key={cat.id} open={expandedCategories.includes(cat.id) || !!searchQuery.trim()}>
+                        <CollapsibleTrigger
+                          className="flex items-center gap-2.5 w-full px-2 py-2 rounded-md hover:bg-muted text-left text-sm font-medium text-foreground"
+                          onClick={() => toggleCategory(cat.id)}
+                        >
+                          <span className="h-6 w-6 rounded-md bg-primary/10 flex items-center justify-center text-primary">
+                            {categoryIcons[cat.id] || <Filter className="h-3.5 w-3.5" />}
+                          </span>
+                          <span className="flex-1">{cat.name}</span>
+                          {expandedCategories.includes(cat.id) || searchQuery.trim() ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="pl-8 space-y-0.5">
+                          {cat.subCategories.map((sub) => (
+                            <Collapsible key={sub.id} open={expandedSubCats.includes(sub.id) || !!searchQuery.trim()}>
+                              <CollapsibleTrigger
+                                className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md hover:bg-muted text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                                onClick={() => toggleSubCat(sub.id)}
+                              >
+                                <span className="flex-1">{sub.name}</span>
+                                {expandedSubCats.includes(sub.id) || searchQuery.trim() ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="pl-3 space-y-0.5">
+                                {sub.attributes.map((attr) => (
+                                  <button
+                                    key={attr.id}
+                                    className="flex items-center gap-2.5 w-full px-2 py-2 rounded-md hover:bg-primary/10 text-left group transition-colors"
+                                    onClick={() => addRule(attr, cat)}
+                                  >
+                                    <span className="text-muted-foreground">{filterTypeIcon(attr.filterType)}</span>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium text-foreground">{attr.name}</p>
+                                      <p className="text-xs text-muted-foreground truncate">{attr.definition}</p>
+                                    </div>
+                                    <Plus className="h-3.5 w-3.5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                                  </button>
+                                ))}
+                              </CollapsibleContent>
+                            </Collapsible>
+                          ))}
+                        </CollapsibleContent>
+                      </Collapsible>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
           </CardContent>
         </Card>
 

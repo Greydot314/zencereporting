@@ -42,9 +42,9 @@ const App = () => (
             path="/*"
             element={
               <SidebarProvider>
-                <div className="min-h-screen flex w-full bg-background">
+                <div className="min-h-screen flex w-full bg-background pt-16">
                   <AppSidebar />
-                  <div className="flex-1 flex flex-col">
+                  <div className="flex-1 flex flex-col overflow-hidden">
                     <Header />
                     <Routes>
                       <Route path="/" element={<Dashboard />} />

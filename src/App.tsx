@@ -20,6 +20,11 @@ import KpiAlertsLanding from "./pages/KpiAlertsLanding";
 import BehavioralAnalyticsLanding from "./pages/BehavioralAnalyticsLanding";
 import NotFound from "./pages/NotFound";
 
+// Segcon module pages
+import SegconLayout from "./pages/segcon/SegconLayout";
+import SegconHome from "./pages/segcon/SegconHome";
+import SegmentList from "./pages/segcon/SegmentList";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -53,6 +58,16 @@ const App = () => (
                       <Route path="/module-info/fraud" element={<FraudLanding />} />
                       <Route path="/module-info/kpi-alerts" element={<KpiAlertsLanding />} />
                       <Route path="/module-info/behavioral-analytics" element={<BehavioralAnalyticsLanding />} />
+                      {/* Segcon Module */}
+                      <Route path="/module/segcon" element={<SegconLayout />}>
+                        <Route index element={<SegconHome />} />
+                        <Route path="segments" element={<SegmentList />} />
+                        <Route path="import" element={<SegconHome />} />
+                        <Route path="lookalike" element={<SegconHome />} />
+                        <Route path="archive" element={<SegconHome />} />
+                        <Route path="split" element={<SegconHome />} />
+                        <Route path="glossary" element={<SegconHome />} />
+                      </Route>
                       <Route path="/settings" element={<Dashboard />} />
                       <Route path="/help" element={<Dashboard />} />
                       <Route path="*" element={<NotFound />} />

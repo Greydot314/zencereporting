@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, Plus, Archive, MoreVertical, RefreshCw, Download, Globe, ChevronDown, Smartphone, Mail, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +52,7 @@ const mockSegments: Segment[] = [
 ];
 
 const SegmentList = () => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("creation");
   const [filterType, setFilterType] = useState("all");
@@ -68,7 +70,7 @@ const SegmentList = () => {
         {/* Page Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">Segment</h1>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={() => navigate("/module/segcon/segments/create")}>
             <Plus className="h-4 w-4" /> Create New Segment
           </Button>
         </div>

@@ -1,12 +1,9 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info, TrendingUp, TrendingDown, Users, Layers, Crown, ArrowRight } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip } from "recharts";
+import { Info, TrendingUp, TrendingDown, Users, Layers, Crown, ArrowRight, BarChart3, Target, Zap, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 // ── Lifecycle Treemap Data ──
 const lifecycleData = [
@@ -32,27 +29,21 @@ const lifecycleData = [
   ]},
 ];
 
-const segmentTabs = [
-  "Stable-Low", "Stable-Medium", "Stable-High", "Declining-Medium", "Declining-High",
-  "Grow-Low", "New-Potential_To_Grow", "Lapsed-Lapsed", "Grow-Medium",
-  "New-Potential_To_Decline", "Declining-Low", "Grow-High", "New-Already_Stable"
+// ── KPI Data ──
+const kpiCards = [
+  { label: "Total Customers", value: "12.1M", change: "+3.2%", trend: "up" as const, icon: Users },
+  { label: "Active Segments", value: "47", change: "+5", trend: "up" as const, icon: Layers },
+  { label: "Avg. Segment Size", value: "257K", change: "-1.8%", trend: "down" as const, icon: BarChart3 },
+  { label: "Reachability Rate", value: "78.4%", change: "+2.1%", trend: "up" as const, icon: Target },
 ];
 
-const trendData = [
-  { date: "2024-09-03", customers: 67000 },
-  { date: "2024-10-01", customers: 64000 },
-  { date: "2024-11-01", customers: 62500 },
-  { date: "2024-12-01", customers: 58000 },
-  { date: "2025-01-04", customers: 55000 },
-  { date: "2025-02-01", customers: 60000 },
-  { date: "2025-02-04", customers: 63000 },
-];
-
-const transitionData = [
-  { name: "Declining", value: 45.07, color: "hsl(38, 92%, 50%)" },
-  { name: "Grow", value: 22.35, color: "hsl(142, 76%, 36%)" },
-  { name: "New", value: 20.16, color: "hsl(221, 83%, 53%)" },
-  { name: "Stable", value: 12.42, color: "hsl(252, 100%, 67%)" },
+// ── Top Movers Data ──
+const topMovers = [
+  { segment: "Emerging Enthusiasts", from: "New", to: "Grow", moved: 24300, direction: "up" as const },
+  { segment: "Wobbling Supporters", from: "Stable", to: "Declining", moved: 18700, direction: "down" as const },
+  { segment: "Ascendant Advocates", from: "Grow", to: "Stable", moved: 12100, direction: "up" as const },
+  { segment: "Faltering Followers", from: "Declining", to: "Lapsed", moved: 9800, direction: "down" as const },
+  { segment: "Budding Rackers", from: "New", to: "Grow", moved: 8400, direction: "up" as const },
 ];
 
 // ── RFM Summary Data ──
@@ -75,10 +66,7 @@ const tierData = [
 
 const SegconHome = () => {
   const [hoveredBlock, setHoveredBlock] = useState<string | null>(null);
-  const [selectedSegmentTab, setSelectedSegmentTab] = useState("Stable-Low");
-  const [segmentBy, setSegmentBy] = useState("lifecycle");
 
-  // Calculate total for treemap proportional sizing
   const totalCustomers = lifecycleData.reduce((sum, g) => sum + g.children.reduce((s, c) => s + c.count, 0), 0);
 
   return (
@@ -91,47 +79,50 @@ const SegconHome = () => {
             <h1 className="text-2xl font-bold text-foreground">Segcon — Home</h1>
             <p className="text-sm text-muted-foreground mt-1">Lifecycle segments, RFM analysis & tier bifurcation</p>
           </div>
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="text-xs border-primary/30 text-primary">
-              Last refreshed: 2 hours ago
-            </Badge>
-          </div>
+          <Badge variant="outline" className="text-xs border-primary/30 text-primary">
+            Last refreshed: 2 hours ago
+          </Badge>
         </div>
 
-        {/* ══════════════════════════════════════════
-            SECTION 1 — LIFECYCLE TREEMAP
-        ══════════════════════════════════════════ */}
+        {/* ── KPI Cards ── */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {kpiCards.map((kpi) => (
+            <Card key={kpi.label}>
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <kpi.icon className="h-4 w-4 text-muted-foreground" />
+                  <span className={`text-xs font-medium flex items-center gap-0.5 ${kpi.trend === "up" ? "text-[hsl(var(--atlas-success))]" : "text-[hsl(var(--atlas-error))]"}`}>
+                    {kpi.trend === "up" ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                    {kpi.change}
+                  </span>
+                </div>
+                <p className="text-2xl font-bold text-foreground">{kpi.value}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{kpi.label}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* ── LIFECYCLE TREEMAP ── */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Layers className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold text-foreground">Lifecycle Segmentation</h2>
-              <Tooltip>
-                <TooltipTrigger><Info className="h-4 w-4 text-muted-foreground" /></TooltipTrigger>
-                <TooltipContent className="max-w-xs">Customers grouped by lifecycle stage: New, Grow, Declining, Stable. Hover any block for details.</TooltipContent>
-              </Tooltip>
-            </div>
+          <div className="flex items-center gap-2">
+            <Layers className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold text-foreground">Lifecycle Segmentation</h2>
+            <Tooltip>
+              <TooltipTrigger><Info className="h-4 w-4 text-muted-foreground" /></TooltipTrigger>
+              <TooltipContent className="max-w-xs">Customers grouped by lifecycle stage. Hover any block for details.</TooltipContent>
+            </Tooltip>
           </div>
 
-          {/* Interactive Treemap */}
           <div className="grid grid-cols-12 gap-1 min-h-[320px]">
             {lifecycleData.map((group) => {
               const groupTotal = group.children.reduce((s, c) => s + c.count, 0);
               const colSpan = Math.max(2, Math.round((groupTotal / totalCustomers) * 12));
               return (
-                <div
-                  key={group.id}
-                  className="flex flex-col gap-0.5 rounded-lg overflow-hidden"
-                  style={{ gridColumn: `span ${colSpan}` }}
-                >
-                  {/* Group header */}
-                  <div
-                    className="px-3 py-2 text-sm font-bold text-white"
-                    style={{ backgroundColor: group.color }}
-                  >
+                <div key={group.id} className="flex flex-col gap-0.5 rounded-lg overflow-hidden" style={{ gridColumn: `span ${colSpan}` }}>
+                  <div className="px-3 py-2 text-sm font-bold text-white" style={{ backgroundColor: group.color }}>
                     {group.label}
                   </div>
-                  {/* Children blocks */}
                   {group.children.map((child, idx) => {
                     const blockId = `${group.id}-${idx}`;
                     const isHovered = hoveredBlock === blockId;
@@ -140,21 +131,12 @@ const SegconHome = () => {
                       <div
                         key={idx}
                         className="relative px-3 py-3 cursor-pointer transition-all duration-200 text-white"
-                        style={{
-                          backgroundColor: group.color,
-                          opacity: isHovered ? 1 : 0.82,
-                          flex: `${childPct} 0 0%`,
-                          minHeight: 48,
-                        }}
+                        style={{ backgroundColor: group.color, opacity: isHovered ? 1 : 0.82, flex: `${childPct} 0 0%`, minHeight: 48 }}
                         onMouseEnter={() => setHoveredBlock(blockId)}
                         onMouseLeave={() => setHoveredBlock(null)}
                       >
-                        <p className="text-xs font-medium truncate">
-                          {group.label.toLowerCase()}-{child.sub}
-                        </p>
+                        <p className="text-xs font-medium truncate">{group.label.toLowerCase()}-{child.sub}</p>
                         <p className="text-[10px] opacity-80 truncate">{child.label}</p>
-
-                        {/* Hover tooltip */}
                         {isHovered && (
                           <div className="absolute z-20 top-full left-2 mt-1 bg-card border border-border rounded-lg shadow-lg p-3 text-foreground min-w-[220px] animate-fade-in">
                             <p className="font-semibold text-sm">{child.label}</p>
@@ -174,129 +156,64 @@ const SegconHome = () => {
           </div>
         </section>
 
-        {/* ── Segment By + Tabs ── */}
+        {/* ── TOP SEGMENT MOVERS ── */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-foreground">Segment by:</span>
-              <Tooltip>
-                <TooltipTrigger><Info className="h-4 w-4 text-muted-foreground" /></TooltipTrigger>
-                <TooltipContent>Choose the segmentation model</TooltipContent>
-              </Tooltip>
-            </div>
-            <Select value={segmentBy} onValueChange={setSegmentBy}>
-              <SelectTrigger className="w-[160px] h-9 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="lifecycle">Lifecycle</SelectItem>
-                <SelectItem value="rfm">RFM</SelectItem>
-                <SelectItem value="tier">Tier</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold text-foreground">Top Segment Movers</h2>
+            <Tooltip>
+              <TooltipTrigger><Info className="h-4 w-4 text-muted-foreground" /></TooltipTrigger>
+              <TooltipContent className="max-w-xs">Customers who recently transitioned between lifecycle stages</TooltipContent>
+            </Tooltip>
           </div>
 
-          {/* Segment tabs (scrollable) */}
-          <div className="overflow-x-auto scrollbar-thin">
-            <div className="flex gap-1">
-              {segmentTabs.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setSelectedSegmentTab(tab)}
-                  className={`px-3 py-1.5 text-xs rounded-md whitespace-nowrap transition-colors ${
-                    selectedSegmentTab === tab
-                      ? "bg-primary text-primary-foreground font-semibold"
-                      : "bg-muted text-muted-foreground hover:bg-muted/80"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Segment Trend */}
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-semibold">Segment Trend — {selectedSegmentTab}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[240px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={trendData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis dataKey="date" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                    <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                    <RechartsTooltip
-                      contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
-                    />
-                    <Line type="monotone" dataKey="customers" stroke="hsl(var(--atlas-warning))" strokeWidth={2} dot={{ fill: "hsl(var(--atlas-warning))", r: 4 }} />
-                  </LineChart>
-                </ResponsiveContainer>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border text-left">
+                      <th className="px-4 py-3 text-xs font-medium text-muted-foreground">Segment</th>
+                      <th className="px-4 py-3 text-xs font-medium text-muted-foreground">From</th>
+                      <th className="px-4 py-3 text-xs font-medium text-muted-foreground">To</th>
+                      <th className="px-4 py-3 text-xs font-medium text-muted-foreground text-right">Customers Moved</th>
+                      <th className="px-4 py-3 text-xs font-medium text-muted-foreground text-center">Direction</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topMovers.map((m, i) => (
+                      <tr key={i} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
+                        <td className="px-4 py-3 font-medium text-foreground">{m.segment}</td>
+                        <td className="px-4 py-3 text-muted-foreground">{m.from}</td>
+                        <td className="px-4 py-3 text-muted-foreground">{m.to}</td>
+                        <td className="px-4 py-3 text-right font-medium text-foreground">{m.moved.toLocaleString()}</td>
+                        <td className="px-4 py-3 text-center">
+                          {m.direction === "up" ? (
+                            <Badge variant="outline" className="text-[10px] border-[hsl(var(--atlas-success))]/30 text-[hsl(var(--atlas-success))]">↑ Upgrade</Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-[10px] border-[hsl(var(--atlas-error))]/30 text-[hsl(var(--atlas-error))]">↓ Downgrade</Badge>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </CardContent>
           </Card>
         </section>
 
-        {/* ── Segment Transition ── */}
-        <section className="space-y-4">
-          <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-foreground">Segment Transition</h2>
-            <Tooltip>
-              <TooltipTrigger><Info className="h-4 w-4 text-muted-foreground" /></TooltipTrigger>
-              <TooltipContent>Users who moved from other segments</TooltipContent>
-            </Tooltip>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-6">
-            {/* Donut */}
-            <div className="h-[280px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={transitionData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={110} paddingAngle={2}>
-                    {transitionData.map((entry, i) => (
-                      <Cell key={i} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <RechartsTooltip
-                    contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
-                    formatter={(value: number) => `${value}%`}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Transition table */}
-            <div className="space-y-2">
-              <p className="text-sm font-semibold text-primary">Declining — 100%</p>
-              <p className="text-xs text-muted-foreground mb-3">Users who moved from other segments.</p>
-              <div className="space-y-0">
-                {transitionData.map((t, i) => (
-                  <div key={i} className="flex items-center justify-between py-2.5 border-b border-border last:border-0">
-                    <span className="text-sm text-foreground">{t.name}</span>
-                    <span className="text-sm font-medium text-foreground">{t.value} %</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Divider */}
         <div className="h-px bg-border" />
 
-        {/* ══════════════════════════════════════════
-            SECTION 2 — RFM SEGMENTS
-        ══════════════════════════════════════════ */}
+        {/* ── RFM SEGMENTS ── */}
         <section className="space-y-4">
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-semibold text-foreground">RFM Segment Overview</h2>
           </div>
-
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {rfmSummary.map((seg) => (
-              <Card key={seg.segment} className="surface-hover">
+              <Card key={seg.segment} className="hover:shadow-md transition-shadow">
                 <CardContent className="pt-5 pb-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-semibold text-foreground">{seg.segment}</span>
@@ -317,26 +234,19 @@ const SegconHome = () => {
           </div>
         </section>
 
-        {/* Divider */}
         <div className="h-px bg-border" />
 
-        {/* ══════════════════════════════════════════
-            SECTION 3 — TIER BIFURCATION
-        ══════════════════════════════════════════ */}
+        {/* ── TIER BIFURCATION ── */}
         <section className="space-y-4">
           <div className="flex items-center gap-2">
             <Crown className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-semibold text-foreground">Tier Bifurcation</h2>
           </div>
-
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {tierData.map((tier) => (
-              <Card key={tier.tier} className="surface-hover">
+              <Card key={tier.tier} className="hover:shadow-md transition-shadow">
                 <CardContent className="pt-5 pb-4 text-center">
-                  <div
-                    className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold text-lg"
-                    style={{ backgroundColor: tier.color }}
-                  >
+                  <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold text-lg" style={{ backgroundColor: tier.color }}>
                     {tier.tier[0]}
                   </div>
                   <p className="font-semibold text-foreground">{tier.tier}</p>

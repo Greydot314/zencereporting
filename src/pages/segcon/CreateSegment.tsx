@@ -626,8 +626,11 @@ const CreateSegment = () => {
                     <div className="flex items-center justify-between px-4 py-2 bg-muted/40 border-b border-border">
                       <div className="flex items-center gap-2">
                         <GripVertical className="h-3.5 w-3.5 text-muted-foreground/50" />
-                        <span className="text-xs font-bold text-foreground">Group {groupIdx + 1}</span>
+                        <span className="text-xs font-bold text-foreground">Rule Group {groupIdx + 1}</span>
                         <span className="text-[10px] text-muted-foreground">({group.rules.length} {group.rules.length === 1 ? "filter" : "filters"})</span>
+                        {!isGroupComplete(group) && group.rules.length > 0 && (
+                          <Badge variant="outline" className="text-[9px] h-4 px-1.5 border-destructive/50 text-destructive">Incomplete</Badge>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         {group.rules.length > 1 && (

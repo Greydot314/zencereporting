@@ -310,7 +310,7 @@ const AttributePickerDropdown = ({
                               <span className="text-muted-foreground">{filterTypeIcon(attr.filterType)}</span>
                               <div className="flex-1 min-w-0">
                                 <p className="text-xs font-medium text-foreground leading-tight">{attr.name}</p>
-                                <p className="text-[10px] text-muted-foreground truncate leading-tight">{attr.definition}</p>
+                                <p className="text-[10px] text-muted-foreground leading-tight whitespace-normal line-clamp-3">{attr.definition}</p>
                               </div>
                               <Plus className="h-3 w-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                             </button>

@@ -564,7 +564,7 @@ const CreateSegment = () => {
                 <Target className="h-4 w-4 text-primary" />
                 <h2 className="text-sm font-semibold text-foreground">Criteria</h2>
                 <span className="text-xs text-muted-foreground ml-1">
-                  {groups.length} {groups.length === 1 ? "group" : "groups"} · {totalRules} {totalRules === 1 ? "rule" : "rules"}
+                  {groups.length} {groups.length === 1 ? "rule group" : "rule groups"} · {totalRules} {totalRules === 1 ? "filter" : "filters"}
                 </span>
               </div>
               <Button variant="outline" size="sm" className="h-7 gap-1 text-xs" onClick={addGroup} disabled={!canAddNewGroup}

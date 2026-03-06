@@ -741,7 +741,8 @@ const CreateSegment = () => {
             {/* Add Group */}
             {groups.length > 0 && (
               <div className="pt-3 ml-5">
-                <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={addGroup}>
+                <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={addGroup} disabled={!canAddNewGroup}
+                  title={!canAddNewGroup ? "Complete all existing rule groups before adding a new one" : ""}>
                   <Plus className="h-3.5 w-3.5" /> Add Rule Group
                 </Button>
               </div>

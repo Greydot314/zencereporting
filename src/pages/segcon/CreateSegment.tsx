@@ -659,7 +659,7 @@ const CreateSegment = () => {
 
       {/* ── Full-Width Builder ── */}
       <div className="flex-1 overflow-auto bg-background">
-        <div className="p-6 max-w-[960px] mx-auto space-y-5">
+        <div className="p-6 space-y-5">
           {/* Segment Info - Name + Expiry */}
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">

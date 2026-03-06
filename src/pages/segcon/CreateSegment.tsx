@@ -661,21 +661,21 @@ const CreateSegment = () => {
       <div className="flex-1 overflow-auto bg-background">
         <div className="p-6 space-y-5">
           {/* Segment Info - Name + Expiry */}
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
+          <div className="flex items-end gap-4 max-w-xl">
+            <div className="space-y-1.5 flex-1">
               <Label htmlFor="seg-name" className="text-xs font-medium">Segment Name *</Label>
               <Input id="seg-name" placeholder="e.g. High-Value Churning Users" value={segmentName} onChange={(e) => setSegmentName(e.target.value)} className="h-9" />
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 w-[200px] flex-shrink-0">
               <Label className="text-xs font-medium">Expiry Date</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className={cn("h-9 w-full justify-start text-left font-normal text-sm", !expiryDate && "text-muted-foreground")}
+                    className={cn("h-9 w-full justify-start text-left font-normal text-xs", !expiryDate && "text-muted-foreground")}
                   >
-                    <Clock className="h-3.5 w-3.5 mr-2" />
-                    {expiryDate ? format(expiryDate, "PPP") : "No expiry (optional)"}
+                    <Clock className="h-3.5 w-3.5 mr-1.5" />
+                    {expiryDate ? format(expiryDate, "PP") : "No expiry"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -693,7 +693,7 @@ const CreateSegment = () => {
           </div>
 
           {/* ── Two-Column Layout: Builder + Side Panel ── */}
-          <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-5">
+          <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-5">
             {/* LEFT: Rules Builder Canvas */}
             <div className="space-y-5">
               {/* ── Rules Builder Canvas ── */}

@@ -579,7 +579,7 @@ const CreateSegment = () => {
                 <p className="text-sm font-medium">No criteria defined</p>
                 <p className="text-xs mt-1 mb-4 max-w-xs mx-auto">Add a group and use the dropdown to pick attributes. Connect groups with AND / OR / AND NOT.</p>
                 <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={addGroup}>
-                  <Plus className="h-3.5 w-3.5" /> Add First Group
+                  <Plus className="h-3.5 w-3.5" /> Add First Rule Group
                 </Button>
               </div>
             )}

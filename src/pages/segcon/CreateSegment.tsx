@@ -9,9 +9,9 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Plus, Trash2, Users, ChevronDown, ChevronRight, Calendar, Hash, Type, ToggleLeft,
-  Loader2, Eye, Save, ArrowLeft, Filter, X, UserRound, BarChart3, Wallet, RefreshCw,
-  Search, Layers, GripVertical, Smartphone, Globe, Star, Activity, ShoppingCart, Mail,
-  Target, Zap, Clock
+  Loader2, Save, ArrowLeft, Filter, X, UserRound, BarChart3, Wallet, RefreshCw,
+  Search, Layers, GripVertical, Smartphone, Activity,
+  Target, Zap
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

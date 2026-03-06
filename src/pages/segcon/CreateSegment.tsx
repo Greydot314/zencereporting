@@ -245,7 +245,7 @@ const AttributePickerDropdown = ({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-1 text-[11px] text-muted-foreground hover:text-primary h-7">
+        <Button variant="outline" size="sm" className="gap-1 text-[11px] h-7">
           <Plus className="h-3 w-3" /> Add Filter
         </Button>
       </PopoverTrigger>
@@ -310,7 +310,7 @@ const AttributePickerDropdown = ({
                               <span className="text-muted-foreground">{filterTypeIcon(attr.filterType)}</span>
                               <div className="flex-1 min-w-0">
                                 <p className="text-xs font-medium text-foreground leading-tight">{attr.name}</p>
-                                <p className="text-[10px] text-muted-foreground truncate leading-tight">{attr.definition}</p>
+                                <p className="text-[10px] text-muted-foreground leading-tight whitespace-normal line-clamp-3">{attr.definition}</p>
                               </div>
                               <Plus className="h-3 w-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                             </button>
@@ -345,7 +345,15 @@ const CreateSegment = () => {
 
   const totalRules = groups.reduce((sum, g) => sum + g.rules.length, 0);
 
+  // Check if a group is complete (has at least one rule with a value set)
+  const isGroupComplete = (group: RuleGroup) => {
+    return group.rules.length > 0 && group.rules.every(r => r.value.trim() !== "");
+  };
+
+  const canAddNewGroup = groups.length === 0 || groups.every(g => isGroupComplete(g));
+
   const addGroup = () => {
+    if (!canAddNewGroup) return;
     const newGroup: RuleGroup = { id: nextId("grp"), intraCondition: "AND", rules: [] };
     if (groups.length > 0) {
       setInterGroupConditions(prev => [...prev, "AND"]);
@@ -556,11 +564,12 @@ const CreateSegment = () => {
                 <Target className="h-4 w-4 text-primary" />
                 <h2 className="text-sm font-semibold text-foreground">Criteria</h2>
                 <span className="text-xs text-muted-foreground ml-1">
-                  {groups.length} {groups.length === 1 ? "group" : "groups"} · {totalRules} {totalRules === 1 ? "rule" : "rules"}
+                  {groups.length} {groups.length === 1 ? "rule group" : "rule groups"} · {totalRules} {totalRules === 1 ? "filter" : "filters"}
                 </span>
               </div>
-              <Button variant="outline" size="sm" className="h-7 gap-1 text-xs" onClick={addGroup}>
-                <Plus className="h-3.5 w-3.5" /> Add Group
+              <Button variant="outline" size="sm" className="h-7 gap-1 text-xs" onClick={addGroup} disabled={!canAddNewGroup}
+                title={!canAddNewGroup ? "Complete all existing rule groups before adding a new one" : ""}>
+                <Plus className="h-3.5 w-3.5" /> Add Rule Group
               </Button>
             </div>
 
@@ -570,7 +579,7 @@ const CreateSegment = () => {
                 <p className="text-sm font-medium">No criteria defined</p>
                 <p className="text-xs mt-1 mb-4 max-w-xs mx-auto">Add a group and use the dropdown to pick attributes. Connect groups with AND / OR / AND NOT.</p>
                 <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={addGroup}>
-                  <Plus className="h-3.5 w-3.5" /> Add First Group
+                  <Plus className="h-3.5 w-3.5" /> Add First Rule Group
                 </Button>
               </div>
             )}
@@ -617,8 +626,11 @@ const CreateSegment = () => {
                     <div className="flex items-center justify-between px-4 py-2 bg-muted/40 border-b border-border">
                       <div className="flex items-center gap-2">
                         <GripVertical className="h-3.5 w-3.5 text-muted-foreground/50" />
-                        <span className="text-xs font-bold text-foreground">Group {groupIdx + 1}</span>
+                        <span className="text-xs font-bold text-foreground">Rule Group {groupIdx + 1}</span>
                         <span className="text-[10px] text-muted-foreground">({group.rules.length} {group.rules.length === 1 ? "filter" : "filters"})</span>
+                        {!isGroupComplete(group) && group.rules.length > 0 && (
+                          <Badge variant="outline" className="text-[9px] h-4 px-1.5 border-destructive/50 text-destructive">Incomplete</Badge>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         {group.rules.length > 1 && (
@@ -729,7 +741,8 @@ const CreateSegment = () => {
             {/* Add Group */}
             {groups.length > 0 && (
               <div className="pt-3 ml-5">
-                <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={addGroup}>
+                <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={addGroup} disabled={!canAddNewGroup}
+                  title={!canAddNewGroup ? "Complete all existing rule groups before adding a new one" : ""}>
                   <Plus className="h-3.5 w-3.5" /> Add Rule Group
                 </Button>
               </div>

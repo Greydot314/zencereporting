@@ -567,8 +567,9 @@ const CreateSegment = () => {
                   {groups.length} {groups.length === 1 ? "group" : "groups"} · {totalRules} {totalRules === 1 ? "rule" : "rules"}
                 </span>
               </div>
-              <Button variant="outline" size="sm" className="h-7 gap-1 text-xs" onClick={addGroup}>
-                <Plus className="h-3.5 w-3.5" /> Add Group
+              <Button variant="outline" size="sm" className="h-7 gap-1 text-xs" onClick={addGroup} disabled={!canAddNewGroup}
+                title={!canAddNewGroup ? "Complete all existing rule groups before adding a new one" : ""}>
+                <Plus className="h-3.5 w-3.5" /> Add Rule Group
               </Button>
             </div>
 

@@ -1,25 +1,28 @@
 import { useState, useCallback } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Plus, Trash2, Users, ChevronDown, ChevronRight, Calendar, Hash, Type, ToggleLeft,
   Loader2, Eye, Save, ArrowLeft, Filter, X, UserRound, BarChart3, Wallet, RefreshCw,
-  Search, Layers
+  Search, Layers, GripVertical, Smartphone, Globe, Star, Activity, ShoppingCart, Mail,
+  Target, Zap, Clock
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-// ── Category Icons ──
-const categoryIcons: Record<string, React.ReactNode> = {
-  demographics: <UserRound className="h-4 w-4" />,
-  behavioral: <BarChart3 className="h-4 w-4" />,
-  transactional: <Wallet className="h-4 w-4" />,
-  lifecycle: <RefreshCw className="h-4 w-4" />,
+// ── Category Config with colors ──
+const categoryConfig: Record<string, { icon: React.ReactNode; color: string; bg: string; label: string }> = {
+  demographics: { icon: <UserRound className="h-4 w-4" />, color: "text-blue-700", bg: "bg-blue-100 border-blue-200", label: "Demographics" },
+  behavioral: { icon: <BarChart3 className="h-4 w-4" />, color: "text-violet-700", bg: "bg-violet-100 border-violet-200", label: "Behavioral" },
+  transactional: { icon: <Wallet className="h-4 w-4" />, color: "text-emerald-700", bg: "bg-emerald-100 border-emerald-200", label: "Transactional" },
+  lifecycle: { icon: <RefreshCw className="h-4 w-4" />, color: "text-amber-700", bg: "bg-amber-100 border-amber-200", label: "Lifecycle" },
+  events: { icon: <Zap className="h-4 w-4" />, color: "text-rose-700", bg: "bg-rose-100 border-rose-200", label: "Events" },
+  devices: { icon: <Smartphone className="h-4 w-4" />, color: "text-cyan-700", bg: "bg-cyan-100 border-cyan-200", label: "Devices" },
 };
 
 // ── 3-Level Tag Hierarchy ──
@@ -40,13 +43,12 @@ interface TagSubCategory {
 interface TagCategory {
   id: string;
   name: string;
-  icon: string;
   subCategories: TagSubCategory[];
 }
 
 const tagHierarchy: TagCategory[] = [
   {
-    id: "demographics", name: "Demographics", icon: "👤",
+    id: "demographics", name: "Demographics",
     subCategories: [
       {
         id: "personal", name: "Personal Info",
@@ -68,7 +70,7 @@ const tagHierarchy: TagCategory[] = [
     ]
   },
   {
-    id: "behavioral", name: "Behavioral", icon: "📊",
+    id: "behavioral", name: "Behavioral",
     subCategories: [
       {
         id: "purchase", name: "Purchase Behavior",
@@ -91,7 +93,7 @@ const tagHierarchy: TagCategory[] = [
     ]
   },
   {
-    id: "transactional", name: "Transactional", icon: "💰",
+    id: "transactional", name: "Transactional",
     subCategories: [
       {
         id: "revenue", name: "Revenue Metrics",
@@ -112,7 +114,7 @@ const tagHierarchy: TagCategory[] = [
     ]
   },
   {
-    id: "lifecycle", name: "Lifecycle", icon: "🔄",
+    id: "lifecycle", name: "Lifecycle",
     subCategories: [
       {
         id: "stage", name: "Stage & Status",
@@ -121,6 +123,33 @@ const tagHierarchy: TagCategory[] = [
           { id: "churn_risk", name: "Churn Risk Score", definition: "ML-predicted churn probability (0-100)", filterType: "number_range" },
           { id: "rfm_segment", name: "RFM Segment", definition: "Recency-Frequency-Monetary segment", filterType: "dropdown", options: ["Champions", "Loyal", "Potential Loyalists", "At Risk", "Hibernating", "Lost"] },
           { id: "days_since_last_activity", name: "Days Since Last Activity", definition: "Inactivity period in days", filterType: "number_range" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "events", name: "Events",
+    subCategories: [
+      {
+        id: "user_events", name: "User Events",
+        attributes: [
+          { id: "added_to_cart", name: "Added To Cart", definition: "User added item to shopping cart", filterType: "date_dropdown", options: ["Last 7 days", "Last 30 days", "Last 90 days"] },
+          { id: "completed_purchase", name: "Completed Purchase", definition: "User completed a purchase", filterType: "date_dropdown", options: ["Last 7 days", "Last 30 days", "Last 90 days"] },
+          { id: "app_opened", name: "App Opened", definition: "User opened the application", filterType: "date_dropdown", options: ["Last 7 days", "Last 30 days", "Last 90 days"] },
+          { id: "page_viewed", name: "Page Viewed", definition: "User viewed a specific page", filterType: "text" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "devices", name: "Devices",
+    subCategories: [
+      {
+        id: "device_info", name: "Device Info",
+        attributes: [
+          { id: "device_type", name: "Device Type", definition: "Type of device used", filterType: "dropdown", options: ["Mobile", "Desktop", "Tablet"] },
+          { id: "operating_system", name: "Operating System", definition: "Device operating system", filterType: "dropdown", options: ["iOS", "Android", "Windows", "macOS", "Linux"] },
+          { id: "num_devices", name: "No. of Devices", definition: "Number of devices used", filterType: "number_range" },
         ]
       }
     ]
@@ -145,7 +174,7 @@ interface FilterRule {
 
 interface RuleGroup {
   id: string;
-  intraCondition: ConditionType; // logic between rules WITHIN this group
+  intraCondition: ConditionType;
   rules: FilterRule[];
 }
 
@@ -162,10 +191,10 @@ const operatorsByType: Record<string, string[]> = {
 let idCounter = 0;
 const nextId = (prefix: string) => `${prefix}_${++idCounter}`;
 
-const conditionColors: Record<ConditionType, string> = {
-  "AND": "bg-emerald-500/15 text-emerald-700 border-emerald-500/30",
-  "OR": "bg-amber-500/15 text-amber-700 border-amber-500/30",
-  "AND NOT": "bg-red-500/15 text-red-700 border-red-500/30",
+const conditionColors: Record<ConditionType, { pill: string; line: string }> = {
+  "AND": { pill: "bg-slate-800 text-white", line: "border-slate-400" },
+  "OR": { pill: "bg-teal-500 text-white", line: "border-teal-400" },
+  "AND NOT": { pill: "bg-red-500 text-white", line: "border-red-400" },
 };
 
 const CreateSegment = () => {
@@ -173,16 +202,15 @@ const CreateSegment = () => {
   const [segmentName, setSegmentName] = useState("");
   const [segmentDescription, setSegmentDescription] = useState("");
 
-  // Groups of rules, with inter-group conditions
   const [groups, setGroups] = useState<RuleGroup[]>([]);
-  const [interGroupConditions, setInterGroupConditions] = useState<ConditionType[]>([]); // conditions[i] links group[i] to group[i+1]
+  const [interGroupConditions, setInterGroupConditions] = useState<ConditionType[]>([]);
 
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [expandedSubCats, setExpandedSubCats] = useState<string[]>([]);
   const [isCountLoading, setIsCountLoading] = useState(false);
   const [estimatedCount, setEstimatedCount] = useState<number | null>(null);
-  const [activePickerGroupId, setActivePickerGroupId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sidebarTab, setSidebarTab] = useState<"attributes" | "events">("attributes");
 
   const totalRules = groups.reduce((sum, g) => sum + g.rules.length, 0);
 
@@ -193,17 +221,14 @@ const CreateSegment = () => {
     setExpandedSubCats(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
   };
 
-  // Add a new empty group
   const addGroup = () => {
     const newGroup: RuleGroup = { id: nextId("grp"), intraCondition: "AND", rules: [] };
     if (groups.length > 0) {
       setInterGroupConditions(prev => [...prev, "AND"]);
     }
     setGroups(prev => [...prev, newGroup]);
-    setActivePickerGroupId(newGroup.id);
   };
 
-  // Remove a group
   const removeGroup = (groupId: string) => {
     const idx = groups.findIndex(g => g.id === groupId);
     if (idx === -1) return;
@@ -217,7 +242,6 @@ const CreateSegment = () => {
     setEstimatedCount(null);
   };
 
-  // Add rule to a specific group
   const addRuleToGroup = (groupId: string, attr: TagAttribute, cat: TagCategory) => {
     const newRule: FilterRule = {
       id: nextId("rule"),
@@ -230,9 +254,36 @@ const CreateSegment = () => {
       value: "",
       options: attr.options,
     };
-    setGroups(prev => prev.map(g => g.id === groupId ? { ...g, rules: [...g.rules, newRule] } : g));
-    setActivePickerGroupId(null);
-    setSearchQuery("");
+    setGroups(prev => {
+      const updated = prev.map(g => g.id === groupId ? { ...g, rules: [...g.rules, newRule] } : g);
+      return updated;
+    });
+    setEstimatedCount(null);
+  };
+
+  // Add rule to the last group, or create one if none exist
+  const addRuleAuto = (attr: TagAttribute, cat: TagCategory) => {
+    if (groups.length === 0) {
+      const newGroup: RuleGroup = { id: nextId("grp"), intraCondition: "AND", rules: [] };
+      setGroups([newGroup]);
+      setTimeout(() => addRuleToGroup(newGroup.id, attr, cat), 0);
+      // Directly add to newGroup
+      const newRule: FilterRule = {
+        id: nextId("rule"),
+        attributeId: attr.id,
+        attributeName: attr.name,
+        categoryId: cat.id,
+        categoryName: cat.name,
+        filterType: attr.filterType,
+        operator: operatorsByType[attr.filterType]?.[0] || "is",
+        value: "",
+        options: attr.options,
+      };
+      setGroups([{ ...newGroup, rules: [newRule] }]);
+    } else {
+      const lastGroup = groups[groups.length - 1];
+      addRuleToGroup(lastGroup.id, attr, cat);
+    }
     setEstimatedCount(null);
   };
 
@@ -244,14 +295,11 @@ const CreateSegment = () => {
   const removeRule = (groupId: string, ruleId: string) => {
     setGroups(prev => {
       const updated = prev.map(g => g.id === groupId ? { ...g, rules: g.rules.filter(r => r.id !== ruleId) } : g);
-      // Auto-remove empty groups
       return updated.filter(g => g.rules.length > 0);
     });
-    // Fix inter-group conditions after potential group removal
-    setGroups(prev => {
-      const newConditions = interGroupConditions.slice(0, Math.max(0, prev.length - 1));
-      setInterGroupConditions(newConditions);
-      return prev;
+    setInterGroupConditions(prev => {
+      const remainingGroups = groups.map(g => g.id === groupId ? { ...g, rules: g.rules.filter(r => r.id !== ruleId) } : g).filter(g => g.rules.length > 0);
+      return prev.slice(0, Math.max(0, remainingGroups.length - 1));
     });
     setEstimatedCount(null);
   };
@@ -299,13 +347,33 @@ const CreateSegment = () => {
       })).filter(cat => cat.subCategories.length > 0)
     : tagHierarchy;
 
+  // ── Natural Language Summary ──
+  const buildSummary = () => {
+    if (groups.length === 0 || totalRules === 0) return null;
+
+    const groupSummaries = groups.map(group => {
+      const ruleParts = group.rules.map(r => {
+        const val = r.value || "…";
+        const valTo = r.valueTo ? ` to ${r.valueTo}` : "";
+        return `${r.attributeName} ${r.operator} ${val}${valTo}`;
+      });
+      if (ruleParts.length === 1) return ruleParts[0];
+      return `(${ruleParts.join(` ${group.intraCondition} `)})`;
+    });
+
+    return groupSummaries.reduce((acc, part, i) => {
+      if (i === 0) return part;
+      return `${acc} ${interGroupConditions[i - 1] || "AND"} ${part}`;
+    }, "");
+  };
+
   const renderFilterInput = (groupId: string, rule: FilterRule) => {
     switch (rule.filterType) {
       case "dropdown":
       case "date_dropdown":
         return (
           <Select value={rule.value} onValueChange={(v) => updateRule(groupId, rule.id, { value: v })}>
-            <SelectTrigger className="h-9 text-sm min-w-[180px]">
+            <SelectTrigger className="h-8 text-xs min-w-[150px] bg-background">
               <SelectValue placeholder="Select value" />
             </SelectTrigger>
             <SelectContent>
@@ -316,37 +384,37 @@ const CreateSegment = () => {
           </Select>
         );
       case "date":
-        return <Input type="date" value={rule.value} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-9 text-sm min-w-[180px]" />;
+        return <Input type="date" value={rule.value} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-8 text-xs min-w-[150px] bg-background" />;
       case "date_range":
         return (
-          <div className="flex items-center gap-2">
-            <Input type="date" value={rule.value} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-9 text-sm w-[150px]" />
-            <span className="text-xs text-muted-foreground font-medium">to</span>
-            <Input type="date" value={rule.valueTo || ""} onChange={(e) => updateRule(groupId, rule.id, { valueTo: e.target.value })} className="h-9 text-sm w-[150px]" />
+          <div className="flex items-center gap-1.5">
+            <Input type="date" value={rule.value} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-8 text-xs w-[130px] bg-background" />
+            <span className="text-[10px] text-muted-foreground font-medium">to</span>
+            <Input type="date" value={rule.valueTo || ""} onChange={(e) => updateRule(groupId, rule.id, { valueTo: e.target.value })} className="h-8 text-xs w-[130px] bg-background" />
           </div>
         );
       case "number_range":
         if (rule.operator === "between") {
           return (
-            <div className="flex items-center gap-2">
-              <Input type="number" placeholder="Min" value={rule.value} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-9 text-sm w-[110px]" />
-              <span className="text-xs text-muted-foreground font-medium">to</span>
-              <Input type="number" placeholder="Max" value={rule.valueTo || ""} onChange={(e) => updateRule(groupId, rule.id, { valueTo: e.target.value })} className="h-9 text-sm w-[110px]" />
+            <div className="flex items-center gap-1.5">
+              <Input type="number" placeholder="Min" value={rule.value} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-8 text-xs w-[90px] bg-background" />
+              <span className="text-[10px] text-muted-foreground font-medium">to</span>
+              <Input type="number" placeholder="Max" value={rule.valueTo || ""} onChange={(e) => updateRule(groupId, rule.id, { valueTo: e.target.value })} className="h-8 text-xs w-[90px] bg-background" />
             </div>
           );
         }
-        return <Input type="number" placeholder="Value" value={rule.value} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-9 text-sm min-w-[140px]" />;
+        return <Input type="number" placeholder="Value" value={rule.value} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-8 text-xs min-w-[120px] bg-background" />;
       case "text":
-        return <Input placeholder="Enter value" value={rule.value} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-9 text-sm min-w-[180px]" />;
+        return <Input placeholder="Enter value" value={rule.value} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-8 text-xs min-w-[150px] bg-background" />;
       case "boolean":
         return (
           <Select value={rule.value || "true"} onValueChange={(v) => updateRule(groupId, rule.id, { value: v })}>
-            <SelectTrigger className="h-9 text-sm w-[110px]">
+            <SelectTrigger className="h-8 text-xs w-[90px] bg-background">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="true">Yes</SelectItem>
-              <SelectItem value="false">No</SelectItem>
+              <SelectItem value="true">True</SelectItem>
+              <SelectItem value="false">False</SelectItem>
             </SelectContent>
           </Select>
         );
@@ -355,290 +423,366 @@ const CreateSegment = () => {
     }
   };
 
-  const renderAttributePicker = (groupId: string) => (
-    <Popover open={activePickerGroupId === groupId} onOpenChange={(open) => { setActivePickerGroupId(open ? groupId : null); if (!open) setSearchQuery(""); }}>
-      <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-1.5 text-xs">
-          <Plus className="h-3.5 w-3.5" /> Add Filter
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[420px] p-0 max-h-[460px] flex flex-col" align="start">
-        <div className="p-3 border-b border-border space-y-2">
-          <p className="text-sm font-semibold text-foreground">Select Attribute</p>
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input placeholder="Search attributes..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="h-8 pl-8 text-sm" />
-          </div>
-        </div>
-        <div className="p-2 space-y-0.5 overflow-auto flex-1">
-          {filteredHierarchy.length === 0 && (
-            <p className="text-xs text-muted-foreground text-center py-6">No attributes match your search.</p>
-          )}
-          {filteredHierarchy.map((cat) => (
-            <Collapsible key={cat.id} open={expandedCategories.includes(cat.id) || !!searchQuery.trim()}>
-              <CollapsibleTrigger
-                className="flex items-center gap-2.5 w-full px-2 py-2 rounded-md hover:bg-muted text-left text-sm font-medium text-foreground"
-                onClick={() => toggleCategory(cat.id)}
-              >
-                <span className="h-6 w-6 rounded-md bg-primary/10 flex items-center justify-center text-primary">
-                  {categoryIcons[cat.id] || <Filter className="h-3.5 w-3.5" />}
-                </span>
-                <span className="flex-1">{cat.name}</span>
-                {expandedCategories.includes(cat.id) || searchQuery.trim() ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
-              </CollapsibleTrigger>
-              <CollapsibleContent className="pl-8 space-y-0.5">
-                {cat.subCategories.map((sub) => (
-                  <Collapsible key={sub.id} open={expandedSubCats.includes(sub.id) || !!searchQuery.trim()}>
-                    <CollapsibleTrigger
-                      className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md hover:bg-muted text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide"
-                      onClick={() => toggleSubCat(sub.id)}
-                    >
-                      <span className="flex-1">{sub.name}</span>
-                      {expandedSubCats.includes(sub.id) || searchQuery.trim() ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="pl-3 space-y-0.5">
-                      {sub.attributes.map((attr) => (
-                        <button
-                          key={attr.id}
-                          className="flex items-center gap-2.5 w-full px-2 py-2 rounded-md hover:bg-primary/10 text-left group transition-colors"
-                          onClick={() => addRuleToGroup(groupId, attr, cat)}
-                        >
-                          <span className="text-muted-foreground">{filterTypeIcon(attr.filterType)}</span>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground">{attr.name}</p>
-                            <p className="text-xs text-muted-foreground truncate">{attr.definition}</p>
-                          </div>
-                          <Plus className="h-3.5 w-3.5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </button>
-                      ))}
-                    </CollapsibleContent>
-                  </Collapsible>
-                ))}
-              </CollapsibleContent>
-            </Collapsible>
-          ))}
-        </div>
-      </PopoverContent>
-    </Popover>
-  );
+  const summary = buildSummary();
 
   return (
-    <main className="flex-1 overflow-auto">
-      <div className="p-6 max-w-[1200px] mx-auto space-y-6">
-
-        {/* ── Header ── */}
+    <main className="flex-1 overflow-hidden flex flex-col">
+      {/* ── Header ── */}
+      <div className="flex items-center gap-3 px-6 py-4 border-b border-border bg-background">
+        <Button variant="ghost" size="icon" onClick={() => navigate("/module/segcon/segments")} className="h-8 w-8">
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <div className="flex-1">
+          <h1 className="text-lg font-bold text-foreground">Create Segment</h1>
+          <p className="text-xs text-muted-foreground">Build complex audience segments visually</p>
+        </div>
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/module/segcon/segments")}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-foreground">Create Segment</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">Define rules to build a customer segment</p>
+          {/* Live count badge */}
+          <div className="flex items-center gap-2 mr-2">
+            <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs" onClick={fetchRealtimeCount} disabled={totalRules === 0 || isCountLoading}>
+              {isCountLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Users className="h-3.5 w-3.5" />}
+              {isCountLoading ? "Counting…" : estimatedCount !== null ? `${estimatedCount.toLocaleString()} users` : "Check Count"}
+            </Button>
           </div>
-          <Button variant="outline" size="sm" className="gap-1.5">
-            <Save className="h-4 w-4" /> Save Draft
+          <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
+            <Save className="h-3.5 w-3.5" /> Save Draft
           </Button>
-          <Button size="sm" className="gap-1.5" disabled={!segmentName || totalRules === 0}>
+          <Button size="sm" className="h-8 gap-1.5 text-xs" disabled={!segmentName || totalRules === 0}>
             Create Segment
           </Button>
         </div>
+      </div>
 
-        {/* ── Segment Info ── */}
-        <Card>
-          <CardContent className="pt-5 pb-5 space-y-4">
+      {/* ── 2-Panel Layout ── */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* ── LEFT: Persistent Attribute Sidebar ── */}
+        <div className="w-[300px] border-r border-border bg-muted/30 flex flex-col flex-shrink-0">
+          <div className="p-3 border-b border-border space-y-2">
+            <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Fields</p>
+            {/* Tabs */}
+            <div className="flex gap-1">
+              {(["attributes", "events"] as const).map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setSidebarTab(tab)}
+                  className={`flex-1 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                    sidebarTab === tab
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-background text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  {tab === "attributes" ? "Attributes" : "Events"}
+                </button>
+              ))}
+            </div>
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+              <Input placeholder="Search…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="h-8 pl-8 text-xs bg-background" />
+            </div>
+          </div>
+          <ScrollArea className="flex-1">
+            <div className="p-2 space-y-0.5">
+              {filteredHierarchy
+                .filter(cat => sidebarTab === "events" ? cat.id === "events" : cat.id !== "events")
+                .map(cat => {
+                  const config = categoryConfig[cat.id];
+                  return (
+                    <Collapsible key={cat.id} open={expandedCategories.includes(cat.id) || !!searchQuery.trim()}>
+                      <CollapsibleTrigger
+                        className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-md hover:bg-muted text-left text-sm font-medium text-foreground transition-colors"
+                        onClick={() => toggleCategory(cat.id)}
+                      >
+                        <span className={`h-6 w-6 rounded-md flex items-center justify-center ${config?.bg || "bg-muted"} ${config?.color || ""}`}>
+                          {config?.icon || <Filter className="h-3.5 w-3.5" />}
+                        </span>
+                        <span className="flex-1 text-xs font-semibold">{cat.name}</span>
+                        {expandedCategories.includes(cat.id) || searchQuery.trim()
+                          ? <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                          : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+                        }
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="pl-7 space-y-0.5">
+                        {cat.subCategories.map(sub => (
+                          <Collapsible key={sub.id} open={expandedSubCats.includes(sub.id) || !!searchQuery.trim()}>
+                            <CollapsibleTrigger
+                              className="flex items-center gap-1.5 w-full px-2 py-1.5 rounded-md hover:bg-muted text-left text-[11px] font-semibold text-muted-foreground uppercase tracking-wider"
+                              onClick={() => toggleSubCat(sub.id)}
+                            >
+                              <span className="flex-1">{sub.name}</span>
+                              {expandedSubCats.includes(sub.id) || searchQuery.trim()
+                                ? <ChevronDown className="h-3 w-3" />
+                                : <ChevronRight className="h-3 w-3" />
+                              }
+                            </CollapsibleTrigger>
+                            <CollapsibleContent className="pl-2 space-y-0.5">
+                              {sub.attributes.map(attr => (
+                                <button
+                                  key={attr.id}
+                                  className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md hover:bg-primary/10 text-left group transition-colors"
+                                  onClick={() => addRuleAuto(attr, cat)}
+                                >
+                                  <span className="text-muted-foreground">{filterTypeIcon(attr.filterType)}</span>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-xs font-medium text-foreground leading-tight">{attr.name}</p>
+                                    <p className="text-[10px] text-muted-foreground truncate leading-tight">{attr.definition}</p>
+                                  </div>
+                                  <Plus className="h-3 w-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                                </button>
+                              ))}
+                            </CollapsibleContent>
+                          </Collapsible>
+                        ))}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  );
+                })}
+              {filteredHierarchy.filter(cat => sidebarTab === "events" ? cat.id === "events" : cat.id !== "events").length === 0 && (
+                <p className="text-xs text-muted-foreground text-center py-8">No attributes match</p>
+              )}
+            </div>
+          </ScrollArea>
+        </div>
+
+        {/* ── RIGHT: Builder Canvas ── */}
+        <div className="flex-1 overflow-auto bg-background">
+          <div className="p-6 max-w-[900px] mx-auto space-y-5">
+            {/* Segment Info */}
             <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="seg-name" className="text-sm font-medium">Segment Name *</Label>
-                <Input id="seg-name" placeholder="e.g. High-Value Churning Users" value={segmentName} onChange={(e) => setSegmentName(e.target.value)} />
+              <div className="space-y-1.5">
+                <Label htmlFor="seg-name" className="text-xs font-medium">Segment Name *</Label>
+                <Input id="seg-name" placeholder="e.g. High-Value Churning Users" value={segmentName} onChange={(e) => setSegmentName(e.target.value)} className="h-9" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="seg-desc" className="text-sm font-medium">Description</Label>
-                <Input id="seg-desc" placeholder="Optional description" value={segmentDescription} onChange={(e) => setSegmentDescription(e.target.value)} />
+              <div className="space-y-1.5">
+                <Label htmlFor="seg-desc" className="text-xs font-medium">Description</Label>
+                <Input id="seg-desc" placeholder="Optional description" value={segmentDescription} onChange={(e) => setSegmentDescription(e.target.value)} className="h-9" />
               </div>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* ── Rules Builder ── */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-semibold">Segment Rules</CardTitle>
-              <p className="text-xs text-muted-foreground">
-                {groups.length} {groups.length === 1 ? "group" : "groups"} · {totalRules} {totalRules === 1 ? "rule" : "rules"}
-              </p>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-0">
-            {groups.length === 0 && (
-              <div className="text-center py-12 text-muted-foreground">
-                <Layers className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                <p className="text-sm font-medium">No rule groups yet</p>
-                <p className="text-xs mt-1 mb-4">Create a group, then add filters inside it. Connect groups with AND / OR / AND NOT.</p>
-                <Button variant="outline" size="sm" className="gap-1.5" onClick={addGroup}>
-                  <Plus className="h-4 w-4" /> Add Rule Group
+            {/* ── Rules Builder Canvas ── */}
+            <div className="space-y-0">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Target className="h-4 w-4 text-primary" />
+                  <h2 className="text-sm font-semibold text-foreground">Criteria</h2>
+                  <span className="text-xs text-muted-foreground ml-1">
+                    {groups.length} {groups.length === 1 ? "group" : "groups"} · {totalRules} {totalRules === 1 ? "rule" : "rules"}
+                  </span>
+                </div>
+                <Button variant="outline" size="sm" className="h-7 gap-1 text-xs" onClick={addGroup}>
+                  <Plus className="h-3.5 w-3.5" /> Add Group
                 </Button>
               </div>
-            )}
 
-            {groups.map((group, groupIdx) => (
-              <div key={group.id}>
-                {/* ── Inter-Group Condition Connector ── */}
-                {groupIdx > 0 && (
-                  <div className="flex items-center justify-center py-3">
-                    <div className="flex-1 border-t border-dashed border-border" />
-                    <Select
-                      value={interGroupConditions[groupIdx - 1]}
-                      onValueChange={(v) => updateInterGroupCondition(groupIdx - 1, v as ConditionType)}
-                    >
-                      <SelectTrigger className={`h-8 w-[120px] text-xs font-bold border-2 rounded-full mx-3 ${conditionColors[interGroupConditions[groupIdx - 1]]}`}>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="AND">AND</SelectItem>
-                        <SelectItem value="OR">OR</SelectItem>
-                        <SelectItem value="AND NOT">AND NOT</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <div className="flex-1 border-t border-dashed border-border" />
-                  </div>
-                )}
+              {groups.length === 0 && (
+                <div className="border-2 border-dashed border-border rounded-xl py-16 text-center text-muted-foreground">
+                  <Layers className="h-10 w-10 mx-auto mb-3 opacity-20" />
+                  <p className="text-sm font-medium">No criteria defined</p>
+                  <p className="text-xs mt-1 mb-4 max-w-xs mx-auto">Click attributes from the left panel, or add a group first. Connect groups with AND / OR / AND NOT.</p>
+                  <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={addGroup}>
+                    <Plus className="h-3.5 w-3.5" /> Add First Group
+                  </Button>
+                </div>
+              )}
 
-                {/* ── Group Card ── */}
-                <div className="rounded-xl border-2 border-border bg-muted/20 overflow-hidden">
-                  {/* Group Header */}
-                  <div className="flex items-center justify-between px-4 py-2.5 bg-muted/40 border-b border-border">
-                    <div className="flex items-center gap-2.5">
-                      <Layers className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-semibold text-foreground">Group {groupIdx + 1}</span>
-                      <span className="text-xs text-muted-foreground">·</span>
-                      <span className="text-xs text-muted-foreground">{group.rules.length} {group.rules.length === 1 ? "filter" : "filters"}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {/* Intra-group condition toggle */}
-                      {group.rules.length > 1 && (
-                        <div className="flex items-center gap-1 text-xs">
-                          <span className="text-muted-foreground mr-1">Match:</span>
-                          {(["AND", "OR"] as ConditionType[]).map(c => (
+              {groups.map((group, groupIdx) => (
+                <div key={group.id}>
+                  {/* ── Inter-Group Connector with visual brackets ── */}
+                  {groupIdx > 0 && (
+                    <div className="flex items-center py-2 relative">
+                      {/* Left bracket line */}
+                      <div className={`absolute left-4 top-0 bottom-0 w-0 border-l-2 border-dashed ${conditionColors[interGroupConditions[groupIdx - 1]].line}`} />
+                      <div className="flex-1 flex items-center justify-center">
+                        <div className="flex-1 h-px bg-border" />
+                        {/* Condition pill */}
+                        <div className="mx-3 flex gap-1">
+                          {(["AND", "OR", "AND NOT"] as ConditionType[]).map(c => (
                             <button
                               key={c}
-                              onClick={() => updateGroupCondition(group.id, c)}
-                              className={`px-2.5 py-1 rounded-full text-xs font-bold border transition-colors ${
-                                group.intraCondition === c
-                                  ? conditionColors[c]
-                                  : "bg-transparent text-muted-foreground border-transparent hover:bg-muted"
+                              onClick={() => updateInterGroupCondition(groupIdx - 1, c as ConditionType)}
+                              className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
+                                interGroupConditions[groupIdx - 1] === c
+                                  ? conditionColors[c].pill
+                                  : "bg-muted text-muted-foreground hover:bg-muted/80"
                               }`}
                             >
                               {c}
                             </button>
                           ))}
                         </div>
-                      )}
-                      <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => removeGroup(group.id)}>
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Group Rules */}
-                  <div className="p-3 space-y-0">
-                    {group.rules.length === 0 && (
-                      <div className="text-center py-6 text-muted-foreground">
-                        <p className="text-xs">No filters in this group yet.</p>
+                        <div className="flex-1 h-px bg-border" />
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {group.rules.map((rule, ruleIdx) => (
-                      <div key={rule.id}>
-                        {/* Intra-group condition label */}
-                        {ruleIdx > 0 && (
-                          <div className="flex items-center justify-center py-1.5">
-                            <div className="h-3 border-l border-border" />
-                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border mx-2 ${conditionColors[group.intraCondition]}`}>
-                              {group.intraCondition}
-                            </span>
-                            <div className="h-3 border-l border-border" />
-                          </div>
-                        )}
+                  {/* ── Group Card with visual bracket ── */}
+                  <div className="relative">
+                    {/* Left bracket */}
+                    <div className="absolute left-0 top-2 bottom-2 w-2 flex flex-col">
+                      <div className="w-full h-3 border-l-2 border-t-2 border-slate-300 rounded-tl-md" />
+                      <div className="w-full flex-1 border-l-2 border-slate-300" />
+                      <div className="w-full h-3 border-l-2 border-b-2 border-slate-300 rounded-bl-md" />
+                    </div>
 
-                        {/* Rule Row */}
-                        <div className="flex items-start gap-3 p-3.5 rounded-lg bg-background border border-border hover:border-primary/20 transition-colors">
-                          <div className="flex-shrink-0 mt-0.5 h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                            {categoryIcons[rule.categoryId] || <Filter className="h-4 w-4" />}
-                          </div>
-                          <div className="flex-1 min-w-0 space-y-2.5">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-sm font-semibold text-foreground">{rule.attributeName}</span>
-                              <Badge variant="outline" className="text-[11px] font-normal px-2 py-0">
-                                {rule.categoryName}
-                              </Badge>
+                    <div className="ml-5 rounded-xl border border-border bg-card overflow-hidden shadow-sm">
+                      {/* Group Header */}
+                      <div className="flex items-center justify-between px-4 py-2 bg-muted/40 border-b border-border">
+                        <div className="flex items-center gap-2">
+                          <GripVertical className="h-3.5 w-3.5 text-muted-foreground/50" />
+                          <span className="text-xs font-bold text-foreground">Group {groupIdx + 1}</span>
+                          <span className="text-[10px] text-muted-foreground">({group.rules.length} {group.rules.length === 1 ? "filter" : "filters"})</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {group.rules.length > 1 && (
+                            <div className="flex items-center gap-0.5 bg-background rounded-lg border border-border p-0.5">
+                              {(["AND", "OR"] as ConditionType[]).map(c => (
+                                <button
+                                  key={c}
+                                  onClick={() => updateGroupCondition(group.id, c)}
+                                  className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold transition-all ${
+                                    group.intraCondition === c
+                                      ? conditionColors[c].pill
+                                      : "text-muted-foreground hover:bg-muted"
+                                  }`}
+                                >
+                                  {c}
+                                </button>
+                              ))}
                             </div>
-                            <div className="flex items-center gap-2.5 flex-wrap">
-                              <Select value={rule.operator} onValueChange={(v) => updateRule(group.id, rule.id, { operator: v, value: "", valueTo: "" })}>
-                                <SelectTrigger className="h-9 w-[150px] text-sm">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {operatorsByType[rule.filterType]?.map(op => (
-                                    <SelectItem key={op} value={op}>{op}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              {renderFilterInput(group.id, rule)}
-                            </div>
-                          </div>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0 text-muted-foreground hover:text-destructive" onClick={() => removeRule(group.id, rule.id)}>
-                            <X className="h-4 w-4" />
+                          )}
+                          <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => removeGroup(group.id)}>
+                            <Trash2 className="h-3 w-3" />
                           </Button>
                         </div>
                       </div>
-                    ))}
 
-                    {/* Add filter inside group */}
-                    <div className="pt-2">
-                      {renderAttributePicker(group.id)}
+                      {/* Rules */}
+                      <div className="p-3 space-y-0">
+                        {group.rules.length === 0 && (
+                          <div className="text-center py-6 text-muted-foreground">
+                            <p className="text-xs">Click an attribute from the left panel to add a filter here.</p>
+                          </div>
+                        )}
+
+                        {group.rules.map((rule, ruleIdx) => {
+                          const catConfig = categoryConfig[rule.categoryId];
+                          return (
+                            <div key={rule.id}>
+                              {/* Intra-group connector */}
+                              {ruleIdx > 0 && (
+                                <div className="flex items-center justify-center py-1">
+                                  <div className="flex-1 border-t border-dashed border-border" />
+                                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold mx-2 ${conditionColors[group.intraCondition].pill}`}>
+                                    {group.intraCondition}
+                                  </span>
+                                  <div className="flex-1 border-t border-dashed border-border" />
+                                </div>
+                              )}
+
+                              {/* Rule Card - Inline sentence style */}
+                              <div className="relative group/rule rounded-lg border border-border bg-background hover:border-primary/30 transition-colors p-3">
+                                {/* Category Badge - top right */}
+                                <Badge className={`absolute -top-2.5 right-3 text-[10px] font-semibold px-2 py-0 border ${catConfig?.bg || "bg-muted"} ${catConfig?.color || "text-foreground"}`}>
+                                  {catConfig?.label || rule.categoryName}
+                                </Badge>
+
+                                {/* Source label */}
+                                <p className="text-[10px] text-muted-foreground mb-1.5 font-medium">{rule.categoryName} &gt; {rule.attributeName}</p>
+
+                                {/* Inline filter row */}
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                                    <span className={`h-7 w-7 rounded-md flex items-center justify-center ${catConfig?.bg || "bg-muted"} ${catConfig?.color || ""}`}>
+                                      {catConfig?.icon || <Filter className="h-3.5 w-3.5" />}
+                                    </span>
+                                    <span className="text-sm font-semibold text-foreground">{rule.attributeName}</span>
+                                  </div>
+
+                                  <Select value={rule.operator} onValueChange={(v) => updateRule(group.id, rule.id, { operator: v, value: "", valueTo: "" })}>
+                                    <SelectTrigger className="h-8 w-auto min-w-[120px] text-xs bg-muted/50 border-border">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {operatorsByType[rule.filterType]?.map(op => (
+                                        <SelectItem key={op} value={op}>{op}</SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+
+                                  {renderFilterInput(group.id, rule)}
+
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6 opacity-0 group-hover/rule:opacity-100 transition-opacity text-muted-foreground hover:text-destructive flex-shrink-0 ml-auto"
+                                    onClick={() => removeRule(group.id, rule.id)}
+                                  >
+                                    <X className="h-3.5 w-3.5" />
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+
+                        {/* Add filter to this group */}
+                        <div className="pt-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="gap-1 text-[11px] text-muted-foreground hover:text-primary h-7"
+                            onClick={() => {
+                              // Focus on sidebar for adding
+                            }}
+                          >
+                            <Plus className="h-3 w-3" /> Add filter from sidebar
+                          </Button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
 
-            {/* Add Group Button */}
-            {groups.length > 0 && (
-              <div className="pt-4">
-                <Button variant="outline" size="sm" className="gap-1.5" onClick={addGroup}>
-                  <Plus className="h-4 w-4" /> Add Rule Group
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* ── Realtime Count ── */}
-        <Card className="border-primary/20">
-          <CardContent className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-3">
-              <Users className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-sm font-semibold text-foreground">Estimated Segment Size</p>
-                <p className="text-xs text-muted-foreground">Check how many customers match your rules</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              {estimatedCount !== null && !isCountLoading && (
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-foreground">{estimatedCount.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground">customers matched</p>
+              {/* Add Group */}
+              {groups.length > 0 && (
+                <div className="pt-3 ml-5">
+                  <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={addGroup}>
+                    <Plus className="h-3.5 w-3.5" /> Add Rule Group
+                  </Button>
                 </div>
               )}
-              <Button variant="outline" size="sm" className="gap-1.5" onClick={fetchRealtimeCount} disabled={totalRules === 0 || isCountLoading}>
-                {isCountLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
-                {isCountLoading ? "Counting…" : "Check Count"}
-              </Button>
             </div>
-          </CardContent>
-        </Card>
 
+            {/* ── Natural Language Summary ── */}
+            {summary && (
+              <Card className="border-primary/20 bg-primary/5">
+                <CardContent className="py-3 px-4">
+                  <div className="flex items-start gap-2.5">
+                    <Activity className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[10px] font-semibold text-primary uppercase tracking-wide mb-1">Query Summary</p>
+                      <p className="text-sm text-foreground font-mono leading-relaxed break-words">{summary}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* ── Estimated Size ── */}
+            {estimatedCount !== null && !isCountLoading && (
+              <Card className="border-emerald-200 bg-emerald-50/50 dark:bg-emerald-950/20 dark:border-emerald-800">
+                <CardContent className="flex items-center gap-4 py-3 px-4">
+                  <Users className="h-5 w-5 text-emerald-600" />
+                  <div>
+                    <p className="text-2xl font-bold text-foreground">{estimatedCount.toLocaleString()}</p>
+                    <p className="text-[10px] text-muted-foreground">customers matched</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
       </div>
     </main>
   );

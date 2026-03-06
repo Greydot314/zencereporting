@@ -345,7 +345,15 @@ const CreateSegment = () => {
 
   const totalRules = groups.reduce((sum, g) => sum + g.rules.length, 0);
 
+  // Check if a group is complete (has at least one rule with a value set)
+  const isGroupComplete = (group: RuleGroup) => {
+    return group.rules.length > 0 && group.rules.every(r => r.value.trim() !== "");
+  };
+
+  const canAddNewGroup = groups.length === 0 || groups.every(g => isGroupComplete(g));
+
   const addGroup = () => {
+    if (!canAddNewGroup) return;
     const newGroup: RuleGroup = { id: nextId("grp"), intraCondition: "AND", rules: [] };
     if (groups.length > 0) {
       setInterGroupConditions(prev => [...prev, "AND"]);

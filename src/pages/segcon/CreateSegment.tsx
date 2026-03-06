@@ -660,41 +660,42 @@ const CreateSegment = () => {
       {/* ── Full-Width Builder ── */}
       <div className="flex-1 overflow-auto bg-background">
         <div className="p-6 space-y-5">
+          {/* Segment Info - Name + Expiry (above the grid) */}
+          <div className="flex items-end gap-4 max-w-xl">
+            <div className="space-y-1.5 flex-1">
+              <Label htmlFor="seg-name" className="text-xs font-medium">Segment Name *</Label>
+              <Input id="seg-name" placeholder="e.g. High-Value Churning Users" value={segmentName} onChange={(e) => setSegmentName(e.target.value)} className="h-9" />
+            </div>
+            <div className="space-y-1.5 w-[200px] flex-shrink-0">
+              <Label className="text-xs font-medium">Expiry Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn("h-9 w-full justify-start text-left font-normal text-xs", !expiryDate && "text-muted-foreground")}
+                  >
+                    <Clock className="h-3.5 w-3.5 mr-1.5" />
+                    {expiryDate ? format(expiryDate, "PP") : "No expiry"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={expiryDate}
+                    onSelect={setExpiryDate}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+
           {/* ── Two-Column Layout: Builder + Side Panel ── */}
           <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-5 items-start">
             {/* LEFT: Rules Builder Canvas */}
             <div className="space-y-5">
-              {/* Segment Info - Name + Expiry */}
-              <div className="flex items-end gap-4 max-w-xl">
-                <div className="space-y-1.5 flex-1">
-                  <Label htmlFor="seg-name" className="text-xs font-medium">Segment Name *</Label>
-                  <Input id="seg-name" placeholder="e.g. High-Value Churning Users" value={segmentName} onChange={(e) => setSegmentName(e.target.value)} className="h-9" />
-                </div>
-                <div className="space-y-1.5 w-[200px] flex-shrink-0">
-                  <Label className="text-xs font-medium">Expiry Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn("h-9 w-full justify-start text-left font-normal text-xs", !expiryDate && "text-muted-foreground")}
-                      >
-                        <Clock className="h-3.5 w-3.5 mr-1.5" />
-                        {expiryDate ? format(expiryDate, "PP") : "No expiry"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={expiryDate}
-                        onSelect={setExpiryDate}
-                        disabled={(date) => date < new Date()}
-                        initialFocus
-                        className={cn("p-3 pointer-events-auto")}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </div>
               {/* ── Rules Builder Canvas ── */}
               <div className="space-y-0">
                 <div className="flex items-center justify-between mb-3">

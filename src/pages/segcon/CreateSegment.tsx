@@ -245,7 +245,7 @@ const AttributePickerDropdown = ({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-1 text-[11px] text-muted-foreground hover:text-primary h-7">
+        <Button variant="outline" size="sm" className="gap-1 text-[11px] h-7">
           <Plus className="h-3 w-3" /> Add Filter
         </Button>
       </PopoverTrigger>

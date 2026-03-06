@@ -953,7 +953,7 @@ const CreateSegment = () => {
             </div>
 
             {/* RIGHT: Side Panel - Summary, Mind Map, Count */}
-            <div className="space-y-4">
+            <div className="space-y-4 xl:pt-10">
               {/* ── Natural Language Summary ── */}
               {summary && (
                 <Card className="border-primary/20 bg-primary/5">

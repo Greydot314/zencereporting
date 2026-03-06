@@ -8,11 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 import {
-  Plus, Trash2, Users, ChevronDown, ChevronRight, Calendar, Hash, Type, ToggleLeft,
+  Plus, Trash2, Users, ChevronDown, ChevronRight, Calendar as CalendarIcon, Hash, Type, ToggleLeft,
   Loader2, Save, ArrowLeft, Filter, X, UserRound, BarChart3, Wallet, RefreshCw,
   Search, Layers, GripVertical, Smartphone, Activity,
-  Target, Zap
+  Target, Zap, ShieldX, Clock, GitBranch
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -179,6 +182,14 @@ interface RuleGroup {
   rules: FilterRule[];
 }
 
+interface ExclusionFilter {
+  id: string;
+  type: "alert" | "broadcast";
+  campaignName: string;
+  dateFrom: string;
+  dateTo: string;
+}
+
 const operatorsByType: Record<string, string[]> = {
   dropdown: ["is", "is not", "is any of"],
   date: ["is", "is before", "is after", "is in last"],
@@ -224,8 +235,7 @@ const AttributePickerDropdown = ({
         subCategories: cat.subCategories.map(sub => ({
           ...sub,
           attributes: sub.attributes.filter(attr =>
-            attr.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            attr.definition.toLowerCase().includes(searchQuery.toLowerCase())
+            attr.name.toLowerCase().includes(searchQuery.toLowerCase())
           ),
         })).filter(sub => sub.attributes.length > 0),
       })).filter(cat => cat.subCategories.length > 0)
@@ -234,7 +244,7 @@ const AttributePickerDropdown = ({
   const filterTypeIcon = (type: TagAttribute["filterType"]) => {
     switch (type) {
       case "dropdown": case "date_dropdown": return <Filter className="h-3 w-3" />;
-      case "date": case "date_range": return <Calendar className="h-3 w-3" />;
+      case "date": case "date_range": return <CalendarIcon className="h-3 w-3" />;
       case "number_range": return <Hash className="h-3 w-3" />;
       case "text": return <Type className="h-3 w-3" />;
       case "boolean": return <ToggleLeft className="h-3 w-3" />;
@@ -250,7 +260,6 @@ const AttributePickerDropdown = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[360px] p-0" align="start" sideOffset={4}>
-        {/* Search */}
         <div className="p-2 border-b border-border">
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -308,11 +317,8 @@ const AttributePickerDropdown = ({
                               }}
                             >
                               <span className="text-muted-foreground">{filterTypeIcon(attr.filterType)}</span>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-xs font-medium text-foreground leading-tight">{attr.name}</p>
-                                <p className="text-[10px] text-muted-foreground leading-tight whitespace-normal line-clamp-3">{attr.definition}</p>
-                              </div>
-                              <Plus className="h-3 w-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                              <span className="text-xs font-medium text-foreground leading-tight">{attr.name}</span>
+                              <Plus className="h-3 w-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-auto" />
                             </button>
                           ))}
                         </CollapsibleContent>
@@ -332,20 +338,99 @@ const AttributePickerDropdown = ({
   );
 };
 
+// ── Mind Map Component ──
+const SegmentMindMap = ({ groups, interGroupConditions }: { groups: RuleGroup[]; interGroupConditions: ConditionType[] }) => {
+  if (groups.length === 0) return null;
+
+  return (
+    <div className="flex items-center justify-center overflow-x-auto py-4">
+      <div className="flex items-center gap-0 min-w-max">
+        {/* Root node */}
+        <div className="flex flex-col items-center">
+          <div className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-bold shadow-sm">
+            Segment
+          </div>
+        </div>
+
+        {/* Connector line from root */}
+        <div className="w-6 h-px bg-border" />
+
+        {/* Groups */}
+        <div className="flex flex-col gap-3">
+          {groups.map((group, gIdx) => (
+            <div key={group.id} className="flex items-center gap-0">
+              {/* Inter-group condition label */}
+              {gIdx > 0 && (
+                <div className="flex flex-col items-center mr-0">
+                  <div className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${conditionColors[interGroupConditions[gIdx - 1]]?.pill || "bg-muted text-muted-foreground"}`}>
+                    {interGroupConditions[gIdx - 1] || "AND"}
+                  </div>
+                </div>
+              )}
+              {gIdx === 0 && <div className="w-0" />}
+
+              {/* Connector */}
+              <div className="w-4 h-px bg-border" />
+
+              {/* Group node */}
+              <div className="flex items-center gap-0">
+                <div className="px-2.5 py-1 rounded-lg border border-border bg-card text-[10px] font-semibold text-foreground shadow-sm whitespace-nowrap">
+                  Group {gIdx + 1}
+                </div>
+
+                {/* Connector to rules */}
+                <div className="w-3 h-px bg-border" />
+
+                {/* Rules branch */}
+                <div className="flex flex-col gap-1">
+                  {group.rules.map((rule, rIdx) => {
+                    const catConfig = categoryConfig[rule.categoryId];
+                    return (
+                      <div key={rule.id} className="flex items-center gap-0">
+                        {rIdx > 0 && (
+                          <div className={`px-1.5 py-0 rounded text-[8px] font-bold mr-0 ${conditionColors[group.intraCondition].pill}`}>
+                            {group.intraCondition}
+                          </div>
+                        )}
+                        {rIdx === 0 && <div className="w-0" />}
+                        <div className="w-2 h-px bg-border" />
+                        <div className={`flex items-center gap-1 px-2 py-0.5 rounded border text-[10px] whitespace-nowrap ${catConfig?.bg || "bg-muted border-border"} ${catConfig?.color || "text-foreground"}`}>
+                          {catConfig?.icon && <span className="[&>svg]:h-2.5 [&>svg]:w-2.5">{catConfig.icon}</span>}
+                          <span className="font-medium">{rule.attributeName}</span>
+                          <span className="text-muted-foreground">{rule.operator}</span>
+                          <span className="font-semibold">{rule.value || "…"}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const CreateSegment = () => {
   const navigate = useNavigate();
   const [segmentName, setSegmentName] = useState("");
-  const [segmentDescription, setSegmentDescription] = useState("");
 
   const [groups, setGroups] = useState<RuleGroup[]>([]);
   const [interGroupConditions, setInterGroupConditions] = useState<ConditionType[]>([]);
+
+  // Exclusion filters
+  const [exclusionFilters, setExclusionFilters] = useState<ExclusionFilter[]>([]);
+
+  // Expiry date
+  const [expiryDate, setExpiryDate] = useState<Date | undefined>();
 
   const [isCountLoading, setIsCountLoading] = useState(false);
   const [estimatedCount, setEstimatedCount] = useState<number | null>(null);
 
   const totalRules = groups.reduce((sum, g) => sum + g.rules.length, 0);
 
-  // Check if a group is complete (has at least one rule with a value set)
   const isGroupComplete = (group: RuleGroup) => {
     return group.rules.length > 0 && group.rules.every(r => r.value.trim() !== "");
   };
@@ -415,6 +500,25 @@ const CreateSegment = () => {
     setInterGroupConditions(prev => prev.map((c, i) => i === index ? condition : c));
   };
 
+  // Exclusion filter handlers
+  const addExclusionFilter = () => {
+    setExclusionFilters(prev => [...prev, {
+      id: nextId("excl"),
+      type: "broadcast",
+      campaignName: "",
+      dateFrom: "",
+      dateTo: "",
+    }]);
+  };
+
+  const updateExclusionFilter = (id: string, updates: Partial<ExclusionFilter>) => {
+    setExclusionFilters(prev => prev.map(f => f.id === id ? { ...f, ...updates } : f));
+  };
+
+  const removeExclusionFilter = (id: string) => {
+    setExclusionFilters(prev => prev.filter(f => f.id !== id));
+  };
+
   const fetchRealtimeCount = useCallback(() => {
     if (totalRules === 0) return;
     setIsCountLoading(true);
@@ -429,7 +533,7 @@ const CreateSegment = () => {
   const filterTypeIcon = (type: TagAttribute["filterType"]) => {
     switch (type) {
       case "dropdown": case "date_dropdown": return <Filter className="h-3.5 w-3.5" />;
-      case "date": case "date_range": return <Calendar className="h-3.5 w-3.5" />;
+      case "date": case "date_range": return <CalendarIcon className="h-3.5 w-3.5" />;
       case "number_range": return <Hash className="h-3.5 w-3.5" />;
       case "text": return <Type className="h-3.5 w-3.5" />;
       case "boolean": return <ToggleLeft className="h-3.5 w-3.5" />;
@@ -451,10 +555,21 @@ const CreateSegment = () => {
       return `(${ruleParts.join(` ${group.intraCondition} `)})`;
     });
 
-    return groupSummaries.reduce((acc, part, i) => {
+    let result = groupSummaries.reduce((acc, part, i) => {
       if (i === 0) return part;
       return `${acc} ${interGroupConditions[i - 1] || "AND"} ${part}`;
     }, "");
+
+    if (exclusionFilters.length > 0) {
+      const exclParts = exclusionFilters
+        .filter(f => f.campaignName.trim())
+        .map(f => `${f.type === "alert" ? "Alert" : "Broadcast"} "${f.campaignName}" (${f.dateFrom || "…"} → ${f.dateTo || "…"})`);
+      if (exclParts.length > 0) {
+        result += ` EXCLUDING ${exclParts.join(", ")}`;
+      }
+    }
+
+    return result;
   };
 
   const renderFilterInput = (groupId: string, rule: FilterRule) => {
@@ -545,15 +660,35 @@ const CreateSegment = () => {
       {/* ── Full-Width Builder ── */}
       <div className="flex-1 overflow-auto bg-background">
         <div className="p-6 max-w-[960px] mx-auto space-y-5">
-          {/* Segment Info */}
+          {/* Segment Info - Name + Expiry */}
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="seg-name" className="text-xs font-medium">Segment Name *</Label>
               <Input id="seg-name" placeholder="e.g. High-Value Churning Users" value={segmentName} onChange={(e) => setSegmentName(e.target.value)} className="h-9" />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="seg-desc" className="text-xs font-medium">Description</Label>
-              <Input id="seg-desc" placeholder="Optional description" value={segmentDescription} onChange={(e) => setSegmentDescription(e.target.value)} className="h-9" />
+              <Label className="text-xs font-medium">Expiry Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn("h-9 w-full justify-start text-left font-normal text-sm", !expiryDate && "text-muted-foreground")}
+                  >
+                    <Clock className="h-3.5 w-3.5 mr-2" />
+                    {expiryDate ? format(expiryDate, "PPP") : "No expiry (optional)"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={expiryDate}
+                    onSelect={setExpiryDate}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
@@ -567,10 +702,6 @@ const CreateSegment = () => {
                   {groups.length} {groups.length === 1 ? "rule group" : "rule groups"} · {totalRules} {totalRules === 1 ? "filter" : "filters"}
                 </span>
               </div>
-              <Button variant="outline" size="sm" className="h-7 gap-1 text-xs" onClick={addGroup} disabled={!canAddNewGroup}
-                title={!canAddNewGroup ? "Complete all existing rule groups before adding a new one" : ""}>
-                <Plus className="h-3.5 w-3.5" /> Add Rule Group
-              </Button>
             </div>
 
             {groups.length === 0 && (
@@ -614,7 +745,6 @@ const CreateSegment = () => {
 
                 {/* ── Group Card ── */}
                 <div className="relative">
-                  {/* Left bracket */}
                   <div className="absolute left-0 top-2 bottom-2 w-2 flex flex-col">
                     <div className="w-full h-3 border-l-2 border-t-2 border-slate-300 rounded-tl-md" />
                     <div className="w-full flex-1 border-l-2 border-slate-300" />
@@ -668,7 +798,6 @@ const CreateSegment = () => {
                         const catConfig = categoryConfig[rule.categoryId];
                         return (
                           <div key={rule.id}>
-                            {/* Intra-group connector */}
                             {ruleIdx > 0 && (
                               <div className="flex items-center justify-center py-1">
                                 <div className="flex-1 border-t border-dashed border-border" />
@@ -679,17 +808,13 @@ const CreateSegment = () => {
                               </div>
                             )}
 
-                            {/* Rule Card */}
                             <div className="relative group/rule rounded-lg border border-border bg-background hover:border-primary/30 transition-colors p-3">
-                              {/* Category Badge */}
                               <Badge className={`absolute -top-2.5 right-3 text-[10px] font-semibold px-2 py-0 border ${catConfig?.bg || "bg-muted"} ${catConfig?.color || "text-foreground"}`}>
                                 {catConfig?.label || rule.categoryName}
                               </Badge>
 
-                              {/* Source label */}
                               <p className="text-[10px] text-muted-foreground mb-1.5 font-medium">{rule.categoryName} &gt; {rule.attributeName}</p>
 
-                              {/* Inline filter row */}
                               <div className="flex items-center gap-2 flex-wrap">
                                 <div className="flex items-center gap-1.5 flex-shrink-0">
                                   <span className={`h-7 w-7 rounded-md flex items-center justify-center border ${catConfig?.bg || "bg-muted"} ${catConfig?.color || ""}`}>
@@ -725,7 +850,6 @@ const CreateSegment = () => {
                         );
                       })}
 
-                      {/* Add filter dropdown */}
                       <div className="pt-2">
                         <AttributePickerDropdown
                           groupId={group.id}
@@ -738,7 +862,7 @@ const CreateSegment = () => {
               </div>
             ))}
 
-            {/* Add Group */}
+            {/* Add Group - only bottom button */}
             {groups.length > 0 && (
               <div className="pt-3 ml-5">
                 <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={addGroup} disabled={!canAddNewGroup}
@@ -747,6 +871,80 @@ const CreateSegment = () => {
                 </Button>
               </div>
             )}
+          </div>
+
+          {/* ── Campaign Exclusion Filters ── */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ShieldX className="h-4 w-4 text-destructive" />
+                <h2 className="text-sm font-semibold text-foreground">Exclusion Filters</h2>
+                <span className="text-xs text-muted-foreground">Exclude users targeted by campaigns</span>
+              </div>
+              <Button variant="outline" size="sm" className="gap-1.5 text-xs h-7" onClick={addExclusionFilter}>
+                <Plus className="h-3 w-3" /> Add Exclusion
+              </Button>
+            </div>
+
+            {exclusionFilters.length === 0 && (
+              <div className="border border-dashed border-border rounded-lg py-6 text-center text-muted-foreground">
+                <ShieldX className="h-6 w-6 mx-auto mb-2 opacity-20" />
+                <p className="text-xs">No exclusion filters. Optionally exclude users already targeted by Alert or Broadcast campaigns.</p>
+              </div>
+            )}
+
+            {exclusionFilters.map((filter) => (
+              <div key={filter.id} className="rounded-lg border border-destructive/20 bg-destructive/5 p-3">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <div className="flex items-center gap-1.5">
+                    <ShieldX className="h-4 w-4 text-destructive" />
+                    <span className="text-xs font-semibold text-foreground">Exclude users of</span>
+                  </div>
+
+                  <Select value={filter.type} onValueChange={(v) => updateExclusionFilter(filter.id, { type: v as "alert" | "broadcast" })}>
+                    <SelectTrigger className="h-8 w-[120px] text-xs bg-background">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="alert">Alert</SelectItem>
+                      <SelectItem value="broadcast">Broadcast</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Input
+                    placeholder="Campaign name"
+                    value={filter.campaignName}
+                    onChange={(e) => updateExclusionFilter(filter.id, { campaignName: e.target.value })}
+                    className="h-8 text-xs w-[180px] bg-background"
+                  />
+
+                  <span className="text-xs text-muted-foreground font-medium">targeted between</span>
+
+                  <Input
+                    type="date"
+                    value={filter.dateFrom}
+                    onChange={(e) => updateExclusionFilter(filter.id, { dateFrom: e.target.value })}
+                    className="h-8 text-xs w-[140px] bg-background"
+                  />
+                  <span className="text-[10px] text-muted-foreground">→</span>
+                  <Input
+                    type="date"
+                    value={filter.dateTo}
+                    onChange={(e) => updateExclusionFilter(filter.id, { dateTo: e.target.value })}
+                    className="h-8 text-xs w-[140px] bg-background"
+                  />
+
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-muted-foreground hover:text-destructive flex-shrink-0 ml-auto"
+                    onClick={() => removeExclusionFilter(filter.id)}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* ── Natural Language Summary ── */}
@@ -760,6 +958,19 @@ const CreateSegment = () => {
                     <p className="text-sm text-foreground font-mono leading-relaxed break-words">{summary}</p>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* ── Mind Map ── */}
+          {totalRules > 0 && (
+            <Card className="border-border">
+              <CardContent className="py-3 px-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <GitBranch className="h-4 w-4 text-primary" />
+                  <p className="text-[10px] font-semibold text-primary uppercase tracking-wide">Segment Mind Map</p>
+                </div>
+                <SegmentMindMap groups={groups} interGroupConditions={interGroupConditions} />
               </CardContent>
             </Card>
           )}

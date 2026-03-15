@@ -95,3 +95,4 @@ export const MyModels = ({ onViewResults, onNewModel }: MyModelsProps) => {
 };
 
 import { cn } from "@/lib/utils";
+// cn imported at bottom and used in component

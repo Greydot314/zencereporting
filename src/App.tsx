@@ -70,6 +70,7 @@ const App = () => (
                         <Route path="archive" element={<SegconHome />} />
                         <Route path="split" element={<SegconHome />} />
                         <Route path="glossary" element={<SegconHome />} />
+                        <Route path="model-studio" element={<ModelStudio />} />
                       </Route>
                       <Route path="/settings" element={<Dashboard />} />
                       <Route path="/help" element={<Dashboard />} />

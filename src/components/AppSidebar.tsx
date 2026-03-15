@@ -118,6 +118,7 @@ const modules: ModuleItem[] = [
       { title: "Archive", url: "/module/segcon/archive" },
       { title: "Split Segment", url: "/module/segcon/split" },
       { title: "Glossary", url: "/module/segcon/glossary" },
+      { title: "Model Studio", url: "/module/segcon/model-studio", badge: "NEW" },
     ]
   },
   { 

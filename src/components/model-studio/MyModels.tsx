@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 import { myModels } from "@/data/modelStudioMockData";
 
 const statusConfig: Record<string, { icon: React.ElementType; className: string; label: string }> = {
@@ -93,6 +94,3 @@ export const MyModels = ({ onViewResults, onNewModel }: MyModelsProps) => {
     </div>
   );
 };
-
-import { cn } from "@/lib/utils";
-// cn imported at bottom and used in component

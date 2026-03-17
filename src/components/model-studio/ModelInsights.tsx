@@ -1,17 +1,26 @@
-import { ArrowLeft, Download, CheckCircle2, Sparkles } from "lucide-react";
+import { ArrowLeft, Download, CheckCircle2, Sparkles, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ScatterChart, Scatter, CartesianGrid, ZAxis, Cell, Legend } from "recharts";
 import { rfmInsightsData } from "@/data/modelStudioMockData";
 
 const segColors: Record<string, string> = {
   Champions: 'hsl(221, 83%, 53%)',
-  Loyal: 'hsl(221, 83%, 63%)',
+  Loyal: 'hsl(142, 76%, 36%)',
   'At-Risk': 'hsl(38, 92%, 50%)',
-  Hibernating: 'hsl(220, 14%, 70%)',
+  Hibernating: 'hsl(220, 14%, 60%)',
   Lost: 'hsl(0, 84%, 60%)',
+};
+
+const segBg: Record<string, string> = {
+  Champions: 'bg-blue-500/5 border-blue-500/20 hover:border-blue-500/40',
+  Loyal: 'bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40',
+  'At-Risk': 'bg-amber-500/5 border-amber-500/20 hover:border-amber-500/40',
+  Hibernating: 'bg-gray-500/5 border-gray-500/20 hover:border-gray-500/40',
+  Lost: 'bg-red-500/5 border-red-500/20 hover:border-red-500/40',
 };
 
 interface ModelInsightsProps {
@@ -20,40 +29,55 @@ interface ModelInsightsProps {
 
 export const ModelInsights = ({ onBack }: ModelInsightsProps) => {
   const { segments, overlapData, scatterData } = rfmInsightsData;
-
   const barData = segments.map(s => ({ name: s.name, pct: s.pct, count: s.count.toLocaleString() }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Top Summary */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8"><ArrowLeft className="h-4 w-4" /></Button>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <Button variant="ghost" size="icon" onClick={onBack} className="h-9 w-9 mt-0.5 rounded-xl"><ArrowLeft className="h-4 w-4" /></Button>
           <div>
             <h2 className="text-lg font-semibold text-foreground">RFM Segmentation — Brand A Q1 2025</h2>
-            <div className="flex items-center gap-3 mt-0.5">
-              <span className="text-xs text-muted-foreground">Run: Mar 12, 2025</span>
-              <span className="text-xs text-muted-foreground">Source: Atlantis Retail DB</span>
-              <span className="text-xs text-muted-foreground">1,24,560 customers</span>
-              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] gap-1">
+            <div className="flex flex-wrap items-center gap-3 mt-1">
+              <span className="text-xs text-muted-foreground">Mar 12, 2025</span>
+              <span className="text-xs text-muted-foreground">•</span>
+              <span className="text-xs text-muted-foreground">Atlantis Retail DB</span>
+              <span className="text-xs text-muted-foreground">•</span>
+              <span className="text-xs font-medium text-foreground">1,24,560 customers</span>
+              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] gap-1 font-medium">
                 <CheckCircle2 className="h-3 w-3" /> Completed
               </Badge>
             </div>
           </div>
         </div>
-        <Button variant="outline" size="sm" className="gap-1.5 text-xs"><Download className="h-3.5 w-3.5" />Export</Button>
+        <Button variant="outline" size="sm" className="gap-1.5 text-xs shadow-sm"><Download className="h-3.5 w-3.5" />Export</Button>
       </div>
 
-      {/* Section 1: Segment Overview */}
-      <Card>
-        <CardHeader className="pb-2"><CardTitle className="text-sm">Segment Overview</CardTitle></CardHeader>
+      {/* KPI Summary Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        {segments.map(seg => (
+          <div key={seg.name} className="rounded-xl border border-border bg-card p-3 text-center space-y-1">
+            <span className="text-lg">{seg.emoji}</span>
+            <p className="text-[11px] font-medium text-muted-foreground">{seg.name}</p>
+            <p className="text-xl font-bold text-foreground">{seg.pct}%</p>
+            <p className="text-[10px] text-muted-foreground">{seg.count.toLocaleString()}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Segment Overview Chart */}
+      <Card className="shadow-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-semibold">Segment Distribution</CardTitle>
+        </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={barData} layout="vertical" margin={{ left: 80 }}>
-              <XAxis type="number" domain={[0, 35]} tickFormatter={v => `${v}%`} tick={{ fontSize: 11 }} />
-              <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} width={80} />
-              <Tooltip formatter={(v: number) => `${v}%`} />
-              <Bar dataKey="pct" radius={[0, 4, 4, 0]}>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={barData} layout="vertical" margin={{ left: 90 }}>
+              <XAxis type="number" domain={[0, 35]} tickFormatter={v => `${v}%`} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fontWeight: 500 }} width={85} axisLine={false} tickLine={false} />
+              <Tooltip formatter={(v: number) => `${v}%`} contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', fontSize: 12 }} />
+              <Bar dataKey="pct" radius={[0, 6, 6, 0]} barSize={28}>
                 {barData.map((entry, i) => (
                   <Cell key={i} fill={segColors[entry.name] || 'hsl(220, 14%, 70%)'} />
                 ))}
@@ -63,90 +87,124 @@ export const ModelInsights = ({ onBack }: ModelInsightsProps) => {
         </CardContent>
       </Card>
 
-      {/* Section 2: Segment Deep-Dive */}
+      {/* Deep-Dive Cards */}
       <div>
-        <h3 className="text-sm font-semibold text-foreground mb-3">Segment Deep-Dive</h3>
-        <div className="flex gap-4 overflow-x-auto pb-2">
+        <h3 className="text-sm font-semibold text-foreground mb-4">Segment Deep-Dive</h3>
+        <div className="flex gap-4 overflow-x-auto pb-3 -mx-1 px-1">
           {segments.map(seg => (
-            <Card key={seg.name} className="min-w-[220px] flex-shrink-0 border-border/60">
-              <CardContent className="p-4 space-y-2.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">{seg.emoji}</span>
-                  <h4 className="text-sm font-semibold">{seg.name}</h4>
+            <Card key={seg.name} className={`min-w-[240px] flex-shrink-0 transition-all duration-200 ${segBg[seg.name]}`}>
+              <CardContent className="p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-2xl">{seg.emoji}</span>
+                    <h4 className="text-sm font-semibold text-foreground">{seg.name}</h4>
+                  </div>
+                  <Badge variant="outline" className="text-[10px] font-medium">{seg.action}</Badge>
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  {seg.count.toLocaleString()} customers ({seg.pct}%)
+                <p className="text-xs text-muted-foreground">
+                  {seg.count.toLocaleString()} customers <span className="text-foreground font-semibold">({seg.pct}%)</span>
+                </p>
+                <div className="space-y-2">
+                  {[{ label: 'Avg Recency', value: `${seg.avgRecency} days`, pct: Math.min(100, seg.avgRecency / 2.4) },
+                    { label: 'Avg Frequency', value: `${seg.avgFrequency}/yr`, pct: Math.min(100, seg.avgFrequency * 5.5) },
+                    { label: 'Avg Monetary', value: `₹${seg.avgMonetary.toLocaleString()}`, pct: Math.min(100, seg.avgMonetary / 125) }].map(m => (
+                    <div key={m.label} className="space-y-0.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] text-muted-foreground">{m.label}</span>
+                        <span className="text-[11px] font-semibold">{m.value}</span>
+                      </div>
+                      <Progress value={m.pct} className="h-1" />
+                    </div>
+                  ))}
                 </div>
-                <div className="grid grid-cols-3 gap-2 text-[10px]">
-                  <div><p className="text-muted-foreground">Recency</p><p className="font-semibold">{seg.avgRecency}d</p></div>
-                  <div><p className="text-muted-foreground">Frequency</p><p className="font-semibold">{seg.avgFrequency}/yr</p></div>
-                  <div><p className="text-muted-foreground">Monetary</p><p className="font-semibold">₹{seg.avgMonetary.toLocaleString()}</p></div>
-                </div>
-                <Badge variant="outline" className="text-[10px]">{seg.action}</Badge>
-                <Button size="sm" variant="outline" className="w-full text-xs h-7 mt-1">Create Campaign</Button>
+                <Button size="sm" variant="outline" className="w-full text-xs h-8 mt-1 gap-1.5">
+                  <Megaphone className="h-3 w-3" />Create Campaign
+                </Button>
               </CardContent>
             </Card>
           ))}
         </div>
       </div>
 
-      {/* Section 3: Scatter Plot */}
-      <Card>
-        <CardHeader className="pb-2"><CardTitle className="text-sm">RFM Score Distribution</CardTitle></CardHeader>
+      {/* Scatter Plot */}
+      <Card className="shadow-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-semibold">RFM Score Distribution</CardTitle>
+          <p className="text-[11px] text-muted-foreground">Recency vs Frequency, sized by Monetary value</p>
+        </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis type="number" dataKey="recency" name="Recency (days)" tick={{ fontSize: 10 }} label={{ value: 'Recency (days)', position: 'bottom', fontSize: 11 }} />
-              <YAxis type="number" dataKey="frequency" name="Frequency" tick={{ fontSize: 10 }} label={{ value: 'Frequency', angle: -90, position: 'insideLeft', fontSize: 11 }} />
-              <ZAxis type="number" dataKey="monetary" range={[20, 200]} />
-              <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-              <Legend verticalAlign="top" height={30} iconSize={8} wrapperStyle={{ fontSize: 11 }} />
+          <ResponsiveContainer width="100%" height={320}>
+            <ScatterChart margin={{ top: 10, right: 20, bottom: 25, left: 15 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+              <XAxis type="number" dataKey="recency" name="Recency (days)" tick={{ fontSize: 10 }}
+                label={{ value: 'Recency (days)', position: 'bottom', fontSize: 11, offset: 10 }} axisLine={false} />
+              <YAxis type="number" dataKey="frequency" name="Frequency" tick={{ fontSize: 10 }}
+                label={{ value: 'Frequency', angle: -90, position: 'insideLeft', fontSize: 11 }} axisLine={false} />
+              <ZAxis type="number" dataKey="monetary" range={[30, 250]} />
+              <Tooltip cursor={{ strokeDasharray: '3 3' }}
+                contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))', fontSize: 11 }} />
+              <Legend verticalAlign="top" height={35} iconSize={8} wrapperStyle={{ fontSize: 11 }} />
               {Object.keys(segColors).map(seg => (
-                <Scatter key={seg} name={seg} data={scatterData.filter(d => d.segment === seg)} fill={segColors[seg]} />
+                <Scatter key={seg} name={seg} data={scatterData.filter(d => d.segment === seg)} fill={segColors[seg]} opacity={0.75} />
               ))}
             </ScatterChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
-      {/* Section 4: Overlap */}
-      <Card>
-        <CardHeader className="pb-2"><CardTitle className="text-sm">Overlap with Existing Segments</CardTitle></CardHeader>
+      {/* Overlap Table */}
+      <Card className="shadow-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-semibold">Overlap with Existing Segments</CardTitle>
+          <p className="text-[11px] text-muted-foreground">How AI segments map to your current rule-based segments</p>
+        </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/40">
-                <TableHead className="text-xs">AI Segment</TableHead>
-                <TableHead className="text-xs">Closest Rule-Based Segment</TableHead>
-                <TableHead className="text-xs text-center">Overlap %</TableHead>
-                <TableHead className="text-xs text-right">New Customers Found</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {overlapData.map(r => (
-                <TableRow key={r.aiSegment}>
-                  <TableCell className="text-sm font-medium">{r.aiSegment}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{r.ruleSegment}</TableCell>
-                  <TableCell className="text-xs text-center">{r.overlap}%</TableCell>
-                  <TableCell className="text-xs text-right font-medium">{r.newFound.toLocaleString()}</TableCell>
+          <div className="rounded-lg border border-border overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/40">
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider py-2.5">AI Segment</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider py-2.5">Rule-Based Match</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider py-2.5 text-center">Overlap</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider py-2.5 text-right">New Customers</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {overlapData.map(r => (
+                  <TableRow key={r.aiSegment} className="hover:bg-muted/20 transition-colors">
+                    <TableCell className="text-sm font-medium py-3">{r.aiSegment}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{r.ruleSegment}</TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center gap-2">
+                        <Progress value={r.overlap} className="h-1.5 w-16" />
+                        <span className="text-xs font-mono font-medium">{r.overlap}%</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Badge variant="outline" className="text-[11px] font-mono bg-emerald-500/5 text-emerald-600 border-emerald-500/20">
+                        +{r.newFound.toLocaleString()}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Section 5: AI Narrative */}
-      <Card className="border-primary/20 bg-primary/[0.02]">
-        <CardContent className="p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="h-4 w-4 text-primary" />
+      {/* AI Narrative */}
+      <Card className="border-primary/20 bg-gradient-to-br from-primary/[0.03] to-accent/[0.02] shadow-sm">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+              <Sparkles className="h-4 w-4 text-primary" />
+            </div>
             <h3 className="text-sm font-semibold text-foreground">AI Summary</h3>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Champions represent only 12% of your base but contribute an estimated 41% of revenue. 
-            The At-Risk segment has grown 8% compared to last quarter — consider triggering a win-back 
+            Champions represent only <span className="font-semibold text-foreground">12%</span> of your base but contribute an estimated <span className="font-semibold text-foreground">41% of revenue</span>. 
+            The At-Risk segment has grown <span className="font-semibold text-amber-600">8% compared to last quarter</span> — consider triggering a win-back 
             campaign targeting customers with 60–90 day inactivity. Hibernating customers show seasonal 
             patterns with spikes in November.
           </p>

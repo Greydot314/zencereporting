@@ -18,7 +18,7 @@ const statusConfig: Record<string, { icon: React.ElementType; className: string;
 };
 
 interface MyModelsProps {
-  onViewResults: () => void;
+  onViewResults: (modelName?: string) => void;
   onNewModel: () => void;
 }
 

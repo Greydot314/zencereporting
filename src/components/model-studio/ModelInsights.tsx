@@ -5,7 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ScatterChart, Scatter, CartesianGrid, ZAxis, Cell, Legend } from "recharts";
-import { rfmInsightsData } from "@/data/modelStudioMockData";
+import { rfmInsightsData, modelNameToInsightType, kmeansInsightsData, churnInsightsData, clvInsightsData, productInsightsData } from "@/data/modelStudioMockData";
+import type { ModelInsightType } from "@/data/modelStudioMockData";
+import { KMeansInsights } from "./insights/KMeansInsights";
+import { ChurnInsights } from "./insights/ChurnInsights";
+import { CLVInsights } from "./insights/CLVInsights";
+import { ProductInsights } from "./insights/ProductInsights";
 
 const segColors: Record<string, string> = {
   Champions: 'hsl(221, 83%, 53%)',
@@ -25,11 +30,20 @@ const segBg: Record<string, string> = {
 
 interface ModelInsightsProps {
   onBack: () => void;
+  modelName?: string;
 }
 
-export const ModelInsights = ({ onBack }: ModelInsightsProps) => {
-  const { segments, overlapData, scatterData } = rfmInsightsData;
-  const barData = segments.map(s => ({ name: s.name, pct: s.pct, count: s.count.toLocaleString() }));
+const insightMeta: Record<ModelInsightType, { title: string; date: string; source: string; customers: string }> = {
+  rfm: { title: 'RFM Segmentation — Brand A Q1 2025', date: 'Mar 12, 2025', source: 'Atlantis Retail DB', customers: '1,24,560' },
+  kmeans: { title: kmeansInsightsData.meta.name, date: kmeansInsightsData.meta.runDate, source: kmeansInsightsData.meta.dataSource, customers: kmeansInsightsData.meta.customers },
+  churn: { title: churnInsightsData.meta.name, date: churnInsightsData.meta.runDate, source: churnInsightsData.meta.dataSource, customers: churnInsightsData.meta.customers },
+  clv: { title: clvInsightsData.meta.name, date: clvInsightsData.meta.runDate, source: clvInsightsData.meta.dataSource, customers: clvInsightsData.meta.customers },
+  product: { title: productInsightsData.meta.name, date: productInsightsData.meta.runDate, source: productInsightsData.meta.dataSource, customers: productInsightsData.meta.customers },
+};
+
+export const ModelInsights = ({ onBack, modelName }: ModelInsightsProps) => {
+  const insightType: ModelInsightType = (modelName && modelNameToInsightType[modelName]) || 'rfm';
+  const meta = insightMeta[insightType];
 
   return (
     <div className="space-y-8">
@@ -38,13 +52,13 @@ export const ModelInsights = ({ onBack }: ModelInsightsProps) => {
         <div className="flex items-start gap-3">
           <Button variant="ghost" size="icon" onClick={onBack} className="h-9 w-9 mt-0.5 rounded-xl"><ArrowLeft className="h-4 w-4" /></Button>
           <div>
-            <h2 className="text-lg font-semibold text-foreground">RFM Segmentation — Brand A Q1 2025</h2>
+            <h2 className="text-lg font-semibold text-foreground">{meta.title}</h2>
             <div className="flex flex-wrap items-center gap-3 mt-1">
-              <span className="text-xs text-muted-foreground">Mar 12, 2025</span>
+              <span className="text-xs text-muted-foreground">{meta.date}</span>
               <span className="text-xs text-muted-foreground">•</span>
-              <span className="text-xs text-muted-foreground">Atlantis Retail DB</span>
+              <span className="text-xs text-muted-foreground">{meta.source}</span>
               <span className="text-xs text-muted-foreground">•</span>
-              <span className="text-xs font-medium text-foreground">1,24,560 customers</span>
+              <span className="text-xs font-medium text-foreground">{meta.customers} customers</span>
               <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] gap-1 font-medium">
                 <CheckCircle2 className="h-3 w-3" /> Completed
               </Badge>
@@ -54,6 +68,23 @@ export const ModelInsights = ({ onBack }: ModelInsightsProps) => {
         <Button variant="outline" size="sm" className="gap-1.5 text-xs shadow-sm"><Download className="h-3.5 w-3.5" />Export</Button>
       </div>
 
+      {/* Model-specific content */}
+      {insightType === 'kmeans' && <KMeansInsights />}
+      {insightType === 'churn' && <ChurnInsights />}
+      {insightType === 'clv' && <CLVInsights />}
+      {insightType === 'product' && <ProductInsights />}
+      {insightType === 'rfm' && <RFMInsightsContent />}
+    </div>
+  );
+};
+
+/** RFM-specific content extracted from the original monolith */
+const RFMInsightsContent = () => {
+  const { segments, overlapData, scatterData } = rfmInsightsData;
+  const barData = segments.map(s => ({ name: s.name, pct: s.pct, count: s.count.toLocaleString() }));
+
+  return (
+    <>
       {/* KPI Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {segments.map(seg => (
@@ -210,6 +241,6 @@ export const ModelInsights = ({ onBack }: ModelInsightsProps) => {
           </p>
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 };

@@ -9,6 +9,7 @@ import type { CatalogModel } from "@/data/modelStudioMockData";
 
 const ModelStudio = () => {
   const [activeTab, setActiveTab] = useState("catalog");
+  const [insightsModelName, setInsightsModelName] = useState<string | undefined>();
   const [showInsights, setShowInsights] = useState(false);
   const [drawerModel, setDrawerModel] = useState<CatalogModel | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -18,18 +19,20 @@ const ModelStudio = () => {
     setDrawerOpen(true);
   };
 
-  const handleViewResults = () => {
+  const handleViewResults = (modelName?: string) => {
+    setInsightsModelName(modelName);
     setShowInsights(true);
   };
 
   const handleBackFromInsights = () => {
     setShowInsights(false);
+    setInsightsModelName(undefined);
   };
 
   if (showInsights) {
     return (
       <div className="flex-1 overflow-y-auto p-6">
-        <ModelInsights onBack={handleBackFromInsights} />
+        <ModelInsights onBack={handleBackFromInsights} modelName={insightsModelName} />
       </div>
     );
   }
@@ -52,7 +55,7 @@ const ModelStudio = () => {
         <TabsContent value="catalog" className="animate-in fade-in-50 duration-300">
           <ModelCatalog
             onConfigureModel={handleConfigureModel}
-            onViewSampleOutput={handleViewResults}
+            onViewSampleOutput={() => handleViewResults()}
           />
         </TabsContent>
 

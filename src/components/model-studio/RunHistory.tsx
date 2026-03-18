@@ -14,7 +14,7 @@ import { format } from "date-fns";
 import { runHistory } from "@/data/modelStudioMockData";
 
 interface RunHistoryProps {
-  onViewReport: () => void;
+  onViewReport: (modelName?: string) => void;
 }
 
 export const RunHistory = ({ onViewReport }: RunHistoryProps) => {
@@ -135,7 +135,7 @@ export const RunHistory = ({ onViewReport }: RunHistoryProps) => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-36">
                         {r.status === 'Completed' && (
-                          <DropdownMenuItem className="gap-2 text-xs" onClick={onViewReport}><Eye className="h-3.5 w-3.5" />View Report</DropdownMenuItem>
+                          <DropdownMenuItem className="gap-2 text-xs" onClick={() => onViewReport(r.modelName)}><Eye className="h-3.5 w-3.5" />View Report</DropdownMenuItem>
                         )}
                         <DropdownMenuItem className="gap-2 text-xs"><Play className="h-3.5 w-3.5" />Re-run</DropdownMenuItem>
                       </DropdownMenuContent>

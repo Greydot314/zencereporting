@@ -18,7 +18,7 @@ const statusConfig: Record<string, { icon: React.ElementType; className: string;
 };
 
 interface MyModelsProps {
-  onViewResults: () => void;
+  onViewResults: (modelName?: string) => void;
   onNewModel: () => void;
 }
 
@@ -95,7 +95,7 @@ export const MyModels = ({ onViewResults, onNewModel }: MyModelsProps) => {
                           <DropdownMenuItem className="gap-2 text-xs"><Play className="h-3.5 w-3.5" />Run Again</DropdownMenuItem>
                           <DropdownMenuItem className="gap-2 text-xs"><Pencil className="h-3.5 w-3.5" />Edit Config</DropdownMenuItem>
                           {m.status === 'Completed' && (
-                            <DropdownMenuItem className="gap-2 text-xs" onClick={onViewResults}><Eye className="h-3.5 w-3.5" />View Results</DropdownMenuItem>
+                            <DropdownMenuItem className="gap-2 text-xs" onClick={() => onViewResults(m.name)}><Eye className="h-3.5 w-3.5" />View Results</DropdownMenuItem>
                           )}
                           <DropdownMenuSeparator />
                           <DropdownMenuItem className="gap-2 text-xs text-destructive"><Trash2 className="h-3.5 w-3.5" />Delete</DropdownMenuItem>

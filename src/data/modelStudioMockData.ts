@@ -148,6 +148,126 @@ export const rfmInsightsData = {
   ],
 };
 
+// ── K-Means Insights ──
+export const kmeansInsightsData = {
+  meta: { name: 'K-Means Exploration', runDate: 'Mar 7, 2025', dataSource: 'ClickHouse - Brand B', customers: '98,320', clusters: 6 },
+  clusters: [
+    { id: 1, name: 'High-Value Regulars', count: 14748, pct: 15, avgSpend: 9200, avgFreq: 14, avgRecency: 8, topCategory: 'Electronics', color: 'hsl(221, 83%, 53%)' },
+    { id: 2, name: 'Weekend Shoppers', count: 17714, pct: 18, avgSpend: 4500, avgFreq: 6, avgRecency: 22, topCategory: 'Fashion', color: 'hsl(262, 83%, 58%)' },
+    { id: 3, name: 'Bargain Hunters', count: 22578, pct: 23, avgSpend: 1800, avgFreq: 10, avgRecency: 15, topCategory: 'Groceries', color: 'hsl(142, 76%, 36%)' },
+    { id: 4, name: 'New Explorers', count: 12781, pct: 13, avgSpend: 2200, avgFreq: 2, avgRecency: 5, topCategory: 'Home & Living', color: 'hsl(38, 92%, 50%)' },
+    { id: 5, name: 'Seasonal Buyers', count: 19664, pct: 20, avgSpend: 3100, avgFreq: 4, avgRecency: 65, topCategory: 'Sports', color: 'hsl(340, 75%, 55%)' },
+    { id: 6, name: 'Dormant Accounts', count: 10835, pct: 11, avgSpend: 600, avgFreq: 1, avgRecency: 180, topCategory: 'N/A', color: 'hsl(220, 14%, 60%)' },
+  ],
+  silhouetteScores: [
+    { k: 2, score: 0.42 }, { k: 3, score: 0.56 }, { k: 4, score: 0.61 }, { k: 5, score: 0.67 },
+    { k: 6, score: 0.72 }, { k: 7, score: 0.70 }, { k: 8, score: 0.65 }, { k: 9, score: 0.58 }, { k: 10, score: 0.51 },
+  ],
+  pca: [
+    ...Array.from({ length: 20 }, () => ({ x: -3 + Math.random() * 2, y: 2 + Math.random() * 2, cluster: 'High-Value Regulars' })),
+    ...Array.from({ length: 20 }, () => ({ x: 1 + Math.random() * 2, y: 2 + Math.random() * 1.5, cluster: 'Weekend Shoppers' })),
+    ...Array.from({ length: 25 }, () => ({ x: -1 + Math.random() * 2, y: -1 + Math.random() * 2, cluster: 'Bargain Hunters' })),
+    ...Array.from({ length: 15 }, () => ({ x: 3 + Math.random() * 1.5, y: 0 + Math.random() * 1.5, cluster: 'New Explorers' })),
+    ...Array.from({ length: 20 }, () => ({ x: -3 + Math.random() * 2, y: -3 + Math.random() * 1.5, cluster: 'Seasonal Buyers' })),
+    ...Array.from({ length: 12 }, () => ({ x: 2 + Math.random() * 2, y: -3 + Math.random() * 1.5, cluster: 'Dormant Accounts' })),
+  ],
+  aiSummary: 'K=6 yields the optimal silhouette score of 0.72. "High-Value Regulars" (15%) drive 38% of total revenue — they purchase electronics bi-weekly. "Dormant Accounts" (11%) haven\'t transacted in 180+ days and are candidates for win-back. "Weekend Shoppers" show a strong Saturday spike pattern ideal for flash-sale targeting.',
+};
+
+// ── Churn Insights ──
+export const churnInsightsData = {
+  meta: { name: 'Churn Risk - All Brands', runDate: 'Mar 6, 2025', dataSource: 'ClickHouse - Brand A', customers: '1,12,400', accuracy: 87.3 },
+  riskBuckets: [
+    { range: '0–20', label: 'Very Low', count: 39340, pct: 35, color: 'hsl(142, 76%, 36%)' },
+    { range: '21–40', label: 'Low', count: 24728, pct: 22, color: 'hsl(142, 50%, 50%)' },
+    { range: '41–60', label: 'Medium', count: 19108, pct: 17, color: 'hsl(38, 92%, 50%)' },
+    { range: '61–80', label: 'High', count: 17984, pct: 16, color: 'hsl(15, 80%, 55%)' },
+    { range: '81–100', label: 'Critical', count: 11240, pct: 10, color: 'hsl(0, 84%, 60%)' },
+  ],
+  featureImportance: [
+    { feature: 'Days Since Last Purchase', importance: 0.28 },
+    { feature: 'Purchase Frequency (90d)', importance: 0.22 },
+    { feature: 'Support Tickets', importance: 0.16 },
+    { feature: 'Avg Order Value Trend', importance: 0.13 },
+    { feature: 'Email Engagement', importance: 0.11 },
+    { feature: 'App Sessions (30d)', importance: 0.06 },
+    { feature: 'Loyalty Points Balance', importance: 0.04 },
+  ],
+  monthlyTrend: [
+    { month: 'Oct', churnRate: 4.2 }, { month: 'Nov', churnRate: 3.8 }, { month: 'Dec', churnRate: 3.1 },
+    { month: 'Jan', churnRate: 5.6 }, { month: 'Feb', churnRate: 5.1 }, { month: 'Mar', churnRate: 4.8 },
+  ],
+  topRiskCustomers: [
+    { id: 'C-10234', name: 'Vikram Patel', score: 94, lastPurchase: '142 days ago', ltv: '₹45,200' },
+    { id: 'C-10891', name: 'Meera Joshi', score: 91, lastPurchase: '128 days ago', ltv: '₹38,700' },
+    { id: 'C-11456', name: 'Arjun Reddy', score: 88, lastPurchase: '115 days ago', ltv: '₹52,100' },
+    { id: 'C-12003', name: 'Sanya Gupta', score: 85, lastPurchase: '98 days ago', ltv: '₹29,400' },
+    { id: 'C-12567', name: 'Rohan Mehta', score: 82, lastPurchase: '105 days ago', ltv: '₹61,800' },
+  ],
+  aiSummary: 'Churn risk has increased 14% since January, primarily driven by post-holiday drop-off. The top predictor is "Days Since Last Purchase" — customers inactive for 90+ days have a 6x higher churn probability. 29,224 customers are in the High/Critical zone (26%) representing ₹18.2Cr in at-risk revenue. Recommend immediate win-back for the Critical bucket.',
+};
+
+// ── CLV Insights ──
+export const clvInsightsData = {
+  meta: { name: 'CLV Tiers - Premium', runDate: 'Mar 11, 2025', dataSource: 'Atlantis Retail DB', customers: '1,24,560' },
+  tiers: [
+    { name: 'Platinum', emoji: '💎', count: 6228, pct: 5, avgCLV: 125000, predictedRevenue: '₹77.8Cr', color: 'hsl(262, 83%, 58%)' },
+    { name: 'Gold', emoji: '🥇', count: 18684, pct: 15, avgCLV: 52000, predictedRevenue: '₹97.2Cr', color: 'hsl(38, 92%, 50%)' },
+    { name: 'Silver', emoji: '🥈', count: 43596, pct: 35, avgCLV: 18000, predictedRevenue: '₹78.5Cr', color: 'hsl(220, 14%, 60%)' },
+    { name: 'Bronze', emoji: '🥉', count: 56052, pct: 45, avgCLV: 4500, predictedRevenue: '₹25.2Cr', color: 'hsl(25, 60%, 50%)' },
+  ],
+  clvDistribution: [
+    { range: '₹0–5K', count: 42000 }, { range: '₹5K–15K', count: 31000 }, { range: '₹15K–30K', count: 22000 },
+    { range: '₹30K–60K', count: 16000 }, { range: '₹60K–1L', count: 8500 }, { range: '₹1L+', count: 5060 },
+  ],
+  migrationMatrix: [
+    { from: 'Bronze', to: 'Silver', probability: 18 },
+    { from: 'Silver', to: 'Gold', probability: 12 },
+    { from: 'Gold', to: 'Platinum', probability: 7 },
+    { from: 'Silver', to: 'Bronze', probability: 22 },
+    { from: 'Gold', to: 'Silver', probability: 15 },
+  ],
+  aiSummary: 'Platinum customers (5%) generate 28% of total predicted revenue over the next 12 months. Gold-tier customers show the highest upward migration potential — 12% are projected to reach Platinum with targeted loyalty incentives. Bronze-tier has a 22% risk of churning entirely. Focus retention on Gold customers and acquisition-to-Silver programs.',
+};
+
+// ── Product Propensity Insights ──
+export const productInsightsData = {
+  meta: { name: 'Product Affinity - Brand B', runDate: 'Mar 9, 2025', dataSource: 'ClickHouse - Brand B', customers: '76,540' },
+  topProducts: [
+    { product: 'Wireless Earbuds Pro', propensityScore: 0.82, potentialBuyers: 12400, avgAffinity: 78, category: 'Electronics' },
+    { product: 'Organic Face Serum', propensityScore: 0.76, potentialBuyers: 9800, avgAffinity: 72, category: 'Beauty' },
+    { product: 'Running Shoes X1', propensityScore: 0.71, potentialBuyers: 8200, avgAffinity: 68, category: 'Sports' },
+    { product: 'Smart Home Hub', propensityScore: 0.65, potentialBuyers: 6500, avgAffinity: 61, category: 'Electronics' },
+    { product: 'Premium Coffee Blend', propensityScore: 0.61, potentialBuyers: 11200, avgAffinity: 58, category: 'Food & Beverage' },
+  ],
+  crossSellMatrix: [
+    { source: 'Wireless Earbuds Pro', target: 'Phone Case Premium', affinity: 72 },
+    { source: 'Organic Face Serum', target: 'Vitamin C Moisturizer', affinity: 68 },
+    { source: 'Running Shoes X1', target: 'Sports Watch Elite', affinity: 64 },
+    { source: 'Smart Home Hub', target: 'Smart Bulb Pack', affinity: 81 },
+    { source: 'Premium Coffee Blend', target: 'French Press Set', affinity: 55 },
+  ],
+  categoryBreakdown: [
+    { category: 'Electronics', customers: 24500, avgScore: 0.73 },
+    { category: 'Beauty', customers: 18200, avgScore: 0.68 },
+    { category: 'Sports', customers: 14800, avgScore: 0.62 },
+    { category: 'Food & Beverage', customers: 12040, avgScore: 0.57 },
+    { category: 'Home & Living', customers: 7000, avgScore: 0.49 },
+  ],
+  aiSummary: 'Wireless Earbuds Pro has the highest purchase propensity at 82% with 12,400 potential buyers — ideal for a targeted push campaign. Cross-sell affinity is strongest between Smart Home Hub and Smart Bulb Pack (81%). Electronics customers have the highest overall propensity scores, suggesting a tech-forward customer base for Brand B.',
+};
+
+export type ModelInsightType = 'rfm' | 'kmeans' | 'churn' | 'clv' | 'product';
+
+export const modelNameToInsightType: Record<string, ModelInsightType> = {
+  'RFM Q1 2025 - Brand A': 'rfm',
+  'Churn Risk - All Brands': 'churn',
+  'CLV Tiers - Premium': 'clv',
+  'K-Means Exploration': 'kmeans',
+  'Auto-Segment Monthly': 'rfm',
+  'Product Affinity - Brand B': 'product',
+};
+
 export const comparisonFields = [
   { field: 'Input Requirements', rfm: 'Transactional', kmeans: 'Transactional + Behavioral', churn: 'Transactional + Behavioral', clv: 'Transactional', product: 'Transactional + Product Catalog', hybrid: 'Demographic + Behavioral', sql: 'Any', auto: 'All Available' },
   { field: 'Output Type', rfm: '5 RFM Tiers', kmeans: 'N Clusters', churn: 'Risk Scores', clv: '4 Value Tiers', product: 'Product Scores', hybrid: 'Named Personas', sql: 'User-defined', auto: 'Auto-detected' },

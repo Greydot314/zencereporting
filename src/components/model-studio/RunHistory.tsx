@@ -14,7 +14,7 @@ import { format } from "date-fns";
 import { runHistory } from "@/data/modelStudioMockData";
 
 interface RunHistoryProps {
-  onViewReport: () => void;
+  onViewReport: (modelName?: string) => void;
 }
 
 export const RunHistory = ({ onViewReport }: RunHistoryProps) => {

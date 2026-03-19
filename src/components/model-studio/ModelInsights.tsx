@@ -5,12 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ScatterChart, Scatter, CartesianGrid, ZAxis, Cell, Legend } from "recharts";
-import { rfmInsightsData, modelNameToInsightType, kmeansInsightsData, churnInsightsData, clvInsightsData, productInsightsData } from "@/data/modelStudioMockData";
+import { rfmInsightsData, modelNameToInsightType, kmeansInsightsData, churnInsightsData, clvInsightsData, productInsightsData, hybridPersonaInsightsData } from "@/data/modelStudioMockData";
 import type { ModelInsightType } from "@/data/modelStudioMockData";
 import { KMeansInsights } from "./insights/KMeansInsights";
 import { ChurnInsights } from "./insights/ChurnInsights";
 import { CLVInsights } from "./insights/CLVInsights";
 import { ProductInsights } from "./insights/ProductInsights";
+import { HybridPersonaInsights } from "./insights/HybridPersonaInsights";
 
 const segColors: Record<string, string> = {
   Champions: 'hsl(221, 83%, 53%)',
@@ -39,6 +40,7 @@ const insightMeta: Record<ModelInsightType, { title: string; date: string; sourc
   churn: { title: churnInsightsData.meta.name, date: churnInsightsData.meta.runDate, source: churnInsightsData.meta.dataSource, customers: churnInsightsData.meta.customers },
   clv: { title: clvInsightsData.meta.name, date: clvInsightsData.meta.runDate, source: clvInsightsData.meta.dataSource, customers: clvInsightsData.meta.customers },
   product: { title: productInsightsData.meta.name, date: productInsightsData.meta.runDate, source: productInsightsData.meta.dataSource, customers: productInsightsData.meta.customers },
+  hybrid: { title: hybridPersonaInsightsData.meta.name, date: hybridPersonaInsightsData.meta.runDate, source: hybridPersonaInsightsData.meta.dataSource, customers: hybridPersonaInsightsData.meta.customers },
 };
 
 export const ModelInsights = ({ onBack, modelName }: ModelInsightsProps) => {
@@ -73,6 +75,7 @@ export const ModelInsights = ({ onBack, modelName }: ModelInsightsProps) => {
       {insightType === 'churn' && <ChurnInsights />}
       {insightType === 'clv' && <CLVInsights />}
       {insightType === 'product' && <ProductInsights />}
+      {insightType === 'hybrid' && <HybridPersonaInsights />}
       {insightType === 'rfm' && <RFMInsightsContent />}
     </div>
   );

@@ -40,6 +40,7 @@ const insightMeta: Record<ModelInsightType, { title: string; date: string; sourc
   churn: { title: churnInsightsData.meta.name, date: churnInsightsData.meta.runDate, source: churnInsightsData.meta.dataSource, customers: churnInsightsData.meta.customers },
   clv: { title: clvInsightsData.meta.name, date: clvInsightsData.meta.runDate, source: clvInsightsData.meta.dataSource, customers: clvInsightsData.meta.customers },
   product: { title: productInsightsData.meta.name, date: productInsightsData.meta.runDate, source: productInsightsData.meta.dataSource, customers: productInsightsData.meta.customers },
+  hybrid: { title: hybridPersonaInsightsData.meta.name, date: hybridPersonaInsightsData.meta.runDate, source: hybridPersonaInsightsData.meta.dataSource, customers: hybridPersonaInsightsData.meta.customers },
 };
 
 export const ModelInsights = ({ onBack, modelName }: ModelInsightsProps) => {

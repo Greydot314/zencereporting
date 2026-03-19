@@ -104,6 +104,7 @@ export const myModels: MyModel[] = [
   { id: '4', name: 'K-Means Exploration', baseModel: 'K-Means Clustering', dataSource: 'ClickHouse - Brand B', lastRun: '—', status: 'Draft', segmentsGenerated: 0 },
   { id: '5', name: 'Auto-Segment Monthly', baseModel: 'AI Auto-Segment', dataSource: 'Atlantis Retail DB', lastRun: '2 days ago', status: 'Scheduled', segmentsGenerated: 7 },
   { id: '6', name: 'Product Affinity - Brand B', baseModel: 'Product Propensity', dataSource: 'ClickHouse - Brand B', lastRun: '5 days ago', status: 'Failed', segmentsGenerated: 0 },
+  { id: '7', name: 'Hybrid Persona - All Brands', baseModel: 'Hybrid Persona Builder', dataSource: 'Atlantis CRM + Web Analytics', lastRun: '2 days ago', status: 'Completed', segmentsGenerated: 5 },
 ];
 
 export const runHistory: RunHistoryEntry[] = [

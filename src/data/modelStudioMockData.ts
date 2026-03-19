@@ -257,7 +257,50 @@ export const productInsightsData = {
   aiSummary: 'Wireless Earbuds Pro has the highest purchase propensity at 82% with 12,400 potential buyers — ideal for a targeted push campaign. Cross-sell affinity is strongest between Smart Home Hub and Smart Bulb Pack (81%). Electronics customers have the highest overall propensity scores, suggesting a tech-forward customer base for Brand B.',
 };
 
-export type ModelInsightType = 'rfm' | 'kmeans' | 'churn' | 'clv' | 'product';
+// ── Hybrid Persona Insights ──
+export const hybridPersonaInsightsData = {
+  meta: { name: 'Hybrid Persona Analysis — All Brands', runDate: 'Mar 15, 2025', dataSource: 'Atlantis CRM + Web Analytics', customers: '98,340' },
+  personas: [
+    { name: 'Urban Trendsetters', emoji: '🏙️', tagline: 'Tech-savvy, brand-conscious city dwellers', pct: 28, count: 27535, avgAge: 29, avgSpend: 8400, engagementScore: 8.2, topTraits: ['Mobile-first', 'Social buyer', 'Early adopter'] },
+    { name: 'Value Seekers', emoji: '🏷️', tagline: 'Price-driven, coupon-loving bargain hunters', pct: 24, count: 23602, avgAge: 38, avgSpend: 4200, engagementScore: 6.5, topTraits: ['Coupon user', 'Bulk buyer', 'Price alerts'] },
+    { name: 'Premium Loyalists', emoji: '👑', tagline: 'High-spending repeat customers', pct: 18, count: 17701, avgAge: 44, avgSpend: 14500, engagementScore: 9.1, topTraits: ['Loyalty member', 'Full price', 'Brand advocate'] },
+    { name: 'Weekend Browsers', emoji: '🛋️', tagline: 'Casual weekend shoppers with low commitment', pct: 19, count: 18685, avgAge: 33, avgSpend: 3100, engagementScore: 4.8, topTraits: ['Weekend active', 'Window shopper', 'Impulse buys'] },
+    { name: 'Dormant Potentials', emoji: '💤', tagline: 'Previously active, now disengaged', pct: 11, count: 10817, avgAge: 41, avgSpend: 1800, engagementScore: 2.3, topTraits: ['Lapsed 90d+', 'Email ignorer', 'Re-engage target'] },
+  ],
+  demographics: {
+    ageGroups: [
+      { range: '18-24', 'Urban Trendsetters': 8200, 'Value Seekers': 2100, 'Premium Loyalists': 800, 'Weekend Browsers': 3400 },
+      { range: '25-34', 'Urban Trendsetters': 12400, 'Value Seekers': 6500, 'Premium Loyalists': 4200, 'Weekend Browsers': 7800 },
+      { range: '35-44', 'Urban Trendsetters': 5100, 'Value Seekers': 9800, 'Premium Loyalists': 7500, 'Weekend Browsers': 4600 },
+      { range: '45-54', 'Urban Trendsetters': 1500, 'Value Seekers': 4200, 'Premium Loyalists': 4000, 'Weekend Browsers': 2100 },
+      { range: '55+', 'Urban Trendsetters': 335, 'Value Seekers': 1002, 'Premium Loyalists': 1201, 'Weekend Browsers': 785 },
+    ],
+    regions: [
+      { name: 'Metro', value: 42 },
+      { name: 'Tier-2 Cities', value: 28 },
+      { name: 'Tier-3 Cities', value: 18 },
+      { name: 'Rural', value: 12 },
+    ],
+  },
+  behavioralPatterns: [
+    { dimension: 'Browse Depth', 'Urban Trendsetters': 8.5, 'Value Seekers': 7.2, 'Premium Loyalists': 6.8, 'Weekend Browsers': 4.1 },
+    { dimension: 'Cart Frequency', 'Urban Trendsetters': 7.9, 'Value Seekers': 8.4, 'Premium Loyalists': 9.2, 'Weekend Browsers': 3.5 },
+    { dimension: 'Social Sharing', 'Urban Trendsetters': 9.1, 'Value Seekers': 3.2, 'Premium Loyalists': 5.6, 'Weekend Browsers': 2.8 },
+    { dimension: 'Review Writing', 'Urban Trendsetters': 6.3, 'Value Seekers': 4.8, 'Premium Loyalists': 8.7, 'Weekend Browsers': 1.9 },
+    { dimension: 'Wishlist Usage', 'Urban Trendsetters': 7.1, 'Value Seekers': 8.9, 'Premium Loyalists': 5.4, 'Weekend Browsers': 6.7 },
+    { dimension: 'Loyalty Points', 'Urban Trendsetters': 5.8, 'Value Seekers': 6.1, 'Premium Loyalists': 9.5, 'Weekend Browsers': 2.2 },
+  ],
+  channelPreferences: [
+    { channel: 'Mobile App', 'Urban Trendsetters': 38, 'Value Seekers': 22, 'Premium Loyalists': 18, 'Weekend Browsers': 15 },
+    { channel: 'Website', 'Urban Trendsetters': 12, 'Value Seekers': 28, 'Premium Loyalists': 25, 'Weekend Browsers': 35 },
+    { channel: 'In-Store', 'Urban Trendsetters': 5, 'Value Seekers': 15, 'Premium Loyalists': 32, 'Weekend Browsers': 28 },
+    { channel: 'Email', 'Urban Trendsetters': 8, 'Value Seekers': 20, 'Premium Loyalists': 15, 'Weekend Browsers': 12 },
+    { channel: 'Social Media', 'Urban Trendsetters': 30, 'Value Seekers': 10, 'Premium Loyalists': 8, 'Weekend Browsers': 8 },
+  ],
+  aiSummary: 'Urban Trendsetters (28%) drive the highest engagement via mobile and social channels — ideal for influencer and app-exclusive campaigns. Premium Loyalists (18%) contribute 39% of total revenue despite being a smaller segment, making them prime candidates for VIP programs. Dormant Potentials (11%) represent ₹19.5Cr in recoverable annual revenue; a targeted win-back sequence via SMS (their last responsive channel) could reactivate an estimated 30% within 60 days.',
+};
+
+export type ModelInsightType = 'rfm' | 'kmeans' | 'churn' | 'clv' | 'product' | 'hybrid';
 
 export const modelNameToInsightType: Record<string, ModelInsightType> = {
   'RFM Q1 2025 - Brand A': 'rfm',
@@ -266,6 +309,7 @@ export const modelNameToInsightType: Record<string, ModelInsightType> = {
   'K-Means Exploration': 'kmeans',
   'Auto-Segment Monthly': 'rfm',
   'Product Affinity - Brand B': 'product',
+  'Hybrid Persona - All Brands': 'hybrid',
 };
 
 export const comparisonFields = [

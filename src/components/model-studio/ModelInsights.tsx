@@ -75,6 +75,7 @@ export const ModelInsights = ({ onBack, modelName }: ModelInsightsProps) => {
       {insightType === 'churn' && <ChurnInsights />}
       {insightType === 'clv' && <CLVInsights />}
       {insightType === 'product' && <ProductInsights />}
+      {insightType === 'hybrid' && <HybridPersonaInsights />}
       {insightType === 'rfm' && <RFMInsightsContent />}
     </div>
   );

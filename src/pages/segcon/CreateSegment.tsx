@@ -18,6 +18,7 @@ import {
   Target, Zap, ShieldX, Clock, GitBranch
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import BreakdownSection from "@/components/segcon/BreakdownSection";
 
 // ── Category Config with colors ──
 const categoryConfig: Record<string, { icon: React.ReactNode; color: string; bg: string; label: string }> = {

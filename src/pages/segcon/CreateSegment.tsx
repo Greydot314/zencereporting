@@ -951,6 +951,9 @@ const CreateSegment = () => {
                   </div>
                 ))}
               </div>
+
+              {/* ── Breakdown Section ── */}
+              <BreakdownSection />
             </div>
 
             {/* RIGHT: Side Panel - Summary, Mind Map, Count */}

@@ -18,6 +18,7 @@ import {
   Target, Zap, ShieldX, Clock, GitBranch
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import BreakdownSection from "@/components/segcon/BreakdownSection";
 
 // ── Category Config with colors ──
 const categoryConfig: Record<string, { icon: React.ReactNode; color: string; bg: string; label: string }> = {
@@ -950,6 +951,9 @@ const CreateSegment = () => {
                   </div>
                 ))}
               </div>
+
+              {/* ── Breakdown Section ── */}
+              <BreakdownSection />
             </div>
 
             {/* RIGHT: Side Panel - Summary, Mind Map, Count */}

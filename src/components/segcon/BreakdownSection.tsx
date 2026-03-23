@@ -420,8 +420,52 @@ const BreakdownSection = ({ filterVersion = 0 }: BreakdownSectionProps) => {
         </div>
       )}
 
+      {/* Loading skeleton */}
+      {selected.length > 0 && isRecalculating && (
+        <div className="space-y-4">
+          <Card className="border-border overflow-hidden">
+            <CardContent className="p-0">
+              <div className="px-4 py-2.5 border-b border-border bg-muted/30 flex items-center gap-2">
+                <Loader2 className="h-3.5 w-3.5 text-primary animate-spin" />
+                <span className="text-xs font-medium text-muted-foreground">Recalculating breakdown...</span>
+              </div>
+              <div className="p-4 space-y-3">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <div key={i} className="flex items-center gap-3">
+                    <Skeleton className="h-4 w-[100px]" />
+                    <Skeleton className="h-5 flex-1" />
+                    <Skeleton className="h-4 w-[50px]" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          {selected.length === 2 && (
+            <Card className="border-border overflow-hidden">
+              <CardContent className="p-0">
+                <div className="px-4 py-2.5 border-b border-border bg-muted/30 flex items-center gap-2">
+                  <Grid3X3 className="h-3.5 w-3.5 text-primary animate-pulse" />
+                  <span className="text-xs font-medium text-muted-foreground">Rebuilding cross-tabulation...</span>
+                </div>
+                <div className="p-4 space-y-2">
+                  {[1, 2, 3, 4].map(r => (
+                    <div key={r} className="flex items-center gap-2">
+                      <Skeleton className="h-4 w-[80px]" />
+                      {[1, 2, 3].map(c => (
+                        <Skeleton key={c} className="h-8 flex-1" />
+                      ))}
+                      <Skeleton className="h-4 w-[50px]" />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+
       {/* Results */}
-      {selected.length > 0 && (
+      {selected.length > 0 && !isRecalculating && (
         <div className="space-y-4">
           {selected.map(attrId => {
             const attr = breakdownAttributes.find(a => a.id === attrId);

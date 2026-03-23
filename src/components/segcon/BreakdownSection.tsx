@@ -409,7 +409,7 @@ const BreakdownSection = () => {
           {selected.map(attrId => {
             const attr = breakdownAttributes.find(a => a.id === attrId);
             if (!attr) return null;
-            const results = sortResults(getResults(attrId));
+            const results = sortResults(getResultsData(attrId));
             const maxUsers = Math.max(...results.map(r => r.users));
 
             return (

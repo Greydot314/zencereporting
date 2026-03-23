@@ -494,6 +494,7 @@ const CreateSegment = () => {
       return prev.slice(0, Math.max(0, remainingGroups.length - 1));
     });
     setEstimatedCount(null);
+    setFilterVersion(v => v + 1);
   };
 
   const updateGroupCondition = (groupId: string, condition: ConditionType) => {

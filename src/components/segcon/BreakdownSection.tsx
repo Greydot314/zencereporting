@@ -10,7 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import {
   BarChart3, ChevronDown, Search, X, SplitSquareVertical,
   Table as TableIcon, BarChart, AlertTriangle,
-  UserRound, Smartphone, Globe, Mail, ShoppingCart, Tag, Layers
+  UserRound, Smartphone, Globe, Mail, ShoppingCart, Tag, Layers, Grid3X3
 } from "lucide-react";
 
 // ── Breakdown attributes ──

@@ -535,7 +535,7 @@ const BreakdownSection = ({ filterVersion = 0 }: BreakdownSectionProps) => {
       )}
 
       {/* Cross-Tabulation Matrix */}
-      {selected.length === 2 && (() => {
+      {selected.length === 2 && !isRecalculating && (() => {
         const [id1, id2] = selected;
         const attr1 = breakdownAttributes.find(a => a.id === id1);
         const attr2 = breakdownAttributes.find(a => a.id === id2);

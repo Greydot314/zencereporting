@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import {
   BarChart3, ChevronDown, Search, X, SplitSquareVertical,
   Table as TableIcon, BarChart, AlertTriangle,
-  UserRound, Smartphone, Globe, Mail, ShoppingCart, Tag, Layers
+  UserRound, Smartphone, Globe, Mail, ShoppingCart, Tag, Layers, Grid3X3
 } from "lucide-react";
 
 // ── Breakdown attributes ──
@@ -111,7 +110,56 @@ const mockResults: Record<string, { label: string; users: number; pct: number }[
   ],
 };
 
-const getResults = (id: string) => mockResults[id] || [
+// ── Cross-tab mock data ──
+const crossTabData: Record<string, Record<string, Record<string, number>>> = {
+  "country|device_type": {
+    "India": { "Mobile": 28400, "Desktop": 10200, "Tablet": 6600 },
+    "United States": { "Mobile": 14800, "Desktop": 9600, "Tablet": 4000 },
+    "United Kingdom": { "Mobile": 8200, "Desktop": 5100, "Tablet": 2500 },
+    "UAE": { "Mobile": 7800, "Desktop": 3200, "Tablet": 1300 },
+    "Singapore": { "Mobile": 5400, "Desktop": 2400, "Tablet": 1100 },
+  },
+  "country|gender": {
+    "India": { "Male": 22100, "Female": 19800, "Non-binary": 2200, "Prefer not to say": 1100 },
+    "United States": { "Male": 13200, "Female": 12800, "Non-binary": 1600, "Prefer not to say": 800 },
+    "United Kingdom": { "Male": 7200, "Female": 7100, "Non-binary": 1000, "Prefer not to say": 500 },
+    "UAE": { "Male": 7400, "Female": 4200, "Non-binary": 400, "Prefer not to say": 300 },
+  },
+  "gender|device_type": {
+    "Male": { "Mobile": 33600, "Desktop": 17200, "Tablet": 7400 },
+    "Female": { "Mobile": 32200, "Desktop": 15800, "Tablet": 6800 },
+    "Non-binary": { "Mobile": 4200, "Desktop": 2200, "Tablet": 1000 },
+    "Prefer not to say": { "Mobile": 2400, "Desktop": 1400, "Tablet": 800 },
+  },
+  "loyalty_tier|device_type": {
+    "Platinum": { "Mobile": 4200, "Desktop": 3000, "Tablet": 1200 },
+    "Gold": { "Mobile": 13800, "Desktop": 7600, "Tablet": 3200 },
+    "Silver": { "Mobile": 22400, "Desktop": 10800, "Tablet": 5000 },
+    "Bronze": { "Mobile": 24800, "Desktop": 12200, "Tablet": 5100 },
+    "None": { "Mobile": 7200, "Desktop": 3200, "Tablet": 1300 },
+  },
+};
+
+const getCrossTabKey = (a: string, b: string): string | null => {
+  if (crossTabData[`${a}|${b}`]) return `${a}|${b}`;
+  if (crossTabData[`${b}|${a}`]) return `${b}|${a}`;
+  return null;
+};
+
+const generateFallbackCrossTab = (id1: string, id2: string) => {
+  const rows = getResultsData(id1).slice(0, 5);
+  const cols = getResultsData(id2).slice(0, 4);
+  const data: Record<string, Record<string, number>> = {};
+  rows.forEach(r => {
+    data[r.label] = {};
+    cols.forEach(c => {
+      data[r.label][c.label] = Math.round(r.users * (c.pct / 100) * (0.7 + Math.random() * 0.6));
+    });
+  });
+  return data;
+};
+
+const getResultsData = (id: string) => mockResults[id] || [
   { label: "Group A", users: 42000, pct: 33.6 },
   { label: "Group B", users: 38000, pct: 30.4 },
   { label: "Group C", users: 28000, pct: 22.4 },
@@ -360,7 +408,7 @@ const BreakdownSection = () => {
           {selected.map(attrId => {
             const attr = breakdownAttributes.find(a => a.id === attrId);
             if (!attr) return null;
-            const results = sortResults(getResults(attrId));
+            const results = sortResults(getResultsData(attrId));
             const maxUsers = Math.max(...results.map(r => r.users));
 
             return (
@@ -423,6 +471,100 @@ const BreakdownSection = () => {
           })}
         </div>
       )}
+
+      {/* Cross-Tabulation Matrix */}
+      {selected.length === 2 && (() => {
+        const [id1, id2] = selected;
+        const attr1 = breakdownAttributes.find(a => a.id === id1);
+        const attr2 = breakdownAttributes.find(a => a.id === id2);
+        if (!attr1 || !attr2) return null;
+
+        const key = getCrossTabKey(id1, id2);
+        const isSwapped = key ? key.startsWith(id2) : false;
+        const rawData = key ? crossTabData[key] : generateFallbackCrossTab(id1, id2);
+        
+        const rowAttr = isSwapped ? attr2 : attr1;
+        const colAttr = isSwapped ? attr1 : attr2;
+        const rowLabels = Object.keys(rawData);
+        const colLabels = [...new Set(rowLabels.flatMap(r => Object.keys(rawData[r])))];
+        
+        const rowTotals = rowLabels.map(r => colLabels.reduce((sum, c) => sum + (rawData[r]?.[c] || 0), 0));
+        const colTotals = colLabels.map(c => rowLabels.reduce((sum, r) => sum + (rawData[r]?.[c] || 0), 0));
+        const grandTotal = rowTotals.reduce((s, v) => s + v, 0);
+        const maxVal = Math.max(...rowLabels.flatMap(r => colLabels.map(c => rawData[r]?.[c] || 0)));
+
+        return (
+          <Card className="border-border overflow-hidden">
+            <CardContent className="p-0">
+              <div className="px-4 py-2.5 border-b border-border bg-muted/30 flex items-center gap-2">
+                <Grid3X3 className="h-3.5 w-3.5 text-primary" />
+                <span className="text-xs font-semibold text-foreground">
+                  Cross-Tabulation: {rowAttr.name} × {colAttr.name}
+                </span>
+                <Badge variant="outline" className="text-[9px] h-4 px-1.5 ml-auto">
+                  {rowLabels.length} × {colLabels.length} matrix
+                </Badge>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="px-3 py-2.5 text-left font-medium text-muted-foreground bg-muted/20 sticky left-0">
+                        {rowAttr.name} ↓ / {colAttr.name} →
+                      </th>
+                      {colLabels.map(col => (
+                        <th key={col} className="px-3 py-2.5 text-center font-medium text-muted-foreground min-w-[90px]">
+                          {col}
+                        </th>
+                      ))}
+                      <th className="px-3 py-2.5 text-center font-semibold text-foreground min-w-[80px] bg-muted/20">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rowLabels.map((row, ri) => (
+                      <tr key={row} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
+                        <td className="px-3 py-2.5 font-medium text-foreground bg-muted/10 sticky left-0">
+                          <Tooltip>
+                            <TooltipTrigger className="truncate max-w-[140px] block text-left">{row}</TooltipTrigger>
+                            <TooltipContent>{row}</TooltipContent>
+                          </Tooltip>
+                        </td>
+                        {colLabels.map(col => {
+                          const val = rawData[row]?.[col] || 0;
+                          const intensity = maxVal > 0 ? val / maxVal : 0;
+                          return (
+                            <td key={col} className="px-3 py-2.5 text-center tabular-nums relative">
+                              <div
+                                className="absolute inset-0.5 rounded-sm bg-primary/[var(--cell-opacity)] transition-colors"
+                                style={{ "--cell-opacity": Math.max(0.05, intensity * 0.35) } as React.CSSProperties}
+                              />
+                              <span className="relative text-foreground font-medium">{val.toLocaleString()}</span>
+                            </td>
+                          );
+                        })}
+                        <td className="px-3 py-2.5 text-center font-semibold text-foreground tabular-nums bg-muted/20">
+                          {rowTotals[ri].toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                    <tr className="bg-muted/20">
+                      <td className="px-3 py-2.5 font-semibold text-foreground sticky left-0 bg-muted/20">Total</td>
+                      {colTotals.map((total, i) => (
+                        <td key={i} className="px-3 py-2.5 text-center font-semibold text-foreground tabular-nums">
+                          {total.toLocaleString()}
+                        </td>
+                      ))}
+                      <td className="px-3 py-2.5 text-center font-bold text-primary tabular-nums">
+                        {grandTotal.toLocaleString()}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {/* Empty state */}
       {selected.length === 0 && (

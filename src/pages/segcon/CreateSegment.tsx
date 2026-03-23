@@ -429,6 +429,7 @@ const CreateSegment = () => {
 
   const [isCountLoading, setIsCountLoading] = useState(false);
   const [estimatedCount, setEstimatedCount] = useState<number | null>(null);
+  const [filterVersion, setFilterVersion] = useState(0);
 
   const totalRules = groups.reduce((sum, g) => sum + g.rules.length, 0);
 

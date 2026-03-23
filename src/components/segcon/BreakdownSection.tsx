@@ -6,9 +6,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   BarChart3, ChevronDown, Search, X, SplitSquareVertical,
-  Table as TableIcon, BarChart, AlertTriangle,
+  Table as TableIcon, BarChart, AlertTriangle, Loader2,
   UserRound, Smartphone, Globe, Mail, ShoppingCart, Tag, Layers, Grid3X3
 } from "lucide-react";
 

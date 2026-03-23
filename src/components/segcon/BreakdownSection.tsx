@@ -168,14 +168,31 @@ const getResultsData = (id: string) => mockResults[id] || [
 
 const MAX_SELECTIONS = 2;
 
-const BreakdownSection = () => {
+interface BreakdownSectionProps {
+  filterVersion?: number;
+}
+
+const BreakdownSection = ({ filterVersion = 0 }: BreakdownSectionProps) => {
   const [selected, setSelected] = useState<string[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [showTop, setShowTop] = useState("10");
   const [sortBy, setSortBy] = useState("highest");
   const [viewMode, setViewMode] = useState<"table" | "chart">("table");
+  const [isRecalculating, setIsRecalculating] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const prevFilterVersion = useRef(filterVersion);
+
+  // Show loading skeleton when filters change
+  useEffect(() => {
+    if (prevFilterVersion.current !== filterVersion && selected.length > 0) {
+      prevFilterVersion.current = filterVersion;
+      setIsRecalculating(true);
+      const timer = setTimeout(() => setIsRecalculating(false), 1200 + Math.random() * 800);
+      return () => clearTimeout(timer);
+    }
+    prevFilterVersion.current = filterVersion;
+  }, [filterVersion, selected.length]);
 
   // Close dropdown on outside click
   useEffect(() => {

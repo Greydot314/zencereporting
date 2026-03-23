@@ -954,7 +954,7 @@ const CreateSegment = () => {
               </div>
 
               {/* ── Breakdown Section ── */}
-              <BreakdownSection />
+              <BreakdownSection filterVersion={filterVersion} />
             </div>
 
             {/* RIGHT: Side Panel - Summary, Mind Map, Count */}

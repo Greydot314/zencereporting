@@ -481,6 +481,7 @@ const CreateSegment = () => {
   const updateRule = (groupId: string, ruleId: string, updates: Partial<FilterRule>) => {
     setGroups(prev => prev.map(g => g.id === groupId ? { ...g, rules: g.rules.map(r => r.id === ruleId ? { ...r, ...updates } : r) } : g));
     setEstimatedCount(null);
+    setFilterVersion(v => v + 1);
   };
 
   const removeRule = (groupId: string, ruleId: string) => {

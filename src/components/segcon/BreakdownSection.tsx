@@ -472,6 +472,100 @@ const BreakdownSection = () => {
         </div>
       )}
 
+      {/* Cross-Tabulation Matrix */}
+      {selected.length === 2 && (() => {
+        const [id1, id2] = selected;
+        const attr1 = breakdownAttributes.find(a => a.id === id1);
+        const attr2 = breakdownAttributes.find(a => a.id === id2);
+        if (!attr1 || !attr2) return null;
+
+        const key = getCrossTabKey(id1, id2);
+        const isSwapped = key ? key.startsWith(id2) : false;
+        const rawData = key ? crossTabData[key] : generateFallbackCrossTab(id1, id2);
+        
+        const rowAttr = isSwapped ? attr2 : attr1;
+        const colAttr = isSwapped ? attr1 : attr2;
+        const rowLabels = Object.keys(rawData);
+        const colLabels = [...new Set(rowLabels.flatMap(r => Object.keys(rawData[r])))];
+        
+        const rowTotals = rowLabels.map(r => colLabels.reduce((sum, c) => sum + (rawData[r]?.[c] || 0), 0));
+        const colTotals = colLabels.map(c => rowLabels.reduce((sum, r) => sum + (rawData[r]?.[c] || 0), 0));
+        const grandTotal = rowTotals.reduce((s, v) => s + v, 0);
+        const maxVal = Math.max(...rowLabels.flatMap(r => colLabels.map(c => rawData[r]?.[c] || 0)));
+
+        return (
+          <Card className="border-border overflow-hidden">
+            <CardContent className="p-0">
+              <div className="px-4 py-2.5 border-b border-border bg-muted/30 flex items-center gap-2">
+                <Grid3X3 className="h-3.5 w-3.5 text-primary" />
+                <span className="text-xs font-semibold text-foreground">
+                  Cross-Tabulation: {rowAttr.name} × {colAttr.name}
+                </span>
+                <Badge variant="outline" className="text-[9px] h-4 px-1.5 ml-auto">
+                  {rowLabels.length} × {colLabels.length} matrix
+                </Badge>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="px-3 py-2.5 text-left font-medium text-muted-foreground bg-muted/20 sticky left-0">
+                        {rowAttr.name} ↓ / {colAttr.name} →
+                      </th>
+                      {colLabels.map(col => (
+                        <th key={col} className="px-3 py-2.5 text-center font-medium text-muted-foreground min-w-[90px]">
+                          {col}
+                        </th>
+                      ))}
+                      <th className="px-3 py-2.5 text-center font-semibold text-foreground min-w-[80px] bg-muted/20">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rowLabels.map((row, ri) => (
+                      <tr key={row} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
+                        <td className="px-3 py-2.5 font-medium text-foreground bg-muted/10 sticky left-0">
+                          <Tooltip>
+                            <TooltipTrigger className="truncate max-w-[140px] block text-left">{row}</TooltipTrigger>
+                            <TooltipContent>{row}</TooltipContent>
+                          </Tooltip>
+                        </td>
+                        {colLabels.map(col => {
+                          const val = rawData[row]?.[col] || 0;
+                          const intensity = maxVal > 0 ? val / maxVal : 0;
+                          return (
+                            <td key={col} className="px-3 py-2.5 text-center tabular-nums relative">
+                              <div
+                                className="absolute inset-0.5 rounded-sm bg-primary/[var(--cell-opacity)] transition-colors"
+                                style={{ "--cell-opacity": Math.max(0.05, intensity * 0.35) } as React.CSSProperties}
+                              />
+                              <span className="relative text-foreground font-medium">{val.toLocaleString()}</span>
+                            </td>
+                          );
+                        })}
+                        <td className="px-3 py-2.5 text-center font-semibold text-foreground tabular-nums bg-muted/20">
+                          {rowTotals[ri].toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                    <tr className="bg-muted/20">
+                      <td className="px-3 py-2.5 font-semibold text-foreground sticky left-0 bg-muted/20">Total</td>
+                      {colTotals.map((total, i) => (
+                        <td key={i} className="px-3 py-2.5 text-center font-semibold text-foreground tabular-nums">
+                          {total.toLocaleString()}
+                        </td>
+                      ))}
+                      <td className="px-3 py-2.5 text-center font-bold text-primary tabular-nums">
+                        {grandTotal.toLocaleString()}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })()}
+
       {/* Empty state */}
       {selected.length === 0 && (
         <div className="border border-dashed border-border rounded-lg py-6 text-center text-muted-foreground">

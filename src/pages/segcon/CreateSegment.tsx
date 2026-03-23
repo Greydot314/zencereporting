@@ -459,6 +459,7 @@ const CreateSegment = () => {
       return next;
     });
     setEstimatedCount(null);
+    setFilterVersion(v => v + 1);
   };
 
   const addRuleToGroup = (groupId: string, attr: TagAttribute, cat: TagCategory) => {

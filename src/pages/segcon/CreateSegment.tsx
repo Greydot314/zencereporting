@@ -429,6 +429,7 @@ const CreateSegment = () => {
 
   const [isCountLoading, setIsCountLoading] = useState(false);
   const [estimatedCount, setEstimatedCount] = useState<number | null>(null);
+  const [filterVersion, setFilterVersion] = useState(0);
 
   const totalRules = groups.reduce((sum, g) => sum + g.rules.length, 0);
 
@@ -458,6 +459,7 @@ const CreateSegment = () => {
       return next;
     });
     setEstimatedCount(null);
+    setFilterVersion(v => v + 1);
   };
 
   const addRuleToGroup = (groupId: string, attr: TagAttribute, cat: TagCategory) => {
@@ -474,11 +476,13 @@ const CreateSegment = () => {
     };
     setGroups(prev => prev.map(g => g.id === groupId ? { ...g, rules: [...g.rules, newRule] } : g));
     setEstimatedCount(null);
+    setFilterVersion(v => v + 1);
   };
 
   const updateRule = (groupId: string, ruleId: string, updates: Partial<FilterRule>) => {
     setGroups(prev => prev.map(g => g.id === groupId ? { ...g, rules: g.rules.map(r => r.id === ruleId ? { ...r, ...updates } : r) } : g));
     setEstimatedCount(null);
+    setFilterVersion(v => v + 1);
   };
 
   const removeRule = (groupId: string, ruleId: string) => {
@@ -491,6 +495,7 @@ const CreateSegment = () => {
       return prev.slice(0, Math.max(0, remainingGroups.length - 1));
     });
     setEstimatedCount(null);
+    setFilterVersion(v => v + 1);
   };
 
   const updateGroupCondition = (groupId: string, condition: ConditionType) => {
@@ -953,7 +958,7 @@ const CreateSegment = () => {
               </div>
 
               {/* ── Breakdown Section ── */}
-              <BreakdownSection />
+              <BreakdownSection filterVersion={filterVersion} />
             </div>
 
             {/* RIGHT: Side Panel - Summary, Mind Map, Count */}

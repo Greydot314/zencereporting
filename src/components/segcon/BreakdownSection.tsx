@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,9 +6,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   BarChart3, ChevronDown, Search, X, SplitSquareVertical,
-  Table as TableIcon, BarChart, AlertTriangle,
+  Table as TableIcon, BarChart, AlertTriangle, Loader2,
   UserRound, Smartphone, Globe, Mail, ShoppingCart, Tag, Layers, Grid3X3
 } from "lucide-react";
 
@@ -168,14 +169,31 @@ const getResultsData = (id: string) => mockResults[id] || [
 
 const MAX_SELECTIONS = 2;
 
-const BreakdownSection = () => {
+interface BreakdownSectionProps {
+  filterVersion?: number;
+}
+
+const BreakdownSection = ({ filterVersion = 0 }: BreakdownSectionProps) => {
   const [selected, setSelected] = useState<string[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [showTop, setShowTop] = useState("10");
   const [sortBy, setSortBy] = useState("highest");
   const [viewMode, setViewMode] = useState<"table" | "chart">("table");
+  const [isRecalculating, setIsRecalculating] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const prevFilterVersion = useRef(filterVersion);
+
+  // Show loading skeleton when filters change
+  useEffect(() => {
+    if (prevFilterVersion.current !== filterVersion && selected.length > 0) {
+      prevFilterVersion.current = filterVersion;
+      setIsRecalculating(true);
+      const timer = setTimeout(() => setIsRecalculating(false), 1200 + Math.random() * 800);
+      return () => clearTimeout(timer);
+    }
+    prevFilterVersion.current = filterVersion;
+  }, [filterVersion, selected.length]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -402,8 +420,52 @@ const BreakdownSection = () => {
         </div>
       )}
 
+      {/* Loading skeleton */}
+      {selected.length > 0 && isRecalculating && (
+        <div className="space-y-4">
+          <Card className="border-border overflow-hidden">
+            <CardContent className="p-0">
+              <div className="px-4 py-2.5 border-b border-border bg-muted/30 flex items-center gap-2">
+                <Loader2 className="h-3.5 w-3.5 text-primary animate-spin" />
+                <span className="text-xs font-medium text-muted-foreground">Recalculating breakdown...</span>
+              </div>
+              <div className="p-4 space-y-3">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <div key={i} className="flex items-center gap-3">
+                    <Skeleton className="h-4 w-[100px]" />
+                    <Skeleton className="h-5 flex-1" />
+                    <Skeleton className="h-4 w-[50px]" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          {selected.length === 2 && (
+            <Card className="border-border overflow-hidden">
+              <CardContent className="p-0">
+                <div className="px-4 py-2.5 border-b border-border bg-muted/30 flex items-center gap-2">
+                  <Grid3X3 className="h-3.5 w-3.5 text-primary animate-pulse" />
+                  <span className="text-xs font-medium text-muted-foreground">Rebuilding cross-tabulation...</span>
+                </div>
+                <div className="p-4 space-y-2">
+                  {[1, 2, 3, 4].map(r => (
+                    <div key={r} className="flex items-center gap-2">
+                      <Skeleton className="h-4 w-[80px]" />
+                      {[1, 2, 3].map(c => (
+                        <Skeleton key={c} className="h-8 flex-1" />
+                      ))}
+                      <Skeleton className="h-4 w-[50px]" />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+
       {/* Results */}
-      {selected.length > 0 && (
+      {selected.length > 0 && !isRecalculating && (
         <div className="space-y-4">
           {selected.map(attrId => {
             const attr = breakdownAttributes.find(a => a.id === attrId);
@@ -473,7 +535,7 @@ const BreakdownSection = () => {
       )}
 
       {/* Cross-Tabulation Matrix */}
-      {selected.length === 2 && (() => {
+      {selected.length === 2 && !isRecalculating && (() => {
         const [id1, id2] = selected;
         const attr1 = breakdownAttributes.find(a => a.id === id1);
         const attr2 = breakdownAttributes.find(a => a.id === id2);

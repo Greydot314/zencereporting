@@ -475,6 +475,7 @@ const CreateSegment = () => {
     };
     setGroups(prev => prev.map(g => g.id === groupId ? { ...g, rules: [...g.rules, newRule] } : g));
     setEstimatedCount(null);
+    setFilterVersion(v => v + 1);
   };
 
   const updateRule = (groupId: string, ruleId: string, updates: Partial<FilterRule>) => {

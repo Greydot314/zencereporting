@@ -26,6 +26,7 @@ import SegconHome from "./pages/segcon/SegconHome";
 import SegmentList from "./pages/segcon/SegmentList";
 import CreateSegment from "./pages/segcon/CreateSegment";
 import ModelStudio from "./pages/segcon/ModelStudio";
+import SegmentGroups from "./pages/segcon/SegmentGroups";
 
 const queryClient = new QueryClient();
 

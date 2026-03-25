@@ -113,6 +113,7 @@ const modules: ModuleItem[] = [
     subItems: [
       { title: "Home", url: "/module/segcon" },
       { title: "Segment", url: "/module/segcon/segments" },
+      { title: "Groups", url: "/module/segcon/groups" },
       { title: "Import", url: "/module/segcon/import" },
       { title: "Look-a-Like", url: "/module/segcon/lookalike" },
       { title: "Archive", url: "/module/segcon/archive" },

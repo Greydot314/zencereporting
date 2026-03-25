@@ -26,6 +26,7 @@ import SegconHome from "./pages/segcon/SegconHome";
 import SegmentList from "./pages/segcon/SegmentList";
 import CreateSegment from "./pages/segcon/CreateSegment";
 import ModelStudio from "./pages/segcon/ModelStudio";
+import SegmentGroups from "./pages/segcon/SegmentGroups";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +65,7 @@ const App = () => (
                       <Route path="/module/segcon" element={<SegconLayout />}>
                         <Route index element={<SegconHome />} />
                         <Route path="segments" element={<SegmentList />} />
+                        <Route path="groups" element={<SegmentGroups />} />
                         <Route path="segments/create" element={<CreateSegment />} />
                         <Route path="import" element={<SegconHome />} />
                         <Route path="lookalike" element={<SegconHome />} />

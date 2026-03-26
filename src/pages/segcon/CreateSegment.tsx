@@ -951,7 +951,7 @@ const CreateSegment = () => {
                         <div className="flex-1 flex items-center justify-center">
                           <div className="flex-1 h-px bg-border" />
                           <div className="mx-3 flex gap-1">
-                            {(["AND", "OR", "AND NOT"] as ConditionType[]).map(c => (
+                            {(["AND", "AND NOT"] as ConditionType[]).map(c => (
                               <button
                                 key={c}
                                 onClick={() => updateInterGroupCondition(groupIdx - 1, c)}

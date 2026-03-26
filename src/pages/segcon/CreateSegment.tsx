@@ -167,8 +167,81 @@ const tagHierarchy: TagCategory[] = [
       }
     ]
   },
+  {
+    id: "campaign", name: "Campaign",
+    subCategories: [
+      {
+        id: "campaign_response", name: "Campaign Response",
+        attributes: [
+          { id: "sms_responder", name: "SMS Campaign Responder", definition: "Users who responded to an SMS campaign within a date range", filterType: "campaign_date_only" },
+          { id: "email_responder", name: "Email Campaign Responder", definition: "Users who responded to an email campaign within a date range", filterType: "campaign_date_only" },
+          { id: "push_responder", name: "Push Campaign Responder", definition: "Users who responded to a push notification campaign", filterType: "campaign_date_only" },
+        ]
+      },
+      {
+        id: "campaign_activity", name: "Campaign Activity",
+        attributes: [
+          { id: "campaign_sent", name: "Campaign Sent", definition: "Number of campaigns sent to user in a date range", filterType: "campaign_frequency", sliderMin: 1, sliderMax: 1000, sliderUnit: "Frequency" },
+          { id: "campaign_opened", name: "Campaign Opened", definition: "Number of campaigns opened by user in a date range", filterType: "campaign_frequency", sliderMin: 1, sliderMax: 500, sliderUnit: "Frequency" },
+          { id: "campaign_clicked", name: "Campaign Clicked", definition: "Number of campaign links clicked by user in a date range", filterType: "campaign_frequency", sliderMin: 1, sliderMax: 200, sliderUnit: "Frequency" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "product", name: "Product",
+    subCategories: [
+      {
+        id: "product_recency", name: "Product Recency",
+        attributes: [
+          { id: "brand_name", name: "BrandName", definition: "Brand of the product purchased or interacted with by the customer", filterType: "value_date_range", options: ["ALFA", "BETA", "GAMMA", "DELTA", "OMEGA", "SIGMA", "ZETA"] },
+          { id: "category_name", name: "CategoryName", definition: "Product category purchased or interacted with by the customer", filterType: "value_date_range", options: ["Electronics", "Fashion", "Home & Living", "Beauty", "Sports", "Grocery", "Automotive"] },
+          { id: "product_name", name: "ProductName", definition: "Specific product name purchased or interacted with by the customer", filterType: "value_date_range", options: ["Product A", "Product B", "Product C", "Product D", "Product E"] },
+        ]
+      },
+      {
+        id: "product_metrics", name: "Product Metrics",
+        attributes: [
+          { id: "product_qty", name: "Quantity Purchased", definition: "Total quantity of a product purchased by the customer", filterType: "number_range" },
+          { id: "product_revenue", name: "Product Revenue", definition: "Total revenue from product purchases by the customer", filterType: "number_range" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "member", name: "Member",
+    subCategories: [
+      {
+        id: "channel_info", name: "Channel",
+        attributes: [
+          { id: "transacted_channel", name: "Transacted Channel", definition: "Channel through which the member transacted (Online, Offline, etc.)", filterType: "dropdown", options: ["Online", "Offline", "Mobile App", "In-Store", "Call Center"] },
+          { id: "registration_channel", name: "Registration Channel", definition: "Channel through which the member registered", filterType: "dropdown", options: ["Website", "Mobile App", "In-Store", "Referral", "Social Media"] },
+          { id: "preferred_channel", name: "Preferred Channel", definition: "Member's preferred communication channel", filterType: "dropdown", options: ["Email", "SMS", "Push", "WhatsApp", "In-App"] },
+        ]
+      },
+      {
+        id: "member_status", name: "Status",
+        attributes: [
+          { id: "member_tier", name: "Member Tier", definition: "Current membership tier of the customer", filterType: "dropdown", options: ["Platinum", "Gold", "Silver", "Bronze", "Basic"] },
+          { id: "member_status", name: "Member Status", definition: "Active or inactive membership status", filterType: "dropdown", options: ["Active", "Inactive", "Suspended", "Expired"] },
+        ]
+      }
+    ]
+  },
+  {
+    id: "time", name: "Time",
+    subCategories: [
+      {
+        id: "time_metrics", name: "Time Metrics",
+        attributes: [
+          { id: "latency", name: "Latency", definition: "Number of days since last customer activity or transaction", filterType: "slider_range", sliderMin: 1, sliderMax: 366, sliderUnit: "Days" },
+          { id: "recency", name: "Recency", definition: "Number of days since last purchase by the customer", filterType: "slider_range", sliderMin: 1, sliderMax: 366, sliderUnit: "Days" },
+          { id: "tenure", name: "Tenure", definition: "Number of months since customer first joined the program", filterType: "slider_range", sliderMin: 1, sliderMax: 120, sliderUnit: "Months" },
+        ]
+      }
+    ]
+  },
 ];
-
 // ── Types ──
 type ConditionType = "AND" | "OR" | "AND NOT";
 

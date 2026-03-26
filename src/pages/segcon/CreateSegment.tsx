@@ -561,8 +561,12 @@ const CreateSegment = () => {
       categoryName: cat.name,
       filterType: attr.filterType,
       operator: operatorsByType[attr.filterType]?.[0] || "is",
-      value: "",
+      value: attr.sliderMin !== undefined ? String(attr.sliderMin) : "",
+      valueTo: attr.sliderMax !== undefined ? String(attr.sliderMax) : undefined,
       options: attr.options,
+      sliderMin: attr.sliderMin,
+      sliderMax: attr.sliderMax,
+      sliderUnit: attr.sliderUnit,
     };
     setGroups(prev => prev.map(g => g.id === groupId ? { ...g, rules: [...g.rules, newRule] } : g));
     setEstimatedCount(null);

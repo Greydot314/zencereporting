@@ -536,7 +536,7 @@ const CreateSegment = () => {
 
   const addGroup = () => {
     if (!canAddNewGroup) return;
-    const newGroup: RuleGroup = { id: nextId("grp"), intraCondition: "AND", rules: [] };
+    const newGroup: RuleGroup = { id: nextId("grp"), intraCondition: "OR", rules: [] };
     if (groups.length > 0) {
       setInterGroupConditions(prev => [...prev, "AND"]);
     }

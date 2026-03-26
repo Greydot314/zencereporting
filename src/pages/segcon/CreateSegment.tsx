@@ -40,8 +40,11 @@ interface TagAttribute {
   id: string;
   name: string;
   definition: string;
-  filterType: "dropdown" | "date" | "date_range" | "number_range" | "text" | "boolean" | "date_dropdown";
+  filterType: "dropdown" | "date" | "date_range" | "number_range" | "text" | "boolean" | "date_dropdown" | "campaign_date_only" | "campaign_frequency" | "value_date_range" | "slider_range";
   options?: string[];
+  sliderMin?: number;
+  sliderMax?: number;
+  sliderUnit?: string;
 }
 
 interface TagSubCategory {

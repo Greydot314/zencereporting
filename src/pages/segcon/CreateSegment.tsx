@@ -673,6 +673,53 @@ const CreateSegment = () => {
   };
 
   const renderFilterInput = (groupId: string, rule: FilterRule) => {
+    const sliderMin = rule.sliderMin ?? 1;
+    const sliderMax = rule.sliderMax ?? 100;
+    const sliderUnit = rule.sliderUnit ?? "";
+
+    const dateRangeRow = (
+      <div className="space-y-1 mt-2 w-full">
+        <p className="text-[10px] text-primary font-medium">Select Date range</p>
+        <div className="flex items-center gap-1.5">
+          <Input type="date" value={rule.dateFrom || ""} onChange={(e) => updateRule(groupId, rule.id, { dateFrom: e.target.value })} className="h-8 text-xs w-[140px] bg-background" />
+          <span className="text-[10px] text-muted-foreground font-medium">–</span>
+          <Input type="date" value={rule.dateTo || ""} onChange={(e) => updateRule(groupId, rule.id, { dateTo: e.target.value })} className="h-8 text-xs w-[140px] bg-background" />
+          <CalendarIcon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+        </div>
+      </div>
+    );
+
+    const sliderBlock = (
+      <div className="space-y-2 mt-2 w-full">
+        <p className="text-[10px] text-primary font-medium">Select {sliderUnit}</p>
+        <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+          <span>{sliderUnit} ({rule.value || sliderMin})</span>
+          <span>{sliderUnit} ({rule.valueTo || sliderMax})</span>
+        </div>
+        <Slider
+          min={sliderMin}
+          max={sliderMax}
+          step={1}
+          value={[Number(rule.value) || sliderMin, Number(rule.valueTo) || sliderMax]}
+          onValueChange={([min, max]) => updateRule(groupId, rule.id, { value: String(min), valueTo: String(max) })}
+          className="w-full"
+        />
+        <div className="flex items-center gap-3 mt-1">
+          <p className="text-[10px] text-muted-foreground text-center w-full">Or Manually</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="space-y-0.5">
+            <p className="text-[10px] text-primary font-medium">Min.</p>
+            <Input type="number" value={rule.value || String(sliderMin)} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-8 text-xs w-[80px] bg-background" />
+          </div>
+          <div className="space-y-0.5">
+            <p className="text-[10px] text-primary font-medium">Max.</p>
+            <Input type="number" value={rule.valueTo || String(sliderMax)} onChange={(e) => updateRule(groupId, rule.id, { valueTo: e.target.value })} className="h-8 text-xs w-[120px] bg-background" />
+          </div>
+        </div>
+      </div>
+    );
+
     switch (rule.filterType) {
       case "dropdown":
       case "date_dropdown":
@@ -723,6 +770,76 @@ const CreateSegment = () => {
             </SelectContent>
           </Select>
         );
+
+      // ── Campaign: date range only (e.g. SMS Campaign Responder) ──
+      case "campaign_date_only":
+        return dateRangeRow;
+
+      // ── Campaign: frequency slider + date range (e.g. Campaign Sent) ──
+      case "campaign_frequency":
+        return (
+          <div className="w-full max-w-sm">
+            {sliderBlock}
+            {dateRangeRow}
+          </div>
+        );
+
+      // ── Product: value dropdown + date range (e.g. Product Recency : BrandName) ──
+      case "value_date_range":
+        return (
+          <div className="w-full max-w-md">
+            <div className="flex items-center gap-2 flex-wrap">
+              {rule.operator === "Equals with Range" ? (
+                <Select value={rule.value} onValueChange={(v) => updateRule(groupId, rule.id, { value: v })}>
+                  <SelectTrigger className="h-8 text-xs min-w-[140px] bg-background">
+                    <SelectValue placeholder="Select value" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {rule.options?.map(opt => (
+                      <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : rule.operator === "Contain with Range" ? (
+                <div className="flex items-center gap-2">
+                  <Input placeholder="Enter value" value={rule.value} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-8 text-xs w-[140px] bg-background" />
+                  <span className="text-[10px] text-muted-foreground font-medium">Or</span>
+                  <Select value={rule.valueTo || ""} onValueChange={(v) => updateRule(groupId, rule.id, { valueTo: v })}>
+                    <SelectTrigger className="h-8 text-xs min-w-[130px] bg-background">
+                      <SelectValue placeholder="Select Options" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {rule.options?.map(opt => (
+                        <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : (
+                <Select value={rule.value} onValueChange={(v) => updateRule(groupId, rule.id, { value: v })}>
+                  <SelectTrigger className="h-8 text-xs min-w-[140px] bg-background">
+                    <SelectValue placeholder="Select value" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {rule.options?.map(opt => (
+                      <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+            {(rule.operator === "Equals with Range" || rule.operator === "Contain with Range") && dateRangeRow}
+          </div>
+        );
+
+      // ── Time: slider with min/max (e.g. Latency) ──
+      case "slider_range":
+        return (
+          <div className="w-full max-w-sm">
+            {sliderBlock}
+          </div>
+        );
+
       default:
         return null;
     }

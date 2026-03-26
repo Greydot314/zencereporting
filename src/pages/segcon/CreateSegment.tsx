@@ -256,6 +256,11 @@ interface FilterRule {
   value: string;
   valueTo?: string;
   options?: string[];
+  dateFrom?: string;
+  dateTo?: string;
+  sliderMin?: number;
+  sliderMax?: number;
+  sliderUnit?: string;
 }
 
 interface RuleGroup {

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -15,7 +16,7 @@ import {
   Plus, Trash2, Users, ChevronDown, ChevronRight, Calendar as CalendarIcon, Hash, Type, ToggleLeft,
   Loader2, Save, ArrowLeft, Filter, X, UserRound, BarChart3, Wallet, RefreshCw,
   Search, Layers, GripVertical, Smartphone, Activity,
-  Target, Zap, ShieldX, Clock, GitBranch
+  Target, Zap, ShieldX, Clock, GitBranch, Megaphone, ShoppingBag, UserCheck, Timer
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import BreakdownSection from "@/components/segcon/BreakdownSection";
@@ -28,6 +29,10 @@ const categoryConfig: Record<string, { icon: React.ReactNode; color: string; bg:
   lifecycle: { icon: <RefreshCw className="h-4 w-4" />, color: "text-amber-700", bg: "bg-amber-100 border-amber-200", label: "Lifecycle" },
   events: { icon: <Zap className="h-4 w-4" />, color: "text-rose-700", bg: "bg-rose-100 border-rose-200", label: "Events" },
   devices: { icon: <Smartphone className="h-4 w-4" />, color: "text-cyan-700", bg: "bg-cyan-100 border-cyan-200", label: "Devices" },
+  campaign: { icon: <Megaphone className="h-4 w-4" />, color: "text-orange-700", bg: "bg-orange-100 border-orange-200", label: "Campaign" },
+  product: { icon: <ShoppingBag className="h-4 w-4" />, color: "text-pink-700", bg: "bg-pink-100 border-pink-200", label: "Product" },
+  member: { icon: <UserCheck className="h-4 w-4" />, color: "text-indigo-700", bg: "bg-indigo-100 border-indigo-200", label: "Member" },
+  time: { icon: <Timer className="h-4 w-4" />, color: "text-teal-700", bg: "bg-teal-100 border-teal-200", label: "Time" },
 };
 
 // ── 3-Level Tag Hierarchy ──
@@ -35,8 +40,11 @@ interface TagAttribute {
   id: string;
   name: string;
   definition: string;
-  filterType: "dropdown" | "date" | "date_range" | "number_range" | "text" | "boolean" | "date_dropdown";
+  filterType: "dropdown" | "date" | "date_range" | "number_range" | "text" | "boolean" | "date_dropdown" | "campaign_date_only" | "campaign_frequency" | "value_date_range" | "slider_range";
   options?: string[];
+  sliderMin?: number;
+  sliderMax?: number;
+  sliderUnit?: string;
 }
 
 interface TagSubCategory {
@@ -159,8 +167,81 @@ const tagHierarchy: TagCategory[] = [
       }
     ]
   },
+  {
+    id: "campaign", name: "Campaign",
+    subCategories: [
+      {
+        id: "campaign_response", name: "Campaign Response",
+        attributes: [
+          { id: "sms_responder", name: "SMS Campaign Responder", definition: "Users who responded to an SMS campaign within a date range", filterType: "campaign_date_only" },
+          { id: "email_responder", name: "Email Campaign Responder", definition: "Users who responded to an email campaign within a date range", filterType: "campaign_date_only" },
+          { id: "push_responder", name: "Push Campaign Responder", definition: "Users who responded to a push notification campaign", filterType: "campaign_date_only" },
+        ]
+      },
+      {
+        id: "campaign_activity", name: "Campaign Activity",
+        attributes: [
+          { id: "campaign_sent", name: "Campaign Sent", definition: "Number of campaigns sent to user in a date range", filterType: "campaign_frequency", sliderMin: 1, sliderMax: 1000, sliderUnit: "Frequency" },
+          { id: "campaign_opened", name: "Campaign Opened", definition: "Number of campaigns opened by user in a date range", filterType: "campaign_frequency", sliderMin: 1, sliderMax: 500, sliderUnit: "Frequency" },
+          { id: "campaign_clicked", name: "Campaign Clicked", definition: "Number of campaign links clicked by user in a date range", filterType: "campaign_frequency", sliderMin: 1, sliderMax: 200, sliderUnit: "Frequency" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "product", name: "Product",
+    subCategories: [
+      {
+        id: "product_recency", name: "Product Recency",
+        attributes: [
+          { id: "brand_name", name: "BrandName", definition: "Brand of the product purchased or interacted with by the customer", filterType: "value_date_range", options: ["ALFA", "BETA", "GAMMA", "DELTA", "OMEGA", "SIGMA", "ZETA"] },
+          { id: "category_name", name: "CategoryName", definition: "Product category purchased or interacted with by the customer", filterType: "value_date_range", options: ["Electronics", "Fashion", "Home & Living", "Beauty", "Sports", "Grocery", "Automotive"] },
+          { id: "product_name", name: "ProductName", definition: "Specific product name purchased or interacted with by the customer", filterType: "value_date_range", options: ["Product A", "Product B", "Product C", "Product D", "Product E"] },
+        ]
+      },
+      {
+        id: "product_metrics", name: "Product Metrics",
+        attributes: [
+          { id: "product_qty", name: "Quantity Purchased", definition: "Total quantity of a product purchased by the customer", filterType: "number_range" },
+          { id: "product_revenue", name: "Product Revenue", definition: "Total revenue from product purchases by the customer", filterType: "number_range" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "member", name: "Member",
+    subCategories: [
+      {
+        id: "channel_info", name: "Channel",
+        attributes: [
+          { id: "transacted_channel", name: "Transacted Channel", definition: "Channel through which the member transacted (Online, Offline, etc.)", filterType: "dropdown", options: ["Online", "Offline", "Mobile App", "In-Store", "Call Center"] },
+          { id: "registration_channel", name: "Registration Channel", definition: "Channel through which the member registered", filterType: "dropdown", options: ["Website", "Mobile App", "In-Store", "Referral", "Social Media"] },
+          { id: "preferred_channel", name: "Preferred Channel", definition: "Member's preferred communication channel", filterType: "dropdown", options: ["Email", "SMS", "Push", "WhatsApp", "In-App"] },
+        ]
+      },
+      {
+        id: "member_status", name: "Status",
+        attributes: [
+          { id: "member_tier", name: "Member Tier", definition: "Current membership tier of the customer", filterType: "dropdown", options: ["Platinum", "Gold", "Silver", "Bronze", "Basic"] },
+          { id: "member_status", name: "Member Status", definition: "Active or inactive membership status", filterType: "dropdown", options: ["Active", "Inactive", "Suspended", "Expired"] },
+        ]
+      }
+    ]
+  },
+  {
+    id: "time", name: "Time",
+    subCategories: [
+      {
+        id: "time_metrics", name: "Time Metrics",
+        attributes: [
+          { id: "latency", name: "Latency", definition: "Number of days since last customer activity or transaction", filterType: "slider_range", sliderMin: 1, sliderMax: 366, sliderUnit: "Days" },
+          { id: "recency", name: "Recency", definition: "Number of days since last purchase by the customer", filterType: "slider_range", sliderMin: 1, sliderMax: 366, sliderUnit: "Days" },
+          { id: "tenure", name: "Tenure", definition: "Number of months since customer first joined the program", filterType: "slider_range", sliderMin: 1, sliderMax: 120, sliderUnit: "Months" },
+        ]
+      }
+    ]
+  },
 ];
-
 // ── Types ──
 type ConditionType = "AND" | "OR" | "AND NOT";
 
@@ -175,6 +256,11 @@ interface FilterRule {
   value: string;
   valueTo?: string;
   options?: string[];
+  dateFrom?: string;
+  dateTo?: string;
+  sliderMin?: number;
+  sliderMax?: number;
+  sliderUnit?: string;
 }
 
 interface RuleGroup {
@@ -199,6 +285,10 @@ const operatorsByType: Record<string, string[]> = {
   text: ["contains", "equals", "starts with", "ends with"],
   boolean: ["is"],
   date_dropdown: ["is", "is in"],
+  campaign_date_only: ["Between"],
+  campaign_frequency: ["Between"],
+  value_date_range: ["Equals with Range", "Contain with Range", "Equals"],
+  slider_range: ["Between"],
 };
 
 let idCounter = 0;
@@ -244,11 +334,12 @@ const AttributePickerDropdown = ({
 
   const filterTypeIcon = (type: TagAttribute["filterType"]) => {
     switch (type) {
-      case "dropdown": case "date_dropdown": return <Filter className="h-3 w-3" />;
-      case "date": case "date_range": return <CalendarIcon className="h-3 w-3" />;
-      case "number_range": return <Hash className="h-3 w-3" />;
+      case "dropdown": case "date_dropdown": case "value_date_range": return <Filter className="h-3 w-3" />;
+      case "date": case "date_range": case "campaign_date_only": return <CalendarIcon className="h-3 w-3" />;
+      case "number_range": case "campaign_frequency": return <Hash className="h-3 w-3" />;
       case "text": return <Type className="h-3 w-3" />;
       case "boolean": return <ToggleLeft className="h-3 w-3" />;
+      case "slider_range": return <Timer className="h-3 w-3" />;
       default: return null;
     }
   };
@@ -434,7 +525,11 @@ const CreateSegment = () => {
   const totalRules = groups.reduce((sum, g) => sum + g.rules.length, 0);
 
   const isGroupComplete = (group: RuleGroup) => {
-    return group.rules.length > 0 && group.rules.every(r => r.value.trim() !== "");
+    return group.rules.length > 0 && group.rules.every(r => {
+      if (r.filterType === "slider_range" || r.filterType === "campaign_frequency") return true;
+      if (r.filterType === "campaign_date_only") return (r.dateFrom || "").trim() !== "" && (r.dateTo || "").trim() !== "";
+      return r.value.trim() !== "";
+    });
   };
 
   const canAddNewGroup = groups.length === 0 || groups.every(g => isGroupComplete(g));
@@ -471,8 +566,12 @@ const CreateSegment = () => {
       categoryName: cat.name,
       filterType: attr.filterType,
       operator: operatorsByType[attr.filterType]?.[0] || "is",
-      value: "",
+      value: attr.sliderMin !== undefined ? String(attr.sliderMin) : "",
+      valueTo: attr.sliderMax !== undefined ? String(attr.sliderMax) : undefined,
       options: attr.options,
+      sliderMin: attr.sliderMin,
+      sliderMax: attr.sliderMax,
+      sliderUnit: attr.sliderUnit,
     };
     setGroups(prev => prev.map(g => g.id === groupId ? { ...g, rules: [...g.rules, newRule] } : g));
     setEstimatedCount(null);
@@ -536,13 +635,14 @@ const CreateSegment = () => {
     }, 1500);
   }, [totalRules]);
 
-  const filterTypeIcon = (type: TagAttribute["filterType"]) => {
+  const _filterTypeIcon = (type: TagAttribute["filterType"]) => {
     switch (type) {
-      case "dropdown": case "date_dropdown": return <Filter className="h-3.5 w-3.5" />;
-      case "date": case "date_range": return <CalendarIcon className="h-3.5 w-3.5" />;
-      case "number_range": return <Hash className="h-3.5 w-3.5" />;
+      case "dropdown": case "date_dropdown": case "value_date_range": return <Filter className="h-3.5 w-3.5" />;
+      case "date": case "date_range": case "campaign_date_only": return <CalendarIcon className="h-3.5 w-3.5" />;
+      case "number_range": case "campaign_frequency": return <Hash className="h-3.5 w-3.5" />;
       case "text": return <Type className="h-3.5 w-3.5" />;
       case "boolean": return <ToggleLeft className="h-3.5 w-3.5" />;
+      case "slider_range": return <Timer className="h-3.5 w-3.5" />;
       default: return null;
     }
   };
@@ -579,6 +679,53 @@ const CreateSegment = () => {
   };
 
   const renderFilterInput = (groupId: string, rule: FilterRule) => {
+    const sliderMin = rule.sliderMin ?? 1;
+    const sliderMax = rule.sliderMax ?? 100;
+    const sliderUnit = rule.sliderUnit ?? "";
+
+    const dateRangeRow = (
+      <div className="space-y-1 mt-2 w-full">
+        <p className="text-[10px] text-primary font-medium">Select Date range</p>
+        <div className="flex items-center gap-1.5">
+          <Input type="date" value={rule.dateFrom || ""} onChange={(e) => updateRule(groupId, rule.id, { dateFrom: e.target.value })} className="h-8 text-xs w-[140px] bg-background" />
+          <span className="text-[10px] text-muted-foreground font-medium">–</span>
+          <Input type="date" value={rule.dateTo || ""} onChange={(e) => updateRule(groupId, rule.id, { dateTo: e.target.value })} className="h-8 text-xs w-[140px] bg-background" />
+          <CalendarIcon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+        </div>
+      </div>
+    );
+
+    const sliderBlock = (
+      <div className="space-y-2 mt-2 w-full">
+        <p className="text-[10px] text-primary font-medium">Select {sliderUnit}</p>
+        <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+          <span>{sliderUnit} ({rule.value || sliderMin})</span>
+          <span>{sliderUnit} ({rule.valueTo || sliderMax})</span>
+        </div>
+        <Slider
+          min={sliderMin}
+          max={sliderMax}
+          step={1}
+          value={[Number(rule.value) || sliderMin, Number(rule.valueTo) || sliderMax]}
+          onValueChange={([min, max]) => updateRule(groupId, rule.id, { value: String(min), valueTo: String(max) })}
+          className="w-full"
+        />
+        <div className="flex items-center gap-3 mt-1">
+          <p className="text-[10px] text-muted-foreground text-center w-full">Or Manually</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="space-y-0.5">
+            <p className="text-[10px] text-primary font-medium">Min.</p>
+            <Input type="number" value={rule.value || String(sliderMin)} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-8 text-xs w-[80px] bg-background" />
+          </div>
+          <div className="space-y-0.5">
+            <p className="text-[10px] text-primary font-medium">Max.</p>
+            <Input type="number" value={rule.valueTo || String(sliderMax)} onChange={(e) => updateRule(groupId, rule.id, { valueTo: e.target.value })} className="h-8 text-xs w-[120px] bg-background" />
+          </div>
+        </div>
+      </div>
+    );
+
     switch (rule.filterType) {
       case "dropdown":
       case "date_dropdown":
@@ -629,6 +776,76 @@ const CreateSegment = () => {
             </SelectContent>
           </Select>
         );
+
+      // ── Campaign: date range only (e.g. SMS Campaign Responder) ──
+      case "campaign_date_only":
+        return dateRangeRow;
+
+      // ── Campaign: frequency slider + date range (e.g. Campaign Sent) ──
+      case "campaign_frequency":
+        return (
+          <div className="w-full max-w-sm">
+            {sliderBlock}
+            {dateRangeRow}
+          </div>
+        );
+
+      // ── Product: value dropdown + date range (e.g. Product Recency : BrandName) ──
+      case "value_date_range":
+        return (
+          <div className="w-full max-w-md">
+            <div className="flex items-center gap-2 flex-wrap">
+              {rule.operator === "Equals with Range" ? (
+                <Select value={rule.value} onValueChange={(v) => updateRule(groupId, rule.id, { value: v })}>
+                  <SelectTrigger className="h-8 text-xs min-w-[140px] bg-background">
+                    <SelectValue placeholder="Select value" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {rule.options?.map(opt => (
+                      <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : rule.operator === "Contain with Range" ? (
+                <div className="flex items-center gap-2">
+                  <Input placeholder="Enter value" value={rule.value} onChange={(e) => updateRule(groupId, rule.id, { value: e.target.value })} className="h-8 text-xs w-[140px] bg-background" />
+                  <span className="text-[10px] text-muted-foreground font-medium">Or</span>
+                  <Select value={rule.valueTo || ""} onValueChange={(v) => updateRule(groupId, rule.id, { valueTo: v })}>
+                    <SelectTrigger className="h-8 text-xs min-w-[130px] bg-background">
+                      <SelectValue placeholder="Select Options" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {rule.options?.map(opt => (
+                        <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : (
+                <Select value={rule.value} onValueChange={(v) => updateRule(groupId, rule.id, { value: v })}>
+                  <SelectTrigger className="h-8 text-xs min-w-[140px] bg-background">
+                    <SelectValue placeholder="Select value" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {rule.options?.map(opt => (
+                      <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+            {(rule.operator === "Equals with Range" || rule.operator === "Contain with Range") && dateRangeRow}
+          </div>
+        );
+
+      // ── Time: slider with min/max (e.g. Latency) ──
+      case "slider_range":
+        return (
+          <div className="w-full max-w-sm">
+            {sliderBlock}
+          </div>
+        );
+
       default:
         return null;
     }

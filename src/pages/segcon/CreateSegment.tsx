@@ -280,6 +280,10 @@ const operatorsByType: Record<string, string[]> = {
   text: ["contains", "equals", "starts with", "ends with"],
   boolean: ["is"],
   date_dropdown: ["is", "is in"],
+  campaign_date_only: ["Between"],
+  campaign_frequency: ["Between"],
+  value_date_range: ["Equals with Range", "Contain with Range", "Equals"],
+  slider_range: ["Between"],
 };
 
 let idCounter = 0;

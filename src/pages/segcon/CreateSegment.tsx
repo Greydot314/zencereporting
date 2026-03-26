@@ -525,7 +525,11 @@ const CreateSegment = () => {
   const totalRules = groups.reduce((sum, g) => sum + g.rules.length, 0);
 
   const isGroupComplete = (group: RuleGroup) => {
-    return group.rules.length > 0 && group.rules.every(r => r.value.trim() !== "");
+    return group.rules.length > 0 && group.rules.every(r => {
+      if (r.filterType === "slider_range" || r.filterType === "campaign_frequency") return true;
+      if (r.filterType === "campaign_date_only") return (r.dateFrom || "").trim() !== "" && (r.dateTo || "").trim() !== "";
+      return r.value.trim() !== "";
+    });
   };
 
   const canAddNewGroup = groups.length === 0 || groups.every(g => isGroupComplete(g));

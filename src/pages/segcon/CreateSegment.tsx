@@ -334,11 +334,12 @@ const AttributePickerDropdown = ({
 
   const filterTypeIcon = (type: TagAttribute["filterType"]) => {
     switch (type) {
-      case "dropdown": case "date_dropdown": return <Filter className="h-3 w-3" />;
-      case "date": case "date_range": return <CalendarIcon className="h-3 w-3" />;
-      case "number_range": return <Hash className="h-3 w-3" />;
+      case "dropdown": case "date_dropdown": case "value_date_range": return <Filter className="h-3 w-3" />;
+      case "date": case "date_range": case "campaign_date_only": return <CalendarIcon className="h-3 w-3" />;
+      case "number_range": case "campaign_frequency": return <Hash className="h-3 w-3" />;
       case "text": return <Type className="h-3 w-3" />;
       case "boolean": return <ToggleLeft className="h-3 w-3" />;
+      case "slider_range": return <Timer className="h-3 w-3" />;
       default: return null;
     }
   };

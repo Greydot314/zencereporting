@@ -364,7 +364,7 @@ const AttributePickerDropdown = ({
             />
           </div>
         </div>
-        <ScrollArea className="max-h-[360px]">
+        <ScrollArea className="h-[360px]">
           <div className="p-1.5 space-y-0.5">
             {filteredHierarchy.map(cat => {
               const config = categoryConfig[cat.id];
@@ -536,7 +536,7 @@ const CreateSegment = () => {
 
   const addGroup = () => {
     if (!canAddNewGroup) return;
-    const newGroup: RuleGroup = { id: nextId("grp"), intraCondition: "AND", rules: [] };
+    const newGroup: RuleGroup = { id: nextId("grp"), intraCondition: "OR", rules: [] };
     if (groups.length > 0) {
       setInterGroupConditions(prev => [...prev, "AND"]);
     }
@@ -951,7 +951,7 @@ const CreateSegment = () => {
                         <div className="flex-1 flex items-center justify-center">
                           <div className="flex-1 h-px bg-border" />
                           <div className="mx-3 flex gap-1">
-                            {(["AND", "OR", "AND NOT"] as ConditionType[]).map(c => (
+                            {(["AND", "AND NOT"] as ConditionType[]).map(c => (
                               <button
                                 key={c}
                                 onClick={() => updateInterGroupCondition(groupIdx - 1, c)}
@@ -991,21 +991,9 @@ const CreateSegment = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             {group.rules.length > 1 && (
-                              <div className="flex items-center gap-0.5 bg-background rounded-lg border border-border p-0.5">
-                                {(["AND", "OR"] as ConditionType[]).map(c => (
-                                  <button
-                                    key={c}
-                                    onClick={() => updateGroupCondition(group.id, c)}
-                                    className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold transition-all ${
-                                      group.intraCondition === c
-                                        ? conditionColors[c].pill
-                                        : "text-muted-foreground hover:bg-muted"
-                                    }`}
-                                  >
-                                    {c}
-                                  </button>
-                                ))}
-                              </div>
+                              <Badge variant="secondary" className="text-[10px] font-bold px-2 py-0.5">
+                                OR
+                              </Badge>
                             )}
                             <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => removeGroup(group.id)}>
                               <Trash2 className="h-3 w-3" />

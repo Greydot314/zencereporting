@@ -304,6 +304,7 @@ export const hybridPersonaInsightsData = {
 export type ModelInsightType = 'rfm' | 'kmeans' | 'churn' | 'clv' | 'product' | 'hybrid';
 
 export const modelNameToInsightType: Record<string, ModelInsightType> = {
+  // My Models names
   'RFM Q1 2025 - Brand A': 'rfm',
   'Churn Risk - All Brands': 'churn',
   'CLV Tiers - Premium': 'clv',
@@ -311,6 +312,15 @@ export const modelNameToInsightType: Record<string, ModelInsightType> = {
   'Auto-Segment Monthly': 'rfm',
   'Product Affinity - Brand B': 'product',
   'Hybrid Persona - All Brands': 'hybrid',
+  // Catalog model names (for Sample Output)
+  'RFM Segmentation': 'rfm',
+  'K-Means Clustering': 'kmeans',
+  'Churn Propensity Model': 'churn',
+  'CLV Prediction': 'clv',
+  'Product Propensity': 'product',
+  'Demographic + Behavioral Hybrid': 'hybrid',
+  'Custom SQL + AI Layer': 'rfm',
+  'AI Auto-Segment': 'rfm',
 };
 
 export const comparisonFields = [

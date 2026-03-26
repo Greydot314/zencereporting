@@ -364,7 +364,7 @@ const AttributePickerDropdown = ({
             />
           </div>
         </div>
-        <ScrollArea className="max-h-[360px]">
+        <ScrollArea className="h-[360px]">
           <div className="p-1.5 space-y-0.5">
             {filteredHierarchy.map(cat => {
               const config = categoryConfig[cat.id];

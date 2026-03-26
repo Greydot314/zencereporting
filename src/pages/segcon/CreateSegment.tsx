@@ -16,7 +16,7 @@ import {
   Plus, Trash2, Users, ChevronDown, ChevronRight, Calendar as CalendarIcon, Hash, Type, ToggleLeft,
   Loader2, Save, ArrowLeft, Filter, X, UserRound, BarChart3, Wallet, RefreshCw,
   Search, Layers, GripVertical, Smartphone, Activity,
-  Target, Zap, ShieldX, Clock, GitBranch
+  Target, Zap, ShieldX, Clock, GitBranch, Megaphone, ShoppingBag, UserCheck, Timer
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import BreakdownSection from "@/components/segcon/BreakdownSection";

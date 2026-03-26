@@ -29,6 +29,10 @@ const categoryConfig: Record<string, { icon: React.ReactNode; color: string; bg:
   lifecycle: { icon: <RefreshCw className="h-4 w-4" />, color: "text-amber-700", bg: "bg-amber-100 border-amber-200", label: "Lifecycle" },
   events: { icon: <Zap className="h-4 w-4" />, color: "text-rose-700", bg: "bg-rose-100 border-rose-200", label: "Events" },
   devices: { icon: <Smartphone className="h-4 w-4" />, color: "text-cyan-700", bg: "bg-cyan-100 border-cyan-200", label: "Devices" },
+  campaign: { icon: <Megaphone className="h-4 w-4" />, color: "text-orange-700", bg: "bg-orange-100 border-orange-200", label: "Campaign" },
+  product: { icon: <ShoppingBag className="h-4 w-4" />, color: "text-pink-700", bg: "bg-pink-100 border-pink-200", label: "Product" },
+  member: { icon: <UserCheck className="h-4 w-4" />, color: "text-indigo-700", bg: "bg-indigo-100 border-indigo-200", label: "Member" },
+  time: { icon: <Timer className="h-4 w-4" />, color: "text-teal-700", bg: "bg-teal-100 border-teal-200", label: "Time" },
 };
 
 // ── 3-Level Tag Hierarchy ──

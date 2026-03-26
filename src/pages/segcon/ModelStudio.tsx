@@ -55,7 +55,7 @@ const ModelStudio = () => {
         <TabsContent value="catalog" className="animate-in fade-in-50 duration-300">
           <ModelCatalog
             onConfigureModel={handleConfigureModel}
-            onViewSampleOutput={() => handleViewResults()}
+            onViewSampleOutput={(model) => handleViewResults(model.name)}
           />
         </TabsContent>
 

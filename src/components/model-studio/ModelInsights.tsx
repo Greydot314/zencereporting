@@ -5,13 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ScatterChart, Scatter, CartesianGrid, ZAxis, Cell, Legend } from "recharts";
-import { rfmInsightsData, modelNameToInsightType, kmeansInsightsData, churnInsightsData, clvInsightsData, productInsightsData, hybridPersonaInsightsData } from "@/data/modelStudioMockData";
+import { rfmInsightsData, modelNameToInsightType, kmeansInsightsData, churnInsightsData, clvInsightsData, productInsightsData, hybridPersonaInsightsData, customSQLInsightsData, autoSegmentInsightsData } from "@/data/modelStudioMockData";
 import type { ModelInsightType } from "@/data/modelStudioMockData";
 import { KMeansInsights } from "./insights/KMeansInsights";
 import { ChurnInsights } from "./insights/ChurnInsights";
 import { CLVInsights } from "./insights/CLVInsights";
 import { ProductInsights } from "./insights/ProductInsights";
 import { HybridPersonaInsights } from "./insights/HybridPersonaInsights";
+import { CustomSQLInsights } from "./insights/CustomSQLInsights";
+import { AutoSegmentInsights } from "./insights/AutoSegmentInsights";
 
 const segColors: Record<string, string> = {
   Champions: 'hsl(221, 83%, 53%)',

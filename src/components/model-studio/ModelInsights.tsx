@@ -5,13 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ScatterChart, Scatter, CartesianGrid, ZAxis, Cell, Legend } from "recharts";
-import { rfmInsightsData, modelNameToInsightType, kmeansInsightsData, churnInsightsData, clvInsightsData, productInsightsData, hybridPersonaInsightsData } from "@/data/modelStudioMockData";
+import { rfmInsightsData, modelNameToInsightType, kmeansInsightsData, churnInsightsData, clvInsightsData, productInsightsData, hybridPersonaInsightsData, customSQLInsightsData, autoSegmentInsightsData } from "@/data/modelStudioMockData";
 import type { ModelInsightType } from "@/data/modelStudioMockData";
 import { KMeansInsights } from "./insights/KMeansInsights";
 import { ChurnInsights } from "./insights/ChurnInsights";
 import { CLVInsights } from "./insights/CLVInsights";
 import { ProductInsights } from "./insights/ProductInsights";
 import { HybridPersonaInsights } from "./insights/HybridPersonaInsights";
+import { CustomSQLInsights } from "./insights/CustomSQLInsights";
+import { AutoSegmentInsights } from "./insights/AutoSegmentInsights";
 
 const segColors: Record<string, string> = {
   Champions: 'hsl(221, 83%, 53%)',
@@ -41,6 +43,8 @@ const insightMeta: Record<ModelInsightType, { title: string; date: string; sourc
   clv: { title: clvInsightsData.meta.name, date: clvInsightsData.meta.runDate, source: clvInsightsData.meta.dataSource, customers: clvInsightsData.meta.customers },
   product: { title: productInsightsData.meta.name, date: productInsightsData.meta.runDate, source: productInsightsData.meta.dataSource, customers: productInsightsData.meta.customers },
   hybrid: { title: hybridPersonaInsightsData.meta.name, date: hybridPersonaInsightsData.meta.runDate, source: hybridPersonaInsightsData.meta.dataSource, customers: hybridPersonaInsightsData.meta.customers },
+  customsql: { title: customSQLInsightsData.meta.name, date: customSQLInsightsData.meta.runDate, source: customSQLInsightsData.meta.dataSource, customers: customSQLInsightsData.meta.customers },
+  autosegment: { title: autoSegmentInsightsData.meta.name, date: autoSegmentInsightsData.meta.runDate, source: autoSegmentInsightsData.meta.dataSource, customers: autoSegmentInsightsData.meta.customers },
 };
 
 export const ModelInsights = ({ onBack, modelName }: ModelInsightsProps) => {
@@ -76,6 +80,8 @@ export const ModelInsights = ({ onBack, modelName }: ModelInsightsProps) => {
       {insightType === 'clv' && <CLVInsights />}
       {insightType === 'product' && <ProductInsights />}
       {insightType === 'hybrid' && <HybridPersonaInsights />}
+      {insightType === 'customsql' && <CustomSQLInsights />}
+      {insightType === 'autosegment' && <AutoSegmentInsights />}
       {insightType === 'rfm' && <RFMInsightsContent />}
     </div>
   );

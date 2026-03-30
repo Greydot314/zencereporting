@@ -43,6 +43,8 @@ const insightMeta: Record<ModelInsightType, { title: string; date: string; sourc
   clv: { title: clvInsightsData.meta.name, date: clvInsightsData.meta.runDate, source: clvInsightsData.meta.dataSource, customers: clvInsightsData.meta.customers },
   product: { title: productInsightsData.meta.name, date: productInsightsData.meta.runDate, source: productInsightsData.meta.dataSource, customers: productInsightsData.meta.customers },
   hybrid: { title: hybridPersonaInsightsData.meta.name, date: hybridPersonaInsightsData.meta.runDate, source: hybridPersonaInsightsData.meta.dataSource, customers: hybridPersonaInsightsData.meta.customers },
+  customsql: { title: customSQLInsightsData.meta.name, date: customSQLInsightsData.meta.runDate, source: customSQLInsightsData.meta.dataSource, customers: customSQLInsightsData.meta.customers },
+  autosegment: { title: autoSegmentInsightsData.meta.name, date: autoSegmentInsightsData.meta.runDate, source: autoSegmentInsightsData.meta.dataSource, customers: autoSegmentInsightsData.meta.customers },
 };
 
 export const ModelInsights = ({ onBack, modelName }: ModelInsightsProps) => {

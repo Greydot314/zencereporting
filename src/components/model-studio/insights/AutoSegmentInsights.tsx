@@ -63,26 +63,21 @@ export const AutoSegmentInsights = () => {
             <p className="text-[11px] text-muted-foreground">Area proportional to segment size</p>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={280}>
-              <Treemap
-                data={treemapData}
-                dataKey="size"
-                nameKey="name"
-                aspectRatio={4 / 3}
-                stroke="hsl(var(--background))"
-                strokeWidth={2}
-                content={({ x, y, width, height, name, pct, fill }: any) => {
-                  if (width < 40 || height < 30) return null;
-                  return (
-                    <g>
-                      <rect x={x} y={y} width={width} height={height} fill={fill} rx={4} opacity={0.85} />
-                      <text x={x + width / 2} y={y + height / 2 - 6} textAnchor="middle" fill="white" fontSize={11} fontWeight={600}>{name}</text>
-                      <text x={x + width / 2} y={y + height / 2 + 10} textAnchor="middle" fill="white" fontSize={10} opacity={0.8}>{pct}%</text>
-                    </g>
-                  );
-                }}
-              />
-            </ResponsiveContainer>
+            <div className="grid grid-cols-4 gap-1.5" style={{ height: 280 }}>
+              {treemapData.map((item, i) => {
+                const heightPct = Math.max(30, (item.pct / 22) * 100);
+                return (
+                  <div
+                    key={i}
+                    className="rounded-lg flex flex-col items-center justify-center text-white relative overflow-hidden"
+                    style={{ background: item.fill, opacity: 0.85, height: `${heightPct}%`, minHeight: 60 }}
+                  >
+                    <span className="text-xs font-semibold text-center px-1 leading-tight">{item.name}</span>
+                    <span className="text-[10px] opacity-80 mt-0.5">{item.pct}%</span>
+                  </div>
+                );
+              })}
+            </div>
           </CardContent>
         </Card>
 

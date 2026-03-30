@@ -80,6 +80,8 @@ export const ModelInsights = ({ onBack, modelName }: ModelInsightsProps) => {
       {insightType === 'clv' && <CLVInsights />}
       {insightType === 'product' && <ProductInsights />}
       {insightType === 'hybrid' && <HybridPersonaInsights />}
+      {insightType === 'customsql' && <CustomSQLInsights />}
+      {insightType === 'autosegment' && <AutoSegmentInsights />}
       {insightType === 'rfm' && <RFMInsightsContent />}
     </div>
   );

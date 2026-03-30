@@ -301,7 +301,86 @@ export const hybridPersonaInsightsData = {
   aiSummary: 'Urban Trendsetters (28%) drive the highest engagement via mobile and social channels — ideal for influencer and app-exclusive campaigns. Premium Loyalists (18%) contribute 39% of total revenue despite being a smaller segment, making them prime candidates for VIP programs. Dormant Potentials (11%) represent ₹19.5Cr in recoverable annual revenue; a targeted win-back sequence via SMS (their last responsive channel) could reactivate an estimated 30% within 60 days.',
 };
 
-export type ModelInsightType = 'rfm' | 'kmeans' | 'churn' | 'clv' | 'product' | 'hybrid';
+// ── Custom SQL + AI Layer Insights ──
+export const customSQLInsightsData = {
+  meta: { name: 'Custom SQL + AI Layer — Brand A Q1 2025', runDate: 'Mar 18, 2025', dataSource: 'Customer 360 DB', customers: '98,340' },
+  queryStats: [
+    { label: 'SQL Rules', value: '6' },
+    { label: 'AI Features Used', value: '12' },
+    { label: 'Avg Confidence', value: '87%' },
+    { label: 'Processing Time', value: '4m 32s' },
+  ],
+  segments: [
+    { name: 'Power Buyers', pct: 14, count: 13768, avgSpend: 11200, upgradeScore: 82, action: 'VIP Program' },
+    { name: 'Active Enthusiasts', pct: 22, count: 21635, avgSpend: 5800, upgradeScore: 68, action: 'Loyalty Push' },
+    { name: 'Cross-Category Explorers', pct: 18, count: 17701, avgSpend: 4200, upgradeScore: 74, action: 'Cross-Sell' },
+    { name: 'Deal Seekers', pct: 20, count: 19668, avgSpend: 2900, upgradeScore: 45, action: 'Promo Targeting' },
+    { name: 'Lapsed Customers', pct: 15, count: 14751, avgSpend: 1800, upgradeScore: 28, action: 'Win-Back' },
+    { name: 'Casual Browsers', pct: 11, count: 10817, avgSpend: 900, upgradeScore: 15, action: 'Nurture' },
+  ],
+  featureImportance: [
+    { feature: 'Total Spend (SQL)', importance: 92 },
+    { feature: 'Visit Frequency (SQL)', importance: 85 },
+    { feature: 'Category Diversity (SQL)', importance: 78 },
+    { feature: 'Promo Response Rate (SQL)', importance: 71 },
+    { feature: 'AI: Purchase Propensity', importance: 88 },
+    { feature: 'AI: Channel Affinity Score', importance: 76 },
+    { feature: 'AI: Basket Composition', importance: 69 },
+    { feature: 'AI: Seasonal Pattern', importance: 62 },
+  ],
+  segmentTrend: [
+    { month: 'Oct', 'Power Buyers': 13, 'Active Enthusiasts': 21, 'Cross-Category Explorers': 17, 'Deal Seekers': 21, 'Lapsed Customers': 16, 'Casual Browsers': 12 },
+    { month: 'Nov', 'Power Buyers': 14, 'Active Enthusiasts': 22, 'Cross-Category Explorers': 18, 'Deal Seekers': 20, 'Lapsed Customers': 15, 'Casual Browsers': 11 },
+    { month: 'Dec', 'Power Buyers': 15, 'Active Enthusiasts': 23, 'Cross-Category Explorers': 19, 'Deal Seekers': 19, 'Lapsed Customers': 14, 'Casual Browsers': 10 },
+    { month: 'Jan', 'Power Buyers': 14, 'Active Enthusiasts': 22, 'Cross-Category Explorers': 18, 'Deal Seekers': 20, 'Lapsed Customers': 15, 'Casual Browsers': 11 },
+    { month: 'Feb', 'Power Buyers': 14, 'Active Enthusiasts': 22, 'Cross-Category Explorers': 18, 'Deal Seekers': 20, 'Lapsed Customers': 15, 'Casual Browsers': 11 },
+    { month: 'Mar', 'Power Buyers': 14, 'Active Enthusiasts': 22, 'Cross-Category Explorers': 18, 'Deal Seekers': 20, 'Lapsed Customers': 15, 'Casual Browsers': 11 },
+  ],
+  aiSummary: 'Power Buyers (14%) contribute 38% of revenue with an average spend of ₹11,200 — the AI layer identified an 82% upgrade propensity making them ideal VIP candidates. Cross-Category Explorers (18%) show high category diversity scores and 74% upgrade potential; personalized cross-sell recommendations could increase their basket size by an estimated 25%. Lapsed Customers (15%) have declining engagement but the AI enrichment detected seasonal purchase patterns in 40% of them, suggesting timed re-engagement campaigns around festive periods.',
+};
+
+// ── AI Auto-Segment Insights ──
+export const autoSegmentInsightsData = {
+  meta: { name: 'AI Auto-Segment — Full Customer Base', runDate: 'Mar 20, 2025', dataSource: 'All Data Sources', customers: '2,15,800' },
+  modelMetrics: [
+    { label: 'Segments Found', value: '7', change: '+2' },
+    { label: 'Silhouette Score', value: '0.72', change: '+0.05' },
+    { label: 'Features Analyzed', value: '47' },
+    { label: 'Processing Time', value: '18m 45s' },
+  ],
+  segments: [
+    { name: 'Digital Natives', pct: 22, count: 47476, confidence: 91, topTraits: ['Mobile-first', 'High app engagement', 'Social media influenced', 'Quick checkout'] },
+    { name: 'Premium Spenders', pct: 15, count: 32370, confidence: 88, topTraits: ['High AOV', 'Brand loyal', 'In-store preference', 'Low price sensitivity'] },
+    { name: 'Bargain Hunters', pct: 19, count: 41002, confidence: 85, topTraits: ['Coupon-driven', 'Price comparison', 'Bulk buying', 'Sale season peaks'] },
+    { name: 'Occasional Visitors', pct: 14, count: 30212, confidence: 79, topTraits: ['Low frequency', 'Gift purchases', 'Holiday spikes', 'Email responsive'] },
+    { name: 'Loyal Regulars', pct: 12, count: 25896, confidence: 93, topTraits: ['Consistent frequency', 'Moderate spend', 'Multi-category', 'High retention'] },
+    { name: 'New Explorers', pct: 10, count: 21580, confidence: 76, topTraits: ['< 90 days tenure', 'High browse rate', 'Low conversion', 'Discovery mode'] },
+    { name: 'Dormant Risk', pct: 8, count: 17264, confidence: 82, topTraits: ['Declining frequency', '60+ days inactive', 'Former high spenders', 'Unsubscribed emails'] },
+  ],
+  featureContributions: [
+    { feature: 'Purchase Frequency', importance: 94, type: 'Behavioral' },
+    { feature: 'Average Order Value', importance: 89, type: 'Transactional' },
+    { feature: 'Days Since Last Visit', importance: 86, type: 'Behavioral' },
+    { feature: 'Channel Mix Score', importance: 81, type: 'Behavioral' },
+    { feature: 'Category Breadth', importance: 78, type: 'Transactional' },
+    { feature: 'Promotion Sensitivity', importance: 73, type: 'Behavioral' },
+    { feature: 'Session Duration Avg', importance: 68, type: 'Digital' },
+    { feature: 'Age Group', importance: 62, type: 'Demographic' },
+    { feature: 'Geographic Tier', importance: 58, type: 'Demographic' },
+    { feature: 'Device Preference', importance: 54, type: 'Digital' },
+  ],
+  segmentRadar: [
+    { dimension: 'Spend', 'Digital Natives': 65, 'Premium Spenders': 95, 'Bargain Hunters': 45, 'Loyal Regulars': 70 },
+    { dimension: 'Frequency', 'Digital Natives': 80, 'Premium Spenders': 60, 'Bargain Hunters': 55, 'Loyal Regulars': 90 },
+    { dimension: 'Recency', 'Digital Natives': 85, 'Premium Spenders': 70, 'Bargain Hunters': 50, 'Loyal Regulars': 88 },
+    { dimension: 'Engagement', 'Digital Natives': 92, 'Premium Spenders': 55, 'Bargain Hunters': 40, 'Loyal Regulars': 75 },
+    { dimension: 'Loyalty', 'Digital Natives': 50, 'Premium Spenders': 85, 'Bargain Hunters': 30, 'Loyal Regulars': 95 },
+    { dimension: 'Digital Activity', 'Digital Natives': 95, 'Premium Spenders': 40, 'Bargain Hunters': 65, 'Loyal Regulars': 55 },
+  ],
+  aiSummary: 'The AI engine automatically identified 7 distinct customer segments by analyzing 47 features across all data sources. Digital Natives (22%) show the highest engagement scores at 92/100, driven primarily by mobile app interactions and social media influence — ideal for app-exclusive campaigns. Premium Spenders (15%) have the highest loyalty scores and contribute disproportionately to revenue. Dormant Risk (8%) represents a critical win-back opportunity: these former high spenders have disengaged over the past 60+ days, but their historical purchase patterns suggest a 35% reactivation probability with the right incentive within 30 days.',
+};
+
+export type ModelInsightType = 'rfm' | 'kmeans' | 'churn' | 'clv' | 'product' | 'hybrid' | 'customsql' | 'autosegment';
 
 export const modelNameToInsightType: Record<string, ModelInsightType> = {
   // My Models names
@@ -309,7 +388,7 @@ export const modelNameToInsightType: Record<string, ModelInsightType> = {
   'Churn Risk - All Brands': 'churn',
   'CLV Tiers - Premium': 'clv',
   'K-Means Exploration': 'kmeans',
-  'Auto-Segment Monthly': 'rfm',
+  'Auto-Segment Monthly': 'autosegment',
   'Product Affinity - Brand B': 'product',
   'Hybrid Persona - All Brands': 'hybrid',
   // Catalog model names (for Sample Output)
@@ -319,8 +398,8 @@ export const modelNameToInsightType: Record<string, ModelInsightType> = {
   'CLV Prediction': 'clv',
   'Product Propensity': 'product',
   'Demographic + Behavioral Hybrid': 'hybrid',
-  'Custom SQL + AI Layer': 'rfm',
-  'AI Auto-Segment': 'rfm',
+  'Custom SQL + AI Layer': 'customsql',
+  'AI Auto-Segment': 'autosegment',
 };
 
 export const comparisonFields = [

@@ -921,10 +921,8 @@ const CreateSegment = () => {
           {/* Filter Top N Customer Toggle */}
           <div className="space-y-3">
             <div className="flex items-center gap-3">
+              <Label className="text-xs font-medium cursor-pointer">Filter Top N Customer</Label>
               <Switch checked={rankEnabled} onCheckedChange={(checked) => {
-                setRankEnabled(checked);
-                if (!checked) { setRankValue(""); setRankLimit(""); }
-              }} />
               <Label className="text-xs font-medium cursor-pointer">Filter Top N Customer</Label>
             </div>
             {rankEnabled && (

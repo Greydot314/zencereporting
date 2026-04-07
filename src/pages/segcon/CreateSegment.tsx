@@ -508,6 +508,8 @@ const SegmentMindMap = ({ groups, interGroupConditions }: { groups: RuleGroup[];
 const CreateSegment = () => {
   const navigate = useNavigate();
   const [segmentName, setSegmentName] = useState("");
+  const [rankValue, setRankValue] = useState("");
+  const [rankLimit, setRankLimit] = useState("");
 
   const [groups, setGroups] = useState<RuleGroup[]>([]);
   const [interGroupConditions, setInterGroupConditions] = useState<ConditionType[]>([]);

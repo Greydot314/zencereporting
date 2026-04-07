@@ -916,6 +916,32 @@ const CreateSegment = () => {
               </Popover>
             </div>
           </div>
+          {/* Rank Value + Rank Limit */}
+          <div className="flex items-end gap-4 max-w-xl">
+            <div className="space-y-1.5 flex-1">
+              <Label className="text-xs font-medium">Rank Value *</Label>
+              <Select value={rankValue} onValueChange={setRankValue}>
+                <SelectTrigger className="h-9 text-xs">
+                  <SelectValue placeholder="Rank Value*" />
+                </SelectTrigger>
+                <SelectContent>
+                  {["Available Points", "Total Spends", "Total Transaction", "Total Visits", "Average Spend Per Visits", "Recency", "Latency", "Percentage"].map(opt => (
+                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5 w-[200px] flex-shrink-0">
+              <Label className="text-xs font-medium">Rank Limit</Label>
+              <Input
+                type="number"
+                placeholder="Rank Limit"
+                value={rankLimit}
+                onChange={(e) => setRankLimit(e.target.value)}
+                className="h-9"
+              />
+            </div>
+          </div>
 
           {/* ── Two-Column Layout: Builder + Side Panel ── */}
           <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-5 items-start">

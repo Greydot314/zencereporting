@@ -519,6 +519,9 @@ const CreateSegment = () => {
   // Exclusion filters
   const [exclusionFilters, setExclusionFilters] = useState<ExclusionFilter[]>([]);
 
+  // Refresh frequency
+  const [refreshFrequency, setRefreshFrequency] = useState("daily");
+
   // Expiry date
   const [expiryDate, setExpiryDate] = useState<Date | undefined>();
 

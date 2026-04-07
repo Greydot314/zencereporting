@@ -519,6 +519,9 @@ const CreateSegment = () => {
   // Exclusion filters
   const [exclusionFilters, setExclusionFilters] = useState<ExclusionFilter[]>([]);
 
+  // Refresh frequency
+  const [refreshFrequency, setRefreshFrequency] = useState("daily");
+
   // Expiry date
   const [expiryDate, setExpiryDate] = useState<Date | undefined>();
 
@@ -888,10 +891,25 @@ const CreateSegment = () => {
       <div className="flex-1 overflow-auto bg-background">
         <div className="p-6 space-y-5">
           {/* Segment Info - Name + Expiry (above the grid) */}
-          <div className="flex items-end gap-4 max-w-xl">
+          <div className="flex items-end gap-4 max-w-2xl">
             <div className="space-y-1.5 flex-1">
               <Label htmlFor="seg-name" className="text-xs font-medium">Segment Name *</Label>
               <Input id="seg-name" placeholder="e.g. High-Value Churning Users" value={segmentName} onChange={(e) => setSegmentName(e.target.value)} className="h-9" />
+            </div>
+            <div className="space-y-1.5 w-[160px] flex-shrink-0">
+              <Label className="text-xs font-medium">Frequency *</Label>
+              <Select value={refreshFrequency} onValueChange={setRefreshFrequency}>
+                <SelectTrigger className="h-9 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="fortnightly">Fortnightly</SelectItem>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="daily">Daily</SelectItem>
+                  <SelectItem value="once">Once</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5 w-[200px] flex-shrink-0">
               <Label className="text-xs font-medium">Expiry Date</Label>

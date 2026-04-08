@@ -190,67 +190,56 @@ const CampaignsTab = ({ d }: { d: DurationData }) => (
 /* ── main component ── */
 
 const SegmentKpiAnalysis = ({ segmentName }: Props) => {
-  const [enabled, setEnabled] = useState(true);
   const [duration, setDuration] = useState<DurationKey>("12m");
 
   const data = segmentKpiByDuration[duration];
 
   return (
     <div className="space-y-5">
-      {/* toggle */}
-      <div className="flex items-center gap-3">
-        <Label className="text-sm font-medium text-foreground">Add KPI analysis for this segment</Label>
-        <Switch checked={enabled} onCheckedChange={setEnabled} />
+      {/* top bar */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-base font-semibold text-foreground">{segmentName}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {data.totalCustomers.toLocaleString()} matched customers
+          </p>
+        </div>
+        <HealthScore score={data.healthScore} label={data.healthLabel} percentile={data.healthPercentile} />
       </div>
 
-      {enabled && (
-        <div className="space-y-5">
-          {/* top bar */}
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-base font-semibold text-foreground">{segmentName}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {data.totalCustomers.toLocaleString()} matched customers
-              </p>
-            </div>
-            <HealthScore score={data.healthScore} label={data.healthLabel} percentile={data.healthPercentile} />
-          </div>
+      {/* duration pills */}
+      <div className="flex gap-2">
+        {durations.map((d) => (
+          <button
+            key={d.key}
+            onClick={() => setDuration(d.key)}
+            className={cn(
+              "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+              duration === d.key
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {d.label}
+          </button>
+        ))}
+      </div>
 
-          {/* duration pills */}
-          <div className="flex gap-2">
-            {durations.map((d) => (
-              <button
-                key={d.key}
-                onClick={() => setDuration(d.key)}
-                className={cn(
-                  "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
-                  duration === d.key
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {d.label}
-              </button>
-            ))}
-          </div>
-
-          {/* tabs */}
-          <Tabs defaultValue="overview">
-            <TabsList className="w-full justify-start">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="loyalty">Loyalty</TabsTrigger>
-              <TabsTrigger value="transactions">Transactions</TabsTrigger>
-              <TabsTrigger value="channels">Channels</TabsTrigger>
-              <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
-            </TabsList>
-            <TabsContent value="overview"><OverviewTab d={data} /></TabsContent>
-            <TabsContent value="loyalty"><LoyaltyTab d={data} /></TabsContent>
-            <TabsContent value="transactions"><TransactionsTab d={data} /></TabsContent>
-            <TabsContent value="channels"><ChannelsTab d={data} /></TabsContent>
-            <TabsContent value="campaigns"><CampaignsTab d={data} /></TabsContent>
-          </Tabs>
-        </div>
-      )}
+      {/* tabs */}
+      <Tabs defaultValue="overview">
+        <TabsList className="w-full justify-start">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="loyalty">Loyalty</TabsTrigger>
+          <TabsTrigger value="transactions">Transactions</TabsTrigger>
+          <TabsTrigger value="channels">Channels</TabsTrigger>
+          <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+        </TabsList>
+        <TabsContent value="overview"><OverviewTab d={data} /></TabsContent>
+        <TabsContent value="loyalty"><LoyaltyTab d={data} /></TabsContent>
+        <TabsContent value="transactions"><TransactionsTab d={data} /></TabsContent>
+        <TabsContent value="channels"><ChannelsTab d={data} /></TabsContent>
+        <TabsContent value="campaigns"><CampaignsTab d={data} /></TabsContent>
+      </Tabs>
     </div>
   );
 };

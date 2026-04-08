@@ -195,7 +195,7 @@ const SegmentKpiAnalysis = ({ segmentName }: Props) => {
   return (
     <div className="space-y-5">
       {/* top bar */}
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-base font-semibold text-foreground">{segmentName}</p>
           <p className="text-xs text-muted-foreground mt-0.5">

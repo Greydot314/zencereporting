@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, Archive, MoreVertical, RefreshCw, Download, Globe, ChevronDown, Smartphone, Mail, Users } from "lucide-react";
+import { Search, Plus, Archive, MoreVertical, RefreshCw, Download, Globe, ChevronDown, Smartphone, Mail, Users, BarChart3 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import SegmentKpiAnalysis from "@/components/segcon/SegmentKpiAnalysis";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -56,6 +59,7 @@ const SegmentList = () => {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("creation");
   const [filterType, setFilterType] = useState("all");
+  const [kpiSegment, setKpiSegment] = useState<string | null>(null);
 
   const filtered = mockSegments.filter((s) => {
     const matchSearch = s.name.toLowerCase().includes(search.toLowerCase());
@@ -202,6 +206,9 @@ const SegmentList = () => {
                           <DropdownMenuItem>Edit Segment</DropdownMenuItem>
                           <DropdownMenuItem>Duplicate</DropdownMenuItem>
                           <DropdownMenuSeparator />
+                          <DropdownMenuItem className="gap-2" onClick={() => setKpiSegment(seg.name)}>
+                            <BarChart3 className="h-4 w-4" /> Show Segment Analysis
+                          </DropdownMenuItem>
                           <DropdownMenuItem className="gap-2">
                             <Download className="h-4 w-4" /> Download Segment
                           </DropdownMenuItem>
@@ -223,6 +230,18 @@ const SegmentList = () => {
             </TableBody>
           </Table>
         </div>
+
+        {/* KPI Analysis Dialog */}
+        <Dialog open={!!kpiSegment} onOpenChange={(open) => !open && setKpiSegment(null)}>
+          <DialogContent className="max-w-4xl max-h-[90vh] p-0">
+            <DialogHeader className="p-6 pb-0">
+              <DialogTitle>Segment KPI Analysis</DialogTitle>
+            </DialogHeader>
+            <ScrollArea className="px-6 pb-6 max-h-[calc(90vh-80px)]">
+              {kpiSegment && <SegmentKpiAnalysis segmentName={kpiSegment} />}
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
       </div>
     </main>
   );

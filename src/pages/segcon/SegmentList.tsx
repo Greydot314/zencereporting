@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, Archive, MoreVertical, RefreshCw, Download, Globe, ChevronDown, Smartphone, Mail, Users } from "lucide-react";
+import { Search, Plus, Archive, MoreVertical, RefreshCw, Download, Globe, ChevronDown, Smartphone, Mail, Users, BarChart3 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import SegmentKpiAnalysis from "@/components/segcon/SegmentKpiAnalysis";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";

@@ -230,6 +230,18 @@ const SegmentList = () => {
             </TableBody>
           </Table>
         </div>
+
+        {/* KPI Analysis Dialog */}
+        <Dialog open={!!kpiSegment} onOpenChange={(open) => !open && setKpiSegment(null)}>
+          <DialogContent className="max-w-4xl max-h-[90vh] p-0">
+            <DialogHeader className="p-6 pb-0">
+              <DialogTitle>Segment KPI Analysis</DialogTitle>
+            </DialogHeader>
+            <ScrollArea className="px-6 pb-6 max-h-[calc(90vh-80px)]">
+              {kpiSegment && <SegmentKpiAnalysis segmentName={kpiSegment} />}
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
       </div>
     </main>
   );

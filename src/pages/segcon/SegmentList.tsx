@@ -206,6 +206,9 @@ const SegmentList = () => {
                           <DropdownMenuItem>Edit Segment</DropdownMenuItem>
                           <DropdownMenuItem>Duplicate</DropdownMenuItem>
                           <DropdownMenuSeparator />
+                          <DropdownMenuItem className="gap-2" onClick={() => setKpiSegment(seg.name)}>
+                            <BarChart3 className="h-4 w-4" /> Show Segment Analysis
+                          </DropdownMenuItem>
                           <DropdownMenuItem className="gap-2">
                             <Download className="h-4 w-4" /> Download Segment
                           </DropdownMenuItem>

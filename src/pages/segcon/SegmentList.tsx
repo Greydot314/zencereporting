@@ -59,6 +59,7 @@ const SegmentList = () => {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("creation");
   const [filterType, setFilterType] = useState("all");
+  const [kpiSegment, setKpiSegment] = useState<string | null>(null);
 
   const filtered = mockSegments.filter((s) => {
     const matchSearch = s.name.toLowerCase().includes(search.toLowerCase());

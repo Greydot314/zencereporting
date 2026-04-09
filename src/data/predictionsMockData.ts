@@ -195,12 +195,14 @@ export const mockProductDemandData: ProductDemandData = {
     { event: "Valentine's Week", date: "Feb 7-14", impact: "+60% experience rewards" },
     { event: "Holi Festival", date: "Mar 14", impact: "+35% gift card demand" }
   ],
-  recommendations: [
-    "Stock up on Electronics inventory - 38% surge predicted",
-    "Partner with travel providers for exclusive experiences",
-    "Consider reducing Gift Card promotion spend",
-    "Prepare Valentine's-themed reward bundles"
-  ],
+  top_recommendation: {
+    title: "Aggressively Increase Knit Inventory for Loyalty Members",
+    reason: "Knit sales are surging. Loyalty members are key; ensure ample stock to meet demand & reward their loyalty with consistent availability.",
+    confidence: 85,
+    action_type: "INVENTORY_INCREASE",
+    time_horizon_days: 30,
+    predicted_surge_pct: 37.6
+  },
   lastUpdated: "6 hours ago"
 };
 

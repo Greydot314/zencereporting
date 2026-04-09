@@ -102,11 +102,20 @@ export interface ProductDemand {
   confidence: number;
 }
 
+export interface TopRecommendation {
+  title: string;
+  reason: string;
+  confidence: number;
+  action_type: string;
+  time_horizon_days: number;
+  predicted_surge_pct: number;
+}
+
 export interface ProductDemandData {
   products: ProductDemand[];
   trendingProducts: { name: string; demandScore: number }[];
   seasonalEvents: { event: string; date: string; impact: string }[];
-  recommendations: string[];
+  top_recommendation: TopRecommendation;
   lastUpdated: string;
 }
 

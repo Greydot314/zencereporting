@@ -129,13 +129,31 @@ export const ProductDemandCard = ({ data }: ProductDemandCardProps) => {
           </div>
         </div>
 
-        {/* Recommendations */}
-        <div className="p-3 rounded-lg border bg-amber-50/30">
-          <div className="flex items-center gap-2 mb-1">
-            <Lightbulb className="h-4 w-4 text-amber-500" />
-            <span className="text-xs font-medium">Top Recommendation</span>
+        {/* Top Recommendation */}
+        <div className="p-4 rounded-xl border bg-muted/20">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Lightbulb className="h-4 w-4 text-amber-500" />
+              <span className="text-sm font-semibold text-foreground">{data.top_recommendation.title}</span>
+            </div>
+            <Badge variant="outline" className="text-xs">
+              {data.top_recommendation.confidence}% confidence
+            </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">{data.recommendations[0]}</p>
+          <p className="text-sm text-muted-foreground mb-3">{data.top_recommendation.reason}</p>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Calendar className="h-3.5 w-3.5" />
+              <span>{data.top_recommendation.time_horizon_days}-day horizon</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-emerald-600">
+              <TrendingUp className="h-3.5 w-3.5" />
+              <span>+{data.top_recommendation.predicted_surge_pct}% predicted surge</span>
+            </div>
+            <Badge variant="secondary" className="text-[10px]">
+              {data.top_recommendation.action_type.replace(/_/g, ' ')}
+            </Badge>
+          </div>
         </div>
       </div>
     </section>

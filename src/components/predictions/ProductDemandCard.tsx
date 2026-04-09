@@ -1,5 +1,6 @@
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Package, TrendingUp, TrendingDown, Minus, Calendar, Star, RefreshCw, Lightbulb } from "lucide-react";
+import { Package, TrendingUp, TrendingDown, Minus, Calendar, Star, RefreshCw, Lightbulb, ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductDemandData } from "@/types/predictions";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { ChartEmptyState } from "@/components/ui/chart-empty-state";
@@ -128,37 +129,8 @@ export const ProductDemandCard = ({ data }: ProductDemandCardProps) => {
           </div>
         </div>
 
-        {/* Recommendations */}
-        <div className="space-y-3">
-          <h4 className="text-sm font-medium flex items-center gap-2">
-            <Lightbulb className="h-4 w-4 text-amber-500" />
-            Recommendations
-          </h4>
-          {data.recommendations.map((rec, index) => (
-            <div key={index} className="p-4 rounded-xl border bg-muted/20">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-foreground">{rec.title}</span>
-                <Badge variant="outline" className="text-xs shrink-0 ml-2">
-                  {rec.confidence}% confidence
-                </Badge>
-              </div>
-              <p className="text-sm text-muted-foreground mb-3">{rec.reason}</p>
-              <div className="flex items-center gap-4 flex-wrap">
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Calendar className="h-3.5 w-3.5" />
-                  <span>{rec.time_horizon_days}-day horizon</span>
-                </div>
-                <div className={`flex items-center gap-1.5 text-xs ${rec.predicted_surge_pct >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
-                  {rec.predicted_surge_pct >= 0 ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
-                  <span>{rec.predicted_surge_pct >= 0 ? '+' : ''}{rec.predicted_surge_pct}% predicted surge</span>
-                </div>
-                <Badge variant="secondary" className="text-[10px]">
-                  {rec.action_type.replace(/_/g, ' ')}
-                </Badge>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Recommendations Carousel */}
+        {data.recommendations.length > 0 && <RecommendationCarousel recommendations={data.recommendations} />}
       </div>
     </section>
   );

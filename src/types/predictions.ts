@@ -115,7 +115,7 @@ export interface ProductDemandData {
   products: ProductDemand[];
   trendingProducts: { name: string; demandScore: number }[];
   seasonalEvents: { event: string; date: string; impact: string }[];
-  top_recommendation: TopRecommendation;
+  recommendations: TopRecommendation[];
   lastUpdated: string;
 }
 

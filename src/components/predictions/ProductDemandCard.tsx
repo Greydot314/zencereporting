@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Badge } from "@/components/ui/badge";
 import { Package, TrendingUp, TrendingDown, Minus, Calendar, Star, RefreshCw, Lightbulb } from "lucide-react";
 import { ProductDemandData } from "@/types/predictions";

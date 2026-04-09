@@ -195,14 +195,32 @@ export const mockProductDemandData: ProductDemandData = {
     { event: "Valentine's Week", date: "Feb 7-14", impact: "+60% experience rewards" },
     { event: "Holi Festival", date: "Mar 14", impact: "+35% gift card demand" }
   ],
-  top_recommendation: {
-    title: "Aggressively Increase Knit Inventory for Loyalty Members",
-    reason: "Knit sales are surging. Loyalty members are key; ensure ample stock to meet demand & reward their loyalty with consistent availability.",
-    confidence: 85,
-    action_type: "INVENTORY_INCREASE",
-    time_horizon_days: 30,
-    predicted_surge_pct: 37.6
-  },
+  recommendations: [
+    {
+      title: "Aggressively Increase Knit Inventory for Loyalty Members",
+      reason: "Knit sales are surging. Loyalty members are key; ensure ample stock to meet demand & reward their loyalty with consistent availability.",
+      confidence: 85,
+      action_type: "INVENTORY_INCREASE",
+      time_horizon_days: 30,
+      predicted_surge_pct: 37.6
+    },
+    {
+      title: "Partner with Travel Providers for Exclusive Experiences",
+      reason: "Travel & Experiences demand is up 50%. Exclusive partnerships can drive premium engagement and differentiate the rewards catalog.",
+      confidence: 82,
+      action_type: "PARTNERSHIP",
+      time_horizon_days: 45,
+      predicted_surge_pct: 50.0
+    },
+    {
+      title: "Reduce Gift Card Promotion Spend",
+      reason: "Gift Card demand is declining at -5.8%. Reallocate marketing budget to higher-growth categories like Electronics and Travel.",
+      confidence: 88,
+      action_type: "BUDGET_REALLOCATION",
+      time_horizon_days: 14,
+      predicted_surge_pct: -5.8
+    }
+  ],
   lastUpdated: "6 hours ago"
 };
 

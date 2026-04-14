@@ -39,14 +39,15 @@ interface Segment {
   expiryDate: string;
   lastRefresh: string | null;
   active: boolean;
+  refreshing?: { progress: number; stage: string };
 }
 
 const mockSegments: Segment[] = [
   { id: 147, name: "Testsegment_v2", type: "TagBased", createdBy: "Ashutosh", customers: null, expiryDate: "27-03-2026", lastRefresh: null, active: false },
-  { id: 146, name: "New_23_Daily_Google", type: "Google", createdBy: "Shubham.Hiwale", customers: { total: 132, mobile: 98, email: 132 }, expiryDate: "25-03-2026", lastRefresh: "23-02-2026 13:09:47", active: true },
+  { id: 146, name: "New_23_Daily_Google", type: "Google", createdBy: "Shubham.Hiwale", customers: { total: 132, mobile: 98, email: 132 }, expiryDate: "25-03-2026", lastRefresh: "23-02-2026 13:09:47", active: true, refreshing: { progress: 62, stage: "Processing records" } },
   { id: 145, name: "New_23_Daily_Meta", type: "Meta", createdBy: "Shubham.Hiwale", customers: { total: 132, mobile: 98, email: 132 }, expiryDate: "25-03-2026", lastRefresh: "23-02-2026 13:09:47", active: true },
   { id: 144, name: "New_23_Daily_Custom", type: "Custom", createdBy: "Shubham.Hiwale", customers: { total: 132, mobile: 112, email: 95 }, expiryDate: "25-03-2026", lastRefresh: "23-02-2026 13:09:47", active: true },
-  { id: 143, name: "My_200_29_Custom", type: "Custom", createdBy: "Shubham.Hiwale", customers: null, expiryDate: "22-03-2026", lastRefresh: "20-02-2026 18:27:33", active: true },
+  { id: 143, name: "My_200_29_Custom", type: "Custom", createdBy: "Shubham.Hiwale", customers: null, expiryDate: "22-03-2026", lastRefresh: "20-02-2026 18:27:33", active: true, refreshing: { progress: 89, stage: "Syncing to channels" } },
   { id: 142, name: "New_Test_Base", type: "Custom", createdBy: "Shubham.Hiwale", customers: null, expiryDate: "22-03-2026", lastRefresh: "20-02-2026 18:25:41", active: true },
   { id: 141, name: "Without_Condition", type: "Custom", createdBy: "Shubham.Hiwale", customers: null, expiryDate: "22-03-2026", lastRefresh: "20-02-2026 18:21:43", active: true },
   { id: 140, name: "New_Test_Profile", type: "Custom", createdBy: "Shubham.Hiwale", customers: { total: 132, mobile: 120, email: 88 }, expiryDate: "22-03-2026", lastRefresh: "20-02-2026 19:02:12", active: true },

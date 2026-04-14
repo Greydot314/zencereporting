@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, Archive, MoreVertical, RefreshCw, Download, Globe, ChevronDown, Smartphone, Mail, Users, BarChart3 } from "lucide-react";
+import { Search, Plus, Archive, MoreVertical, RefreshCw, Download, Globe, ChevronDown, Smartphone, Mail, Users, BarChart3, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SegmentKpiAnalysis from "@/components/segcon/SegmentKpiAnalysis";
@@ -39,14 +39,15 @@ interface Segment {
   expiryDate: string;
   lastRefresh: string | null;
   active: boolean;
+  refreshing?: { progress: number; stage: string };
 }
 
 const mockSegments: Segment[] = [
   { id: 147, name: "Testsegment_v2", type: "TagBased", createdBy: "Ashutosh", customers: null, expiryDate: "27-03-2026", lastRefresh: null, active: false },
-  { id: 146, name: "New_23_Daily_Google", type: "Google", createdBy: "Shubham.Hiwale", customers: { total: 132, mobile: 98, email: 132 }, expiryDate: "25-03-2026", lastRefresh: "23-02-2026 13:09:47", active: true },
+  { id: 146, name: "New_23_Daily_Google", type: "Google", createdBy: "Shubham.Hiwale", customers: { total: 132, mobile: 98, email: 132 }, expiryDate: "25-03-2026", lastRefresh: "23-02-2026 13:09:47", active: true, refreshing: { progress: 62, stage: "Processing records" } },
   { id: 145, name: "New_23_Daily_Meta", type: "Meta", createdBy: "Shubham.Hiwale", customers: { total: 132, mobile: 98, email: 132 }, expiryDate: "25-03-2026", lastRefresh: "23-02-2026 13:09:47", active: true },
   { id: 144, name: "New_23_Daily_Custom", type: "Custom", createdBy: "Shubham.Hiwale", customers: { total: 132, mobile: 112, email: 95 }, expiryDate: "25-03-2026", lastRefresh: "23-02-2026 13:09:47", active: true },
-  { id: 143, name: "My_200_29_Custom", type: "Custom", createdBy: "Shubham.Hiwale", customers: null, expiryDate: "22-03-2026", lastRefresh: "20-02-2026 18:27:33", active: true },
+  { id: 143, name: "My_200_29_Custom", type: "Custom", createdBy: "Shubham.Hiwale", customers: null, expiryDate: "22-03-2026", lastRefresh: "20-02-2026 18:27:33", active: true, refreshing: { progress: 89, stage: "Syncing to channels" } },
   { id: 142, name: "New_Test_Base", type: "Custom", createdBy: "Shubham.Hiwale", customers: null, expiryDate: "22-03-2026", lastRefresh: "20-02-2026 18:25:41", active: true },
   { id: 141, name: "Without_Condition", type: "Custom", createdBy: "Shubham.Hiwale", customers: null, expiryDate: "22-03-2026", lastRefresh: "20-02-2026 18:21:43", active: true },
   { id: 140, name: "New_Test_Profile", type: "Custom", createdBy: "Shubham.Hiwale", customers: { total: 132, mobile: 120, email: 88 }, expiryDate: "22-03-2026", lastRefresh: "20-02-2026 19:02:12", active: true },
@@ -189,12 +190,30 @@ const SegmentList = () => {
                     )}
                   </TableCell>
                   <TableCell className="text-sm text-foreground">{seg.expiryDate}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{seg.lastRefresh || "–"}</TableCell>
+                  <TableCell>
+                    {seg.refreshing ? (
+                      <div className="space-y-1 min-w-[140px]">
+                        <div className="flex items-center gap-1.5">
+                          <Loader2 className="h-3.5 w-3.5 text-primary animate-spin" />
+                          <span className="text-xs font-medium text-primary">{seg.refreshing.progress}%</span>
+                        </div>
+                        <div className="h-1.5 w-full rounded-full bg-secondary overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-primary transition-all"
+                            style={{ width: `${seg.refreshing.progress}%` }}
+                          />
+                        </div>
+                        <p className="text-[10px] text-muted-foreground">{seg.refreshing.stage}</p>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">{seg.lastRefresh || "–"}</span>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-2">
                       <Switch checked={seg.active} />
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <RefreshCw className="h-4 w-4 text-muted-foreground" />
+                      <Button variant="ghost" size="icon" className="h-8 w-8" disabled={!!seg.refreshing}>
+                        <RefreshCw className={`h-4 w-4 text-muted-foreground ${seg.refreshing ? "animate-spin" : ""}`} />
                       </Button>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

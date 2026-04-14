@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, Archive, MoreVertical, RefreshCw, Download, Globe, ChevronDown, Smartphone, Mail, Users, BarChart3 } from "lucide-react";
+import { Search, Plus, Archive, MoreVertical, RefreshCw, Download, Globe, ChevronDown, Smartphone, Mail, Users, BarChart3, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SegmentKpiAnalysis from "@/components/segcon/SegmentKpiAnalysis";
@@ -190,12 +190,30 @@ const SegmentList = () => {
                     )}
                   </TableCell>
                   <TableCell className="text-sm text-foreground">{seg.expiryDate}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{seg.lastRefresh || "–"}</TableCell>
+                  <TableCell>
+                    {seg.refreshing ? (
+                      <div className="space-y-1 min-w-[140px]">
+                        <div className="flex items-center gap-1.5">
+                          <Loader2 className="h-3.5 w-3.5 text-primary animate-spin" />
+                          <span className="text-xs font-medium text-primary">{seg.refreshing.progress}%</span>
+                        </div>
+                        <div className="h-1.5 w-full rounded-full bg-secondary overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-primary transition-all"
+                            style={{ width: `${seg.refreshing.progress}%` }}
+                          />
+                        </div>
+                        <p className="text-[10px] text-muted-foreground">{seg.refreshing.stage}</p>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">{seg.lastRefresh || "–"}</span>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-2">
                       <Switch checked={seg.active} />
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <RefreshCw className="h-4 w-4 text-muted-foreground" />
+                      <Button variant="ghost" size="icon" className="h-8 w-8" disabled={!!seg.refreshing}>
+                        <RefreshCw className={`h-4 w-4 text-muted-foreground ${seg.refreshing ? "animate-spin" : ""}`} />
                       </Button>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

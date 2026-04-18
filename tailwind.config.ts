@@ -93,7 +93,10 @@ export default {
   				glass: 'hsl(var(--atlas-glass))',
   				'neon-blue': 'hsl(var(--atlas-neon-blue))',
   				'neon-purple': 'hsl(var(--atlas-neon-purple))',
-  				muted: 'hsl(var(--atlas-muted))'
+  				muted: 'hsl(var(--atlas-muted))',
+  				success: 'hsl(var(--atlas-success))',
+  				warning: 'hsl(var(--atlas-warning))',
+  				error: 'hsl(var(--atlas-error))'
   			},
 			ai: {
 				primary: 'hsl(var(--ai-primary))',

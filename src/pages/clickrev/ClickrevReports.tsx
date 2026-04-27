@@ -180,11 +180,11 @@ const ClickrevReports = () => {
         <Dropdown label="Report" value={report} onChange={setReport} options={REPORT_TYPES} width="w-60" />
         <Dropdown label="Filter by Stores" value={store} onChange={setStore} options={STORES} width="w-60" />
 
-        <div className="relative w-72">
-          <label className="absolute -top-2 left-3 px-1 bg-[#F4F4F7] text-[10px] text-[#6B6B7B]">Filter by Date Range</label>
-          <button className="w-full bg-white border border-[#C9C9D4] rounded-md px-3 py-2.5 text-sm text-left flex items-center gap-2 hover:border-[#5B3FBF]">
-            <CalIcon className="h-3.5 w-3.5 text-[#6B6B7B]" />
-            <span>March 28 2026 - April 27 2026 (1 month)</span>
+        <div className="relative w-80 shrink-0">
+          <label className="absolute -top-2 left-3 px-1 bg-[#F4F4F7] text-[10px] text-[#6B6B7B] whitespace-nowrap">Filter by Date Range</label>
+          <button className="w-full bg-white border border-[#C9C9D4] rounded-md px-3 py-2.5 text-sm text-left flex items-center gap-2 hover:border-[#5B3FBF] whitespace-nowrap overflow-hidden">
+            <CalIcon className="h-3.5 w-3.5 text-[#6B6B7B] shrink-0" />
+            <span className="truncate">28 Mar 2026 – 27 Apr 2026 (1 month)</span>
           </button>
         </div>
 

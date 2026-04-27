@@ -21,6 +21,11 @@ import KpiAlertsLanding from "./pages/KpiAlertsLanding";
 import BehavioralAnalyticsLanding from "./pages/BehavioralAnalyticsLanding";
 import NotFound from "./pages/NotFound";
 
+// Clickrev module
+import ClickrevLayout from "./pages/clickrev/ClickrevLayout";
+import ReportExtracts from "./pages/clickrev/ReportExtracts";
+import ClickrevReports from "./pages/clickrev/ClickrevReports";
+
 // Segcon module pages
 import SegconLayout from "./pages/segcon/SegconLayout";
 import SegconHome from "./pages/segcon/SegconHome";
@@ -40,7 +45,13 @@ const App = () => (
         <Routes>
           {/* Landing page without sidebar */}
           <Route path="/landing" element={<AtlasLanding />} />
-          
+
+          {/* Clickrev module — own layout, no app sidebar */}
+          <Route path="/clickrev" element={<ClickrevLayout />}>
+            <Route index element={<ReportExtracts />} />
+            <Route path="reports" element={<ClickrevReports />} />
+          </Route>
+
           {/* Main app with sidebar layout */}
           <Route
             path="/*"

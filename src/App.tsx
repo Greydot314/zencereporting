@@ -19,6 +19,7 @@ import SegconLanding from "./pages/SegconLanding";
 import FraudLanding from "./pages/FraudLanding";
 import KpiAlertsLanding from "./pages/KpiAlertsLanding";
 import BehavioralAnalyticsLanding from "./pages/BehavioralAnalyticsLanding";
+import OliverLanding from "./pages/OliverLanding";
 import NotFound from "./pages/NotFound";
 
 // Clickrev module
@@ -74,6 +75,7 @@ const App = () => (
                       <Route path="/module-info/fraud" element={<FraudLanding />} />
                       <Route path="/module-info/kpi-alerts" element={<KpiAlertsLanding />} />
                       <Route path="/module-info/behavioral-analytics" element={<BehavioralAnalyticsLanding />} />
+                      <Route path="/module-info/oliver" element={<OliverLanding />} />
                       {/* Segcon Module */}
                       <Route path="/module/segcon" element={<SegconLayout />}>
                         <Route index element={<SegconHome />} />

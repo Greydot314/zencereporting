@@ -119,6 +119,7 @@ const ReportExtracts = () => {
           {folders.map((f) => (
             <button
               key={f.name}
+              onClick={() => navigate(`/clickrev/folder/${encodeURIComponent(f.name)}`)}
               className="flex flex-col items-center gap-2 group"
             >
               <FolderIcon />

@@ -23,9 +23,10 @@ import OliverLanding from "./pages/OliverLanding";
 import NotFound from "./pages/NotFound";
 
 // Clickrev module
-import ClickrevLayout from "./pages/clickrev/ClickrevLayout";
 import ReportExtracts from "./pages/clickrev/ReportExtracts";
 import ClickrevReports from "./pages/clickrev/ClickrevReports";
+import ClickrevFolder from "./pages/clickrev/ClickrevFolder";
+import ClickrevFileViewer from "./pages/clickrev/ClickrevFileViewer";
 
 // Segcon module pages
 import SegconLayout from "./pages/segcon/SegconLayout";

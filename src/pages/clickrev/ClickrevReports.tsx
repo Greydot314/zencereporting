@@ -308,6 +308,7 @@ const ClickrevReports = () => {
         <PivotTable grouped={grouped} report={report} />
       )}
     </div>
+    </div>
   );
 };
 

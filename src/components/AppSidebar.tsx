@@ -96,13 +96,12 @@ const modules: ModuleItem[] = [
   },
   { 
     title: "Clickrev", 
-    url: "/module/clickrev", 
+    url: "/clickrev", 
     icon: FileBarChart, 
     aiStatus: "normal",
     subItems: [
-      { title: "Campaign Performance", url: "/module/clickrev/campaigns" },
-      { title: "Revenue Attribution", url: "/module/clickrev/attribution" },
-      { title: "Click Analytics", url: "/module/clickrev/clicks" },
+      { title: "Report Extract", url: "/clickrev" },
+      { title: "Report Builder", url: "/clickrev/reports" },
     ]
   },
   { 

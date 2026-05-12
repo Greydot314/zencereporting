@@ -171,6 +171,7 @@ const ReportExtracts = () => {
         </div>
       </div>
     </div>
+    </div>
   );
 };
 

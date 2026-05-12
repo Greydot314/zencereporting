@@ -84,6 +84,11 @@ const App = () => (
                         <Route path="glossary" element={<SegconHome />} />
                         <Route path="model-studio" element={<ModelStudio />} />
                       </Route>
+                      {/* Clickrev module */}
+                      <Route path="/clickrev" element={<ReportExtracts />} />
+                      <Route path="/clickrev/folder/:folderName" element={<ClickrevFolder />} />
+                      <Route path="/clickrev/file/:fileName" element={<ClickrevFileViewer />} />
+                      <Route path="/clickrev/reports" element={<ClickrevReports />} />
                       <Route path="/settings" element={<Dashboard />} />
                       <Route path="/help" element={<Dashboard />} />
                       <Route path="*" element={<NotFound />} />

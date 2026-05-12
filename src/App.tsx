@@ -48,12 +48,6 @@ const App = () => (
           {/* Landing page without sidebar */}
           <Route path="/landing" element={<AtlasLanding />} />
 
-          {/* Clickrev module — own layout, no app sidebar */}
-          <Route path="/clickrev" element={<ClickrevLayout />}>
-            <Route index element={<ReportExtracts />} />
-            <Route path="reports" element={<ClickrevReports />} />
-          </Route>
-
           {/* Main app with sidebar layout */}
           <Route
             path="/*"

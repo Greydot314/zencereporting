@@ -152,6 +152,7 @@ const ClickrevReports = () => {
   const canApply = report !== "";
 
   return (
+    <div className="p-6 bg-[#F4F4F7] min-h-full text-[#1F1F2E]">
     <div className="space-y-6">
       {/* Title card */}
       <div className="bg-white rounded-md shadow-sm border border-[#E5E5EC] px-5 py-4 flex items-center justify-between">
@@ -306,6 +307,7 @@ const ClickrevReports = () => {
       ) : (
         <PivotTable grouped={grouped} report={report} />
       )}
+    </div>
     </div>
   );
 };

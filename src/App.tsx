@@ -23,9 +23,10 @@ import OliverLanding from "./pages/OliverLanding";
 import NotFound from "./pages/NotFound";
 
 // Clickrev module
-import ClickrevLayout from "./pages/clickrev/ClickrevLayout";
 import ReportExtracts from "./pages/clickrev/ReportExtracts";
 import ClickrevReports from "./pages/clickrev/ClickrevReports";
+import ClickrevFolder from "./pages/clickrev/ClickrevFolder";
+import ClickrevFileViewer from "./pages/clickrev/ClickrevFileViewer";
 
 // Segcon module pages
 import SegconLayout from "./pages/segcon/SegconLayout";
@@ -46,12 +47,6 @@ const App = () => (
         <Routes>
           {/* Landing page without sidebar */}
           <Route path="/landing" element={<AtlasLanding />} />
-
-          {/* Clickrev module — own layout, no app sidebar */}
-          <Route path="/clickrev" element={<ClickrevLayout />}>
-            <Route index element={<ReportExtracts />} />
-            <Route path="reports" element={<ClickrevReports />} />
-          </Route>
 
           {/* Main app with sidebar layout */}
           <Route
@@ -89,6 +84,11 @@ const App = () => (
                         <Route path="glossary" element={<SegconHome />} />
                         <Route path="model-studio" element={<ModelStudio />} />
                       </Route>
+                      {/* Clickrev module */}
+                      <Route path="/clickrev" element={<ReportExtracts />} />
+                      <Route path="/clickrev/folder/:folderName" element={<ClickrevFolder />} />
+                      <Route path="/clickrev/file/:fileName" element={<ClickrevFileViewer />} />
+                      <Route path="/clickrev/reports" element={<ClickrevReports />} />
                       <Route path="/settings" element={<Dashboard />} />
                       <Route path="/help" element={<Dashboard />} />
                       <Route path="*" element={<NotFound />} />

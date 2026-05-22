@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Calendar, Play, SlidersHorizontal, ChevronDown, Info, Sparkles, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { OliverInsightDialog } from "@/components/atlas/OliverInsightDialog";
+import { OliverDialogRouter } from "@/components/atlas/OliverDialogRouter";
 import {
   AreaChart,
   Area,
@@ -211,7 +211,7 @@ const AtlasPrimeDashboard = () => {
         </div>
       </div>
 
-      <OliverInsightDialog
+      <OliverDialogRouter
         open={!!openKpi}
         onOpenChange={(o) => !o && setOpenKpi(null)}
         kpi={openKpi ?? ""}

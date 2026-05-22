@@ -211,7 +211,7 @@ const AtlasPrimeDashboard = () => {
         </div>
       </div>
 
-      <OliverInsightDialog
+      <OliverDialogRouter
         open={!!openKpi}
         onOpenChange={(o) => !o && setOpenKpi(null)}
         kpi={openKpi ?? ""}

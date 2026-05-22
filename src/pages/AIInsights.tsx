@@ -3,6 +3,7 @@ import { AIInsightCard } from "@/components/AIInsightCard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChartEmptyState } from "@/components/ui/chart-empty-state";
+import { OliverNudgeProvider } from "@/components/nudges/OliverNudgeProvider";
 
 const insightFeed = [
   {
@@ -251,6 +252,7 @@ const AIInsights = () => {
         </div>
         )}
       </div>
+      <OliverNudgeProvider page="ai-insights" />
     </main>
   );
 };

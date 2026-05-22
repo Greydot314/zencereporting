@@ -3,6 +3,7 @@ import { Calendar, Play, SlidersHorizontal, ChevronDown, Info, Sparkles, FileTex
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { OliverDialogRouter } from "@/components/atlas/OliverDialogRouter";
+import { OliverNudgeProvider } from "@/components/nudges/OliverNudgeProvider";
 import {
   AreaChart,
   Area,
@@ -216,6 +217,7 @@ const AtlasPrimeDashboard = () => {
         onOpenChange={(o) => !o && setOpenKpi(null)}
         kpi={openKpi ?? ""}
       />
+      <OliverNudgeProvider page="atlas" />
     </main>
   );
 };

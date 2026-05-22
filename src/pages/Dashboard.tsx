@@ -7,6 +7,7 @@ import { AIInsightsLog } from "@/components/AIInsightsLog";
 import { InterventionDeck } from "@/components/InterventionDeck";
 import { LoyaltyHealthMatrix } from "@/components/LoyaltyHealthMatrix";
 import { PerformanceSummary } from "@/components/PerformanceSummary";
+import { OliverNudgeProvider } from "@/components/nudges/OliverNudgeProvider";
 
 // Quick action chips with detailed descriptions
 const quickActions = [
@@ -91,6 +92,7 @@ const Dashboard = () => {
           </Button>
         </div>
       </div>
+      <OliverNudgeProvider page="dashboard" />
     </main>
   );
 };

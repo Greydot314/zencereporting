@@ -75,11 +75,13 @@ const modules: ModuleItem[] = [
     badge: "PRIME", 
     aiStatus: "warning",
     subItems: [
-      { title: "Customer Segments", url: "/module/atlas-prime/segments", badge: "BETA" },
-      { title: "Cohort Analysis", url: "/module/atlas-prime/cohort" },
-      { title: "LTV Analysis", url: "/module/atlas-prime/ltv" },
-      { title: "Repeat Purchase Rate", url: "/module/atlas-prime/repeat-purchase" },
-      { title: "RFM Dashboard", url: "/module/atlas-prime/rfm" },
+      { title: "Dashboard", url: "/module/atlas-prime" },
+      { title: "Customers", url: "/module/atlas-prime/customers" },
+      { title: "Stores", url: "/module/atlas-prime/stores" },
+      { title: "Products", url: "/module/atlas-prime/products" },
+      { title: "Rewards", url: "/module/atlas-prime/rewards" },
+      { title: "Campaign", url: "/module/atlas-prime/campaign" },
+      { title: "QSR", url: "/module/atlas-prime/qsr" },
     ]
   },
   { 

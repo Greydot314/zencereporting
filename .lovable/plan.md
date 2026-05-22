@@ -1,60 +1,59 @@
+## Goal
 
+Create a reusable footer nudge system that slides up from the bottom with soft rounded edges (Plotline-style), highlights what users can explore in Oliver AI, and routes to `/ai-chat` with a context-aware prefilled prompt. Each of the 4 pages will showcase all 4 designs via a small variant switcher so you can compare them in one session.
 
-## AI Insight Log -- Scalable Flashcard Carousel (up to 50 cards)
+## Pages in scope
 
-### Overview
+- `/module/atlas-prime` (Atlas Prime Dashboard)
+- `/` (Dashboard)
+- `/ai-insights` (AI Insights)
+- `/predictions` (Predictions)
 
-Redesign the AI Insight Log from a static 5-column grid into a **horizontal flashcard carousel** that can handle up to 50 insight entries efficiently.
+## The 4 nudge designs
 
-### Design Decisions for Scale
+All share: bottom-fixed, slide-up entrance, 16-20px rounded top corners, soft shadow, close (X), CTA → `/ai-chat` with prefilled prompt via `navigate("/ai-chat", { state: { prompt } })`. Jolly tone, light gradient backgrounds, subtle confetti/sparkle accents.
 
-Since the count can reach 50 cards:
-- **Lazy rendering**: Only visible cards + neighbors are fully rendered (Embla handles this natively via its viewport clipping)
-- **Category filter tabs**: Add filter tabs (All / Fraud / Churn / Anomaly) above the carousel so users can narrow down insights without scrolling through all 50
-- **Counter badge**: Show total count and filtered count (e.g., "Showing 12 of 50")
-- **Keyboard navigation**: Left/Right arrow keys to scroll
-- **Loop disabled**: With 50 cards, looping would be disorienting -- scroll stops at ends
+1. **Spotlight Card** — Centered pill card (~480px) floating above footer. Oliver avatar circle on left, single jolly headline, one bright CTA. Best for quick attention. Accent: purple→pink gradient.
+2. **Capability Carousel** — Full-width slim bar with auto-rotating capability chips ("Spot churn risks", "Forecast next quarter", "Draft a campaign"). Left: animated Oliver mark. Right: "Try it →" CTA that prefills the current chip's prompt. Accent: indigo + mint.
+3. **Mini Chat Teaser** — Looks like a collapsed chat bubble in the bottom-right (~360px wide). Shows Oliver "typing" a playful question ("Want me to find your top 3 growth levers? ✨"). CTA: "Yes, show me". Accent: warm peach + violet.
+4. **Confetti Banner** — Edge-to-edge celebratory band with confetti dots, big emoji-led headline ("🎉 Meet Oliver — your AI co-pilot"), 3 quick pill links (Insights · Predictions · Campaigns) each prefilling a different prompt. Accent: multi-color gradient.
 
-### Flashcard Layout (per card)
+## Behavior
 
-Each card will show:
-- Type icon + status badge (top row)
-- Title (bold, 2-line clamp)
-- Detail text (2-line clamp)
-- Inline metrics: customers affected + revenue at risk
-- Footer: program name, timestamp, chevron arrow
-- Hover: subtle shadow lift effect
+- Slide-up entrance (`animate-fade-in` + translateY) ~600ms after page mount.
+- Dismissable via X; dismissal stored in `sessionStorage` per `(page, variant)` so you can re-test by reloading.
+- A small floating **variant switcher** (bottom-left, dev-style chip group: 1 · 2 · 3 · 4) lets you cycle designs on each page without code changes.
+- CTA navigates to `/ai-chat` passing `{ state: { prompt: "<context prompt>" } }`. AIChat will read `location.state.prompt` and prefill the input.
 
-### Carousel Behavior
+## Per-page prefill prompts (defaults)
 
-- **Desktop**: Show 3 cards at a time (`basis-1/3`)
-- **Tablet**: Show 2 cards (`basis-1/2`)
-- **Mobile**: Show 1 card (`basis-full`)
-- Left/Right arrow buttons on edges
-- Smooth slide animation with `align: "start"`
-- Scroll progress indicator (dot pagination replaced with a thin progress bar for 50 items -- dots would be too many)
+- Atlas Prime Dashboard → "Summarize today's sales anomalies and what to do about them."
+- Dashboard → "Give me the 3 most important things to act on this week."
+- AI Insights → "Turn the latest insights into a prioritized action plan."
+- Predictions → "Explain next quarter's forecast and the biggest risks."
 
-### Technical Plan
+## Technical details
 
-**File: `src/components/AIInsightsLog.tsx`**
+New files:
+- `src/components/nudges/OliverNudgeProvider.tsx` — wraps page content, renders the active variant + variant switcher, manages dismissal state.
+- `src/components/nudges/variants/SpotlightNudge.tsx`
+- `src/components/nudges/variants/CarouselNudge.tsx`
+- `src/components/nudges/variants/ChatTeaserNudge.tsx`
+- `src/components/nudges/variants/ConfettiNudge.tsx`
+- `src/components/nudges/nudgeContent.ts` — per-page copy + prefill prompts.
 
-1. **Add filter state**: `useState` for active filter type (`"all" | "fraud" | "churn" | "anomaly"`)
-2. **Filter tabs UI**: Row of pill buttons above the carousel to filter by insight type, with count badges on each
-3. **Replace grid with Carousel**: Import `Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext` from `@/components/ui/carousel`
-4. **Carousel options**: `{ align: "start", loop: false, dragFree: true }` -- `dragFree` allows smooth free-scrolling which is better for large sets
-5. **CarouselItem sizing**: Responsive classes `basis-full md:basis-1/2 lg:basis-1/3` on each item
-6. **Flashcard markup**: Enriched card with metrics row (customers affected, revenue at risk) and program/region info in footer
-7. **Progress indicator**: A thin horizontal bar below the carousel showing scroll position (using Embla's `scrollProgress` API)
-8. **Expand mock data**: Add more entries to reach ~15-20 sample items covering various KPI types to demonstrate scalability
-9. **Preserve dialog**: Existing click-to-detail dialog remains unchanged
+Edits:
+- `src/pages/atlas/AtlasPrimeDashboard.tsx`, `src/pages/Dashboard.tsx`, `src/pages/AIInsights.tsx`, `src/pages/Predictions.tsx` — mount `<OliverNudgeProvider page="..." />`.
+- `src/pages/AIChat.tsx` — read `location.state?.prompt` on mount, set as initial input value.
 
-**No other files need changes.** The carousel UI components and Embla package are already installed.
+Styling:
+- Use existing HSL tokens (`--primary`, `--accent`) plus the Oliver purple gradient `from-[#5B3FBF] to-[#8B6FE8]` already used in `OliverInsightDialog`.
+- Soft top corners: `rounded-t-[20px]`. Shadow: `shadow-[0_-8px_32px_-8px_rgba(91,63,191,0.25)]`.
+- Animations: existing `animate-fade-in`; add a small keyframe `slide-up-soft` in `tailwind.config.ts` if needed.
+- Respects dark mode via tokens.
 
-### Summary of Additions
-- Filter tabs with count badges
-- Carousel with responsive card sizing
-- Scroll progress bar (not dots -- better for 50 items)
-- `dragFree` mode for fast browsing
-- Expanded mock data for realistic testing
-- All existing dialog/detail functionality preserved
+Out of scope: persistence across sessions, A/B analytics, real LLM wiring (chat remains the existing mock).
 
+## Validation
+
+After build: load each of the 4 pages, cycle through variants 1–4 using the switcher, confirm slide-up + dismiss + CTA navigates to `/ai-chat` with the prompt prefilled in the textarea.

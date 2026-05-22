@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import { Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,6 +40,16 @@ const AIChat = () => {
   const [toolCompletedCount, setToolCompletedCount] = useState(0);
   const [activeToolActions, setActiveToolActions] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+
+  // Prefill input from nudge CTA
+  useEffect(() => {
+    const prompt = (location.state as { prompt?: string } | null)?.prompt;
+    if (prompt) {
+      setInput(prompt);
+      window.history.replaceState({}, "");
+    }
+  }, [location.state]);
 
   const activeMessages = conversations[activeAgentId];
   const activeWidgets = workspaces[activeAgentId];

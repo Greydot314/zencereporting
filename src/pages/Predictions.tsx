@@ -8,6 +8,7 @@ import { CLVPredictionCard } from "@/components/predictions/CLVPredictionCard";
 import { CustomerActivityCard } from "@/components/predictions/CustomerActivityCard";
 import { ProductDemandCard } from "@/components/predictions/ProductDemandCard";
 import { DecisionImpactRadar } from "@/components/predictions/DecisionImpactRadar";
+import { OliverNudgeProvider } from "@/components/nudges/OliverNudgeProvider";
 import {
   mockForecastData,
   mockChurnData,
@@ -89,6 +90,7 @@ const Predictions = () => {
           <DecisionImpactRadar data={showEmpty ? emptyRadarData : mockDecisionImpactRadarData} />
         </div>
       </div>
+      <OliverNudgeProvider page="predictions" />
     </main>
   );
 };

@@ -254,7 +254,7 @@ const ChannelsTab = ({ d }: { d: DurationData }) => (
 const CampaignsTab = ({ d }: { d: DurationData }) => (
   <div className="space-y-6 pt-4">
     <Section label="Campaign Response History" cards={d.campaigns.responseHistory} accent="green" />
-    <HorizontalBars title="Revenue Contribution by Campaign Type (₹L)" items={d.campaigns.bestCampaignType} barColor="hsl(var(--atlas-warning))" />
+    <HorizontalBars title="Campaign Response Funnel (%)" items={d.campaigns.bestCampaignType} barColor="hsl(var(--atlas-warning))" />
     <Section label="Communication Health" cards={d.campaigns.communicationHealth} accent="primary" />
     <AlertBox text={d.campaigns.recommendation} variant="green" />
   </div>

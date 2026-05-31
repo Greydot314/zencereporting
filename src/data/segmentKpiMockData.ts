@@ -156,17 +156,17 @@ const base: DurationData = {
       { label: "Campaigns Received", value: "14", sub: "In selected period" },
     ],
     bestCampaignType: [
-      { label: "Coupon Offer", value: 14.6 },
-      { label: "Points Bonus", value: 9.8 },
-      { label: "Tier Upgrade Nudge", value: 6.2 },
-      { label: "Generic Content", value: 2.1 },
+      { label: "Delivered", value: 98 },
+      { label: "Opened", value: 34 },
+      { label: "Clicked", value: 12 },
+      { label: "Redeemed", value: 8 },
     ],
     communicationHealth: [
       { label: "Last Campaign Sent", value: "12 days ago", sub: "Safe to contact", subColor: "green" },
       { label: "Fatigue Score", value: "Low", sub: "Well-spaced cadence", subColor: "green" },
       { label: "Unsubscribe Rate", value: "0.6%", sub: "Below 1%", subColor: "green" },
     ],
-    recommendation: "Coupon Offer campaigns have the highest redemption rate at 18.4%. Run a targeted coupon campaign for this segment.",
+    recommendation: "Funnel drop-off is steepest from Opened (34%) to Clicked (12%). Tighten subject-line to CTA alignment to lift click-through for this segment.",
   },
 };
 

@@ -57,10 +57,12 @@ const base: DurationData = {
   totalCustomers: 4520,
   overview: {
     volume: [
-      { label: "Total Customers", value: "4,520", sub: "In segment" },
-      { label: "Active Customers", value: "3,610", sub: "79.9% of segment", subColor: "green" },
-      { label: "Repeat Customers", value: "2,108", sub: "46.6% of segment" },
+      { label: "Total Customers", value: "4,520", sub: "Active: 3,610 · 79.9%", subColor: "green" },
+      { label: "Repeat Customers", value: "2,108", sub: "46.6% of total" },
       { label: "Redeemers", value: "1,582", sub: "35.0% redemption rate", subColor: "green" },
+      { label: "New This Month", value: "164", sub: "+8 vs last mo", subColor: "green" },
+      { label: "Dormant", value: "910", sub: "20.1% of total" },
+      { label: "Avg Loyalty Tier", value: "Silver", sub: "Tier 2 / 4" },
     ],
     monetary: [
       { label: "Total Sales", value: "₹1.24Cr", sub: "Segment revenue" },
@@ -177,10 +179,12 @@ const make6m: DurationData = {
   overview: {
     ...base.overview,
     volume: [
-      { label: "Total Customers", value: "4,520" },
-      { label: "Active Customers", value: "3,200", sub: "70.8% of segment", subColor: "green" },
-      { label: "Repeat Customers", value: "1,800", sub: "39.8% of segment" },
+      { label: "Total Customers", value: "4,520", sub: "Active: 3,200 · 70.8%", subColor: "green" },
+      { label: "Repeat Customers", value: "1,800", sub: "39.8% of total" },
       { label: "Redeemers", value: "1,280", sub: "28.3% redemption rate" },
+      { label: "New (6m)", value: "640", sub: "Added in period", subColor: "green" },
+      { label: "Dormant", value: "1,320", sub: "29.2% of total", subColor: "amber" },
+      { label: "Avg Loyalty Tier", value: "Silver", sub: "Tier 2 / 4" },
     ],
     monetary: [
       { label: "Total Sales", value: "₹68.2L", sub: "Segment revenue" },
@@ -200,10 +204,12 @@ const make3m: DurationData = {
   overview: {
     ...base.overview,
     volume: [
-      { label: "Total Customers", value: "4,520" },
-      { label: "Active Customers", value: "2,400", sub: "53.1% of segment", subColor: "amber" },
-      { label: "Repeat Customers", value: "1,100", sub: "24.3% of segment" },
+      { label: "Total Customers", value: "4,520", sub: "Active: 2,400 · 53.1%", subColor: "amber" },
+      { label: "Repeat Customers", value: "1,100", sub: "24.3% of total" },
       { label: "Redeemers", value: "820", sub: "18.1% redemption rate", subColor: "amber" },
+      { label: "New (3m)", value: "280", sub: "Added in period" },
+      { label: "Dormant", value: "2,120", sub: "46.9% of total", subColor: "red" },
+      { label: "Avg Loyalty Tier", value: "Silver", sub: "Tier 2 / 4" },
     ],
     monetary: [
       { label: "Total Sales", value: "₹32.1L", sub: "Segment revenue" },

@@ -135,7 +135,7 @@ const base: DurationData = {
       { label: "Website", value: 17 },
     ],
     reachability: [
-      { label: "App Installed", value: "2,980", sub: "82% push-enabled", subColor: "green" },
+      { label: "RCS Reachable", value: "3,210", sub: "71% RCS-capable devices", subColor: "green" },
       { label: "Email Reachable", value: "3,840", sub: "91% valid email", subColor: "green" },
       { label: "SMS Reachable", value: "4,120", sub: "94% mobile coverage", subColor: "green" },
       { label: "WhatsApp Opted-In", value: "2,140", sub: "47% opt-in rate", subColor: "amber" },
@@ -156,10 +156,10 @@ const base: DurationData = {
       { label: "Campaigns Received", value: "14", sub: "In selected period" },
     ],
     bestCampaignType: [
-      { label: "Coupon Offer", value: 18.4 },
-      { label: "Points Bonus", value: 14.2 },
-      { label: "Tier Upgrade Nudge", value: 9.8 },
-      { label: "Generic Content", value: 5.1 },
+      { label: "Coupon Offer", value: 14.6 },
+      { label: "Points Bonus", value: 9.8 },
+      { label: "Tier Upgrade Nudge", value: 6.2 },
+      { label: "Generic Content", value: 2.1 },
     ],
     communicationHealth: [
       { label: "Last Campaign Sent", value: "12 days ago", sub: "Safe to contact", subColor: "green" },

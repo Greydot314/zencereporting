@@ -146,7 +146,7 @@ const Section = ({
         {b && <HeroCard card={b} accent={accent} />}
       </div>
       {rest.length > 0 && (
-        <div className={cn("grid gap-3", `grid-cols-${rest.length}`)}>
+        <div className={cn("grid gap-3", rest.length === 1 && "grid-cols-1", rest.length === 2 && "grid-cols-2", rest.length === 3 && "grid-cols-3", rest.length >= 4 && "grid-cols-4")}>
           {rest.map((c, i) => <MiniCard key={i} card={c} />)}
         </div>
       )}

@@ -201,7 +201,7 @@ const HealthRing = ({ score, label, percentile }: { score: number; label: string
         </div>
       </div>
       <div>
-        <span className="inline-block text-[11px] font-medium px-2 py-0.5 rounded" style={{ backgroundColor: `${color} / 0.15`.replace("hsl(", "hsla(").replace(")", ", 0.15)"), color }}>
+        <span className="inline-block text-[11px] font-medium px-2 py-0.5 rounded" style={{ backgroundColor: color, color: "white", opacity: 0.9 }}>
           {label}
         </span>
         <p className="text-[10px] text-muted-foreground mt-1">Top {percentile}% of segments</p>

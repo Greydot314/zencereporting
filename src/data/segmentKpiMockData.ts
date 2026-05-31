@@ -222,16 +222,25 @@ const makeLifetime: DurationData = {
   overview: {
     ...base.overview,
     volume: [
-      { label: "Total Customers", value: "4,520" },
-      { label: "Active Customers", value: "4,100", sub: "90.7% of segment", subColor: "green" },
-      { label: "Repeat Customers", value: "3,200", sub: "70.8% of segment", subColor: "green" },
-      { label: "Redeemers", value: "2,400", sub: "53.1% redemption rate", subColor: "green" },
+      { label: "Total customers", value: "4,520", sub: "Active: 4,100  90.7%", subColor: "green" },
+      { label: "Repeat customers", value: "3,200", sub: "70.8% of segment", subColor: "green" },
+      { label: "Redeemers", value: "2,400", sub: "53.1% redemption" },
+      { label: "New this month", value: "184", sub: "+12 vs last mo", subColor: "green" },
+      { label: "Dormant", value: "420", sub: "9.3% of segment" },
+      { label: "Avg loyalty tier", value: "Gold", sub: "Tier 2 / 4" },
     ],
     monetary: [
-      { label: "Total Sales", value: "₹3.8Cr", sub: "Segment revenue" },
-      { label: "Avg Order Value", value: "₹2,900", sub: "+16% vs all customers", subColor: "green" },
-      { label: "Avg Visits / Customer", value: "8.2", sub: "Per customer" },
-      { label: "Avg Basket Size", value: "3.4", sub: "Items per txn" },
+      { label: "Total sales (lifetime)", value: "₹3.8Cr", sub: "+18% vs last period", subColor: "green" },
+      { label: "Avg order value", value: "₹2,900", sub: "+16% vs all customers", subColor: "green" },
+      { label: "Avg visits / customer", value: "8.2", sub: "Per customer" },
+      { label: "Avg basket size", value: "3.4", sub: "Items per txn" },
+      { label: "Revenue / customer", value: "₹8,407", sub: "Lifetime avg" },
+      { label: "Spend share", value: "22.4%", sub: "Of total portfolio" },
+    ],
+    engagement: [
+      { label: "Avg recency", value: "24 days", sub: "Since last purchase", subColor: "green" },
+      { label: "Churn risk", value: "14.2%", sub: "Medium", subColor: "amber" },
+      { label: "Predicted LTV", value: "₹12,400", sub: "Next 12 months" },
     ],
   },
 };

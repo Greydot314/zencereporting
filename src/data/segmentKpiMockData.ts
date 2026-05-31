@@ -156,10 +156,10 @@ const base: DurationData = {
       { label: "Campaigns Received", value: "14", sub: "In selected period" },
     ],
     bestCampaignType: [
-      { label: "Coupon Offer", value: 14.6 },
-      { label: "Points Bonus", value: 9.8 },
-      { label: "Tier Upgrade Nudge", value: 6.2 },
-      { label: "Generic Content", value: 2.1 },
+      { label: "Delivered", value: 98 },
+      { label: "Opened", value: 34 },
+      { label: "Clicked", value: 12 },
+      { label: "Redeemed", value: 8 },
     ],
     communicationHealth: [
       { label: "Last Campaign Sent", value: "12 days ago", sub: "Safe to contact", subColor: "green" },

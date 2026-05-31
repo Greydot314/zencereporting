@@ -166,7 +166,7 @@ const base: DurationData = {
       { label: "Fatigue Score", value: "Low", sub: "Well-spaced cadence", subColor: "green" },
       { label: "Unsubscribe Rate", value: "0.6%", sub: "Below 1%", subColor: "green" },
     ],
-    recommendation: "Coupon Offer campaigns have the highest redemption rate at 18.4%. Run a targeted coupon campaign for this segment.",
+    recommendation: "Funnel drop-off is steepest from Opened (34%) to Clicked (12%). Tighten subject-line to CTA alignment to lift click-through for this segment.",
   },
 };
 

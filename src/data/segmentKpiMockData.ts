@@ -135,7 +135,7 @@ const base: DurationData = {
       { label: "Website", value: 17 },
     ],
     reachability: [
-      { label: "App Installed", value: "2,980", sub: "82% push-enabled", subColor: "green" },
+      { label: "RCS Reachable", value: "3,210", sub: "71% RCS-capable devices", subColor: "green" },
       { label: "Email Reachable", value: "3,840", sub: "91% valid email", subColor: "green" },
       { label: "SMS Reachable", value: "4,120", sub: "94% mobile coverage", subColor: "green" },
       { label: "WhatsApp Opted-In", value: "2,140", sub: "47% opt-in rate", subColor: "amber" },

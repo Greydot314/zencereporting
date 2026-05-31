@@ -52,7 +52,7 @@ const DeltaSub = ({ text, tone }: { text?: string; tone?: KpiCard["subColor"] })
 
 /* ── hero card (large) ── */
 const HeroCard = ({ card, accent }: { card: KpiCard; accent: AccentKey }) => (
-  <div className={cn("rounded-lg bg-muted/40 p-4 border-l-[3px]", accentBorder[accent])}>
+  <div className={cn("bg-muted/40 border border-border p-4 border-l-[3px]", accentBorder[accent])}>
     <p className="text-[11px] text-muted-foreground">{card.label}</p>
     <p className="text-2xl font-semibold text-foreground mt-1 tracking-tight">{card.value}</p>
     <DeltaSub text={card.sub} tone={card.subColor} />
@@ -61,7 +61,7 @@ const HeroCard = ({ card, accent }: { card: KpiCard; accent: AccentKey }) => (
 
 /* ── mini card ── */
 const MiniCard = ({ card }: { card: KpiCard }) => (
-  <div className="rounded-lg bg-muted/30 p-3.5">
+  <div className="bg-muted/30 border border-border p-3.5">
     <p className="text-[11px] text-muted-foreground">{card.label}</p>
     <p className="text-base font-semibold text-foreground mt-0.5">{card.value}</p>
     <DeltaSub text={card.sub} tone={card.subColor} />
@@ -104,13 +104,13 @@ const badgeForCard = (card: KpiCard): { label: string; tone: keyof typeof badgeB
 const EngagementCard = ({ card }: { card: KpiCard }) => {
   const b = badgeForCard(card);
   return (
-    <div className="rounded-lg bg-muted/30 p-3.5 space-y-2">
+    <div className="bg-muted/30 border border-border p-3.5 space-y-2">
       <p className="text-[11px] text-muted-foreground">{card.label}</p>
       <p className="text-lg font-semibold text-foreground">{card.value}</p>
-      <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
-        <div className={cn("h-full rounded-full transition-all", toneBg[b.tone])} style={{ width: `${b.pct}%` }} />
+      <div className="h-1 w-full bg-muted overflow-hidden">
+        <div className={cn("h-full transition-all", toneBg[b.tone])} style={{ width: `${b.pct}%` }} />
       </div>
-      <span className={cn("inline-block text-[10px] font-medium px-2 py-0.5 rounded", badgeBg[b.tone])}>{b.label}</span>
+      <span className={cn("inline-block text-[10px] font-medium px-2 py-0.5", badgeBg[b.tone])}>{b.label}</span>
     </div>
   );
 };
@@ -158,13 +158,13 @@ const Section = ({
 const HorizontalBars = ({ title, items, barColor }: { title: string; items: BarItem[]; barColor?: string }) => {
   const max = Math.max(...items.map((b) => b.value));
   return (
-    <div className="rounded-lg bg-muted/30 p-4 space-y-3">
+    <div className="bg-muted/30 border border-border p-4 space-y-3">
       <p className="text-xs font-medium text-foreground">{title}</p>
       {items.map((item, i) => (
         <div key={i} className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground w-28 shrink-0 text-right">{item.label}</span>
-          <div className="flex-1 h-5 bg-muted rounded overflow-hidden">
-            <div className="h-full rounded" style={{ width: `${(item.value / max) * 100}%`, backgroundColor: barColor || "hsl(var(--primary))" }} />
+          <div className="flex-1 h-5 bg-muted overflow-hidden">
+            <div className="h-full" style={{ width: `${(item.value / max) * 100}%`, backgroundColor: barColor || "hsl(var(--primary))" }} />
           </div>
           <span className="text-xs font-medium text-foreground w-12">{item.value}%</span>
         </div>
@@ -179,7 +179,7 @@ const AlertBox = ({ text, variant }: { text: string; variant: "amber" | "blue" |
     blue: "border-primary/30 bg-primary/5 text-primary",
     green: "border-[hsl(var(--atlas-success))]/30 bg-[hsl(var(--atlas-success))]/5 text-[hsl(var(--atlas-success))]",
   };
-  return <div className={cn("rounded-lg border p-3 text-xs leading-relaxed", styles[variant])}>{text}</div>;
+  return <div className={cn("border p-3 text-xs leading-relaxed", styles[variant])}>{text}</div>;
 };
 
 /* ── ring gauge health score ── */

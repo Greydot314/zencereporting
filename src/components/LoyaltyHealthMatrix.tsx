@@ -1,6 +1,29 @@
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Coins, Users, Repeat, Clock, ShoppingBag, Award, Crown, Ticket, BadgePercent, IndianRupee } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Coins, Users, Repeat, Clock, ShoppingBag, Award, Crown, Ticket, BadgePercent, IndianRupee, Info, CalendarClock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+
+const MetaChips = ({ period, definition }: { period: string; definition: string }) => (
+  <div className="flex items-center gap-1 shrink-0">
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-background/60 border border-border/60 text-[9px] uppercase tracking-wide text-muted-foreground cursor-help">
+          <CalendarClock className="h-2.5 w-2.5" />
+          {period}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="text-xs max-w-[220px]">Time period: {period}</TooltipContent>
+    </Tooltip>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button type="button" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Definition">
+          <Info className="h-3 w-3" />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="text-xs max-w-[260px] leading-relaxed">{definition}</TooltipContent>
+    </Tooltip>
+  </div>
+);
 
 interface EngagementMetric {
   label: string;

@@ -277,10 +277,11 @@ export const LoyaltyHealthMatrix = () => {
         </div>
         <div className="grid grid-cols-3 gap-4">
           <div className="p-3 rounded-lg bg-secondary/50">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-between mb-2">
               <div className="p-1.5 rounded-md bg-primary/10">
                 <Users className="h-3.5 w-3.5 text-primary" />
               </div>
+              <MetaChips period="Last 30 days" definition="Unique members who redeemed at least one coupon in the period." />
             </div>
             <p className="text-lg font-semibold text-foreground">18.4K</p>
             <div className="flex items-center justify-between">
@@ -292,10 +293,11 @@ export const LoyaltyHealthMatrix = () => {
             </div>
           </div>
           <div className="p-3 rounded-lg bg-secondary/50">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-between mb-2">
               <div className="p-1.5 rounded-md bg-[hsl(var(--atlas-success))]/10">
                 <IndianRupee className="h-3.5 w-3.5 text-[hsl(var(--atlas-success))]" />
               </div>
+              <MetaChips period="Last 30 days" definition="Gross sales from transactions where at least one coupon was applied." />
             </div>
             <p className="text-lg font-semibold text-foreground">₹4.2Cr</p>
             <div className="flex items-center justify-between">
@@ -307,10 +309,11 @@ export const LoyaltyHealthMatrix = () => {
             </div>
           </div>
           <div className="p-3 rounded-lg bg-secondary/50">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-between mb-2">
               <div className="p-1.5 rounded-md bg-[hsl(var(--atlas-warning))]/10">
                 <BadgePercent className="h-3.5 w-3.5 text-[hsl(var(--atlas-warning))]" />
               </div>
+              <MetaChips period="Last 30 days" definition="Total discount value given via coupons in the period. Watch vs. coupon-driven sales for margin impact." />
             </div>
             <p className="text-lg font-semibold text-foreground">₹38.5L</p>
             <div className="flex items-center justify-between">
@@ -327,5 +330,6 @@ export const LoyaltyHealthMatrix = () => {
         </p>
       </section>
     </div>
+    </TooltipProvider>
   );
 };

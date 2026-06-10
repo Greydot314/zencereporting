@@ -188,9 +188,12 @@ export const LoyaltyHealthMatrix = () => {
                   <div className="p-1.5 rounded-md bg-primary/10">
                     <Icon className="h-3.5 w-3.5 text-primary" />
                   </div>
-                  <Badge variant="outline" className={`text-[10px] ${getStatusStyle(metric.status)}`}>
-                    {metric.status}
-                  </Badge>
+                  <div className="flex items-center gap-1">
+                    <Badge variant="outline" className={`text-[10px] ${getStatusStyle(metric.status)}`}>
+                      {metric.status}
+                    </Badge>
+                    <MetaChips period={metric.period} definition={metric.definition} />
+                  </div>
                 </div>
                 <p className="text-lg font-semibold text-foreground mb-0.5">{metric.value}</p>
                 <div className="flex items-center justify-between">

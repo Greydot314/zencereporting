@@ -230,23 +230,32 @@ export const LoyaltyHealthMatrix = () => {
         </div>
         <div className="grid grid-cols-3 gap-4 mb-3">
           <div className="p-3 rounded-lg bg-secondary/50">
-            <p className="text-xs text-muted-foreground mb-1">Earned (7d)</p>
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-xs text-muted-foreground">Earned (7d)</p>
+              <MetaChips period="Last 7 days" definition="Total loyalty points issued to members across all earn rules in the last 7 days." />
+            </div>
             <p className="text-lg font-semibold text-foreground flex items-center gap-1">
               <TrendingUp className="h-4 w-4 text-[hsl(var(--atlas-success))]" />
               {formatPoints(liabilityData.earned)}
             </p>
           </div>
           <div className="p-3 rounded-lg bg-secondary/50">
-            <p className="text-xs text-muted-foreground mb-1">Burned (7d)</p>
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-xs text-muted-foreground">Burned (7d)</p>
+              <MetaChips period="Last 7 days" definition="Total loyalty points redeemed by members against rewards in the last 7 days." />
+            </div>
             <p className="text-lg font-semibold text-foreground flex items-center gap-1">
               <TrendingDown className="h-4 w-4 text-destructive" />
               {formatPoints(liabilityData.burned)}
             </p>
           </div>
           <div className="p-3 rounded-lg bg-secondary/50">
-            <p className="text-xs text-muted-foreground mb-1">Earn/Burn Ratio</p>
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-xs text-muted-foreground">Earn/Burn Ratio</p>
+              <MetaChips period="Last 7 days" definition="Earned ÷ Burned points. >2.0 signals excess liability; <0.5 signals value erosion." />
+            </div>
             <p className={`text-lg font-semibold ${
-              liabilityData.ratio > 2.0 ? "text-[hsl(var(--atlas-warning))]" : 
+              liabilityData.ratio > 2.0 ? "text-[hsl(var(--atlas-warning))]" :
               liabilityData.ratio < 0.5 ? "text-destructive" : "text-[hsl(var(--atlas-success))]"
             }`}>
               {liabilityData.ratio.toFixed(2)}x

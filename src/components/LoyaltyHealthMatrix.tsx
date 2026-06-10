@@ -47,6 +47,11 @@ interface LiabilityData {
   status: "balanced" | "excess" | "bleeding";
 }
 
+interface EngagementMetricFull extends EngagementMetric {
+  period: string;
+  definition: string;
+}
+
 // Mock config - this would come from program settings
 const programConfig = {
   isTierEnabled: true, // Toggle this to show/hide tier distribution
@@ -61,11 +66,11 @@ const tierData: TierData[] = [
 ];
 
 // Engagement metrics for all programs
-const engagementMetrics: EngagementMetric[] = [
-  { label: "Repeat Purchase Rate", value: "34.2%", change: 2.8, status: "healthy", icon: Repeat },
-  { label: "Avg. Time Between Purchases", value: "18 days", change: -3.1, status: "healthy", icon: Clock },
-  { label: "Basket Size (Members)", value: "₹2,847", change: 5.4, status: "healthy", icon: ShoppingBag },
-  { label: "Reward Redemption Rate", value: "68.5%", change: -1.2, status: "warning", icon: Award },
+const engagementMetrics: EngagementMetricFull[] = [
+  { label: "Repeat Purchase Rate", value: "34.2%", change: 2.8, status: "healthy", icon: Repeat, period: "Last 90 days", definition: "Share of members who made more than one purchase in the period. Formula: (Members with ≥2 orders ÷ Active Members) × 100." },
+  { label: "Avg. Time Between Purchases", value: "18 days", change: -3.1, status: "healthy", icon: Clock, period: "Last 90 days", definition: "Mean gap (in days) between consecutive purchases for repeat members in the period. Lower is better." },
+  { label: "Basket Size (Members)", value: "₹2,847", change: 5.4, status: "healthy", icon: ShoppingBag, period: "Last 30 days", definition: "Average order value across all member transactions in the period. Formula: Member Sales ÷ Member Orders." },
+  { label: "Reward Redemption Rate", value: "68.5%", change: -1.2, status: "warning", icon: Award, period: "Last 30 days", definition: "Share of earned points that members burned in the period. Formula: (Points Burned ÷ Points Earned) × 100." },
 ];
 
 // Mock liability data

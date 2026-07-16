@@ -299,15 +299,16 @@ const ClickrevReports = () => {
         </div>
 
         <button
-          disabled={!canApply}
-          onClick={() => setApplied(true)}
-          className={`px-8 py-2.5 rounded-md text-sm font-medium ml-auto ${
-            canApply
+          disabled={!canApply || applying}
+          onClick={handleApply}
+          className={`px-8 py-2.5 rounded-md text-sm font-medium ml-auto inline-flex items-center gap-2 ${
+            canApply && !applying
               ? "bg-[#5B3FBF] text-white hover:bg-[#4A33A0]"
               : "bg-[#D8D2EE] text-white cursor-not-allowed"
           }`}
         >
-          Apply
+          {applying && <Loader2 className="h-4 w-4 animate-spin" />}
+          {applying ? "Applying..." : "Apply"}
         </button>
       </div>
 

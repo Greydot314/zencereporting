@@ -7,6 +7,11 @@ import {
   Calendar as CalIcon,
   Download,
   X,
+  Loader2,
+  CalendarClock,
+  Mail,
+  Bell,
+  CheckCircle2,
 } from "lucide-react";
 import {
   REPORT_TYPES,
@@ -132,6 +137,23 @@ const ClickrevReports = () => {
   const [dimension, setDimension] = useState<string>("Store");
   const [hierarchy, setHierarchy] = useState<Set<string>>(new Set());
   const [applied, setApplied] = useState(false);
+  const [applying, setApplying] = useState(false);
+  const [showScheduled, setShowScheduled] = useState(false);
+
+  const handleApply = () => {
+    setApplying(true);
+    // Simulate backend estimate check for large dataset
+    window.setTimeout(() => {
+      setApplying(false);
+      // Heuristic demo: treat "Overall" period or hierarchy > 3 as "large dataset"
+      const isLarge = timePeriod === "Overall" || hierarchy.size > 3 || store === "All Stores" || store === "";
+      if (isLarge) {
+        setShowScheduled(true);
+      } else {
+        setApplied(true);
+      }
+    }, 1400);
+  };
 
   const moreRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -277,15 +299,16 @@ const ClickrevReports = () => {
         </div>
 
         <button
-          disabled={!canApply}
-          onClick={() => setApplied(true)}
-          className={`px-8 py-2.5 rounded-md text-sm font-medium ml-auto ${
-            canApply
+          disabled={!canApply || applying}
+          onClick={handleApply}
+          className={`px-8 py-2.5 rounded-md text-sm font-medium ml-auto inline-flex items-center gap-2 ${
+            canApply && !applying
               ? "bg-[#5B3FBF] text-white hover:bg-[#4A33A0]"
               : "bg-[#D8D2EE] text-white cursor-not-allowed"
           }`}
         >
-          Apply
+          {applying && <Loader2 className="h-4 w-4 animate-spin" />}
+          {applying ? "Applying..." : "Apply"}
         </button>
       </div>
 
@@ -308,6 +331,93 @@ const ClickrevReports = () => {
         <PivotTable grouped={grouped} report={report} />
       )}
     </div>
+
+    {/* Auto-schedule modal (large dataset) */}
+    {showScheduled && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1F1F2E]/50 backdrop-blur-sm p-4">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          {/* Header banner */}
+          <div className="relative bg-gradient-to-br from-[#EFEAFB] to-[#F9F6FF] px-6 pt-6 pb-5">
+            <button
+              onClick={() => setShowScheduled(false)}
+              className="absolute top-3 right-3 h-7 w-7 rounded-full hover:bg-white/70 flex items-center justify-center text-[#6B6B7B]"
+              aria-label="Close"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="h-12 w-12 rounded-full bg-white shadow-sm flex items-center justify-center">
+                  <CalendarClock className="h-6 w-6 text-[#5B3FBF]" />
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full bg-[#1F8A4C] flex items-center justify-center border-2 border-white">
+                  <CheckCircle2 className="h-3 w-3 text-white" />
+                </span>
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#1F1F2E]">Report Auto-Scheduled</h3>
+                <p className="text-[11px] text-[#6B6B7B]">Large dataset detected</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Body */}
+          <div className="px-6 py-5 space-y-4">
+            <p className="text-sm text-[#1F1F2E] leading-relaxed">
+              The selected filters returned a large dataset. Since generating this report may take longer than expected, it has been <span className="font-semibold text-[#5B3FBF]">automatically scheduled</span>.
+            </p>
+
+            <div className="bg-[#F4F4F7] rounded-lg p-3 space-y-2.5">
+              <div className="flex items-start gap-2.5">
+                <Bell className="h-4 w-4 text-[#5B3FBF] shrink-0 mt-0.5" />
+                <div className="text-xs text-[#1F1F2E]">
+                  Available on the <span className="font-semibold">portal</span> under Report Extracts
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <Mail className="h-4 w-4 text-[#5B3FBF] shrink-0 mt-0.5" />
+                <div className="text-xs text-[#1F1F2E]">
+                  Delivered to your <span className="font-semibold">registered email</span>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <CalendarClock className="h-4 w-4 text-[#5B3FBF] shrink-0 mt-0.5" />
+                <div className="text-xs text-[#1F1F2E]">
+                  Estimated time: <span className="font-semibold">within 30 minutes</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Progress hint */}
+            <div className="flex items-center gap-2 text-[11px] text-[#6B6B7B]">
+              <div className="flex-1 h-1 bg-[#EFEAFB] rounded-full overflow-hidden">
+                <div className="h-full w-1/3 bg-gradient-to-r from-[#5B3FBF] to-[#8A6FE8] rounded-full animate-pulse" />
+              </div>
+              <span>Queued</span>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="px-6 pb-5 pt-1 flex items-center justify-end gap-2">
+            <button
+              onClick={() => setShowScheduled(false)}
+              className="text-xs text-[#6B6B7B] px-4 py-2 hover:text-[#1F1F2E]"
+            >
+              Close
+            </button>
+            <button
+              onClick={() => {
+                setShowScheduled(false);
+                navigate("/clickrev/extracts");
+              }}
+              className="text-xs bg-[#5B3FBF] text-white px-4 py-2 rounded-md hover:bg-[#4A33A0] font-medium"
+            >
+              Got it, view scheduled
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 };

@@ -12,6 +12,7 @@ import {
   Mail,
   Bell,
   CheckCircle2,
+  FileBarChart2,
 } from "lucide-react";
 import {
   REPORT_TYPES,
@@ -177,26 +178,78 @@ const ClickrevReports = () => {
     <div className="p-6 bg-[#F4F4F7] min-h-full text-[#1F1F2E]">
     <div className="space-y-6">
       {/* Title card */}
-      <div className="bg-white rounded-md shadow-sm border border-[#E5E5EC] px-5 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <div className="bg-white rounded-md shadow-sm border border-[#E5E5EC] px-5 py-3.5 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => navigate("/clickrev")}
-            className="h-8 w-8 rounded-md bg-[#EFEAFB] flex items-center justify-center text-[#5B3FBF] hover:bg-[#E0D5F8]"
+            className="h-8 w-8 rounded-md bg-[#EFEAFB] flex items-center justify-center text-[#5B3FBF] hover:bg-[#E0D5F8] shrink-0"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <h1 className="text-base font-bold">Reports</h1>
+          <div className="h-9 w-9 rounded-md bg-gradient-to-br from-[#5B3FBF] to-[#8A6FE8] flex items-center justify-center shrink-0">
+            <FileBarChart2 className="h-4 w-4 text-white" />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h1 className="text-sm font-bold truncate">
+                {applying
+                  ? `Generating: ${report || "Report"}`
+                  : applied && report
+                    ? report
+                    : report
+                      ? `Ready to generate: ${report}`
+                      : "Reports"}
+              </h1>
+              {applying && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#5B3FBF] bg-[#EFEAFB] px-1.5 py-0.5 rounded-full">
+                  <Loader2 className="h-2.5 w-2.5 animate-spin" />
+                  Processing
+                </span>
+              )}
+              {applied && !applying && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#1F8A4C] bg-[#E6F4EC] px-1.5 py-0.5 rounded-full">
+                  <CheckCircle2 className="h-2.5 w-2.5" />
+                  Ready
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5 text-[11px] text-[#6B6B7B] mt-0.5 truncate">
+              {report ? (
+                <>
+                  <span>{timePeriod}</span>
+                  <span className="text-[#C9C9D4]">•</span>
+                  <span>{dimension}</span>
+                  {store && (
+                    <>
+                      <span className="text-[#C9C9D4]">•</span>
+                      <span className="truncate">{store}</span>
+                    </>
+                  )}
+                  {hierarchy.size > 0 && (
+                    <>
+                      <span className="text-[#C9C9D4]">•</span>
+                      <span>{hierarchy.size} hierarchy filter{hierarchy.size > 1 ? "s" : ""}</span>
+                    </>
+                  )}
+                </>
+              ) : (
+                <span>Select a report type and filters to begin</span>
+              )}
+            </div>
+          </div>
         </div>
         {applied && filteredRows.length > 0 && (
           <button
             onClick={() => downloadCSV(filteredRows)}
-            className="flex items-center gap-1.5 text-[#5B3FBF] border border-[#5B3FBF] rounded-md px-4 py-1.5 text-sm font-medium hover:bg-[#EFEAFB]"
+            className="flex items-center gap-1.5 text-[#5B3FBF] border border-[#5B3FBF] rounded-md px-4 py-1.5 text-sm font-medium hover:bg-[#EFEAFB] shrink-0"
           >
             <Download className="h-3.5 w-3.5" />
             Export
           </button>
         )}
       </div>
+
+
 
       {/* Filter bar */}
       <div className="flex flex-wrap items-center gap-4">
@@ -388,13 +441,6 @@ const ClickrevReports = () => {
               </div>
             </div>
 
-            {/* Progress hint */}
-            <div className="flex items-center gap-2 text-[11px] text-[#6B6B7B]">
-              <div className="flex-1 h-1 bg-[#EFEAFB] rounded-full overflow-hidden">
-                <div className="h-full w-1/3 bg-gradient-to-r from-[#5B3FBF] to-[#8A6FE8] rounded-full animate-pulse" />
-              </div>
-              <span>Queued</span>
-            </div>
           </div>
 
           {/* Footer */}

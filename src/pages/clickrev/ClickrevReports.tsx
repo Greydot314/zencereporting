@@ -441,13 +441,6 @@ const ClickrevReports = () => {
               </div>
             </div>
 
-            {/* Progress hint */}
-            <div className="flex items-center gap-2 text-[11px] text-[#6B6B7B]">
-              <div className="flex-1 h-1 bg-[#EFEAFB] rounded-full overflow-hidden">
-                <div className="h-full w-1/3 bg-gradient-to-r from-[#5B3FBF] to-[#8A6FE8] rounded-full animate-pulse" />
-              </div>
-              <span>Queued</span>
-            </div>
           </div>
 
           {/* Footer */}

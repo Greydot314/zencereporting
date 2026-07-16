@@ -12,6 +12,7 @@ import {
   Mail,
   Bell,
   CheckCircle2,
+  FileBarChart2,
 } from "lucide-react";
 import {
   REPORT_TYPES,

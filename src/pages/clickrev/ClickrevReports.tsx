@@ -137,6 +137,23 @@ const ClickrevReports = () => {
   const [dimension, setDimension] = useState<string>("Store");
   const [hierarchy, setHierarchy] = useState<Set<string>>(new Set());
   const [applied, setApplied] = useState(false);
+  const [applying, setApplying] = useState(false);
+  const [showScheduled, setShowScheduled] = useState(false);
+
+  const handleApply = () => {
+    setApplying(true);
+    // Simulate backend estimate check for large dataset
+    window.setTimeout(() => {
+      setApplying(false);
+      // Heuristic demo: treat "Overall" period or hierarchy > 3 as "large dataset"
+      const isLarge = timePeriod === "Overall" || hierarchy.size > 3 || store === "All Stores" || store === "";
+      if (isLarge) {
+        setShowScheduled(true);
+      } else {
+        setApplied(true);
+      }
+    }, 1400);
+  };
 
   const moreRef = useRef<HTMLDivElement>(null);
   useEffect(() => {

@@ -978,6 +978,18 @@ const CreateSegment = () => {
           <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-5 items-start">
             {/* LEFT: Rules Builder Canvas */}
             <div className="space-y-5">
+              {/* ── Behavioural Event Segmentation (Web & App) ── */}
+              <BehavioralEventBuilder
+                conditions={eventConditions}
+                setConditions={setEventConditions}
+                platform={eventPlatform}
+                setPlatform={setEventPlatform}
+                joiner={eventJoiner}
+                setJoiner={setEventJoiner}
+                sequenced={eventSequenced}
+                setSequenced={setEventSequenced}
+              />
+
               {/* ── Rules Builder Canvas ── */}
               <div className="space-y-0">
                 <div className="flex items-center justify-between mb-3">

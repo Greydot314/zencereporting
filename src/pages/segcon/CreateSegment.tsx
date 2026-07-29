@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import BreakdownSection from "@/components/segcon/BreakdownSection";
+import BehavioralEventBuilder, { type EventCondition } from "@/components/segcon/BehavioralEventBuilder";
 
 // ── Category Config with colors ──
 const categoryConfig: Record<string, { icon: React.ReactNode; color: string; bg: string; label: string }> = {
@@ -509,6 +510,10 @@ const SegmentMindMap = ({ groups, interGroupConditions }: { groups: RuleGroup[];
 const CreateSegment = () => {
   const navigate = useNavigate();
   const [segmentName, setSegmentName] = useState("");
+  const [eventConditions, setEventConditions] = useState<EventCondition[]>([]);
+  const [eventPlatform, setEventPlatform] = useState<"both" | "web" | "app">("both");
+  const [eventJoiner, setEventJoiner] = useState<"AND" | "OR">("AND");
+  const [eventSequenced, setEventSequenced] = useState(false);
   const [rankEnabled, setRankEnabled] = useState(false);
   const [rankValue, setRankValue] = useState("");
   const [rankLimit, setRankLimit] = useState("");
@@ -632,7 +637,7 @@ const CreateSegment = () => {
   };
 
   const fetchRealtimeCount = useCallback(() => {
-    if (totalRules === 0) return;
+    if (totalRules === 0 && eventConditions.length === 0) return;
     setIsCountLoading(true);
     setTimeout(() => {
       const base = 151250;
@@ -873,7 +878,7 @@ const CreateSegment = () => {
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 mr-2">
-            <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs" onClick={fetchRealtimeCount} disabled={totalRules === 0 || isCountLoading}>
+            <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs" onClick={fetchRealtimeCount} disabled={(totalRules === 0 && eventConditions.length === 0) || isCountLoading}>
               {isCountLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Users className="h-3.5 w-3.5" />}
               {isCountLoading ? "Counting…" : estimatedCount !== null ? `${estimatedCount.toLocaleString()} users` : "Check Count"}
             </Button>
@@ -881,7 +886,7 @@ const CreateSegment = () => {
           <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
             <Save className="h-3.5 w-3.5" /> Save Draft
           </Button>
-          <Button size="sm" className="h-8 gap-1.5 text-xs" disabled={!segmentName || totalRules === 0}>
+          <Button size="sm" className="h-8 gap-1.5 text-xs" disabled={!segmentName || (totalRules === 0 && eventConditions.length === 0)}>
             Create Segment
           </Button>
         </div>
@@ -978,6 +983,18 @@ const CreateSegment = () => {
           <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-5 items-start">
             {/* LEFT: Rules Builder Canvas */}
             <div className="space-y-5">
+              {/* ── Behavioural Event Segmentation (Web & App) ── */}
+              <BehavioralEventBuilder
+                conditions={eventConditions}
+                setConditions={setEventConditions}
+                platform={eventPlatform}
+                setPlatform={setEventPlatform}
+                joiner={eventJoiner}
+                setJoiner={setEventJoiner}
+                sequenced={eventSequenced}
+                setSequenced={setEventSequenced}
+              />
+
               {/* ── Rules Builder Canvas ── */}
               <div className="space-y-0">
                 <div className="flex items-center justify-between mb-3">

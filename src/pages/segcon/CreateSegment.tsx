@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import BreakdownSection from "@/components/segcon/BreakdownSection";
+import BehavioralEventBuilder, { type EventCondition } from "@/components/segcon/BehavioralEventBuilder";
 
 // ── Category Config with colors ──
 const categoryConfig: Record<string, { icon: React.ReactNode; color: string; bg: string; label: string }> = {

@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -13,17 +12,16 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import {
   Activity, Plus, Trash2, Search, Globe, Smartphone, Zap, X,
   SlidersHorizontal, CalendarRange, Info, ArrowRight, Repeat,
-  AlertTriangle, Upload, Tag, Replace,
+  Link2, Building2, Layers, CheckCircle2,
 } from "lucide-react";
 import {
-  behavioralEvents, eventGroups, eventTags, sourceMeta, availabilityLabel, timeWindowPresets,
-  stringOperators, numberOperators, booleanOperators,
-  type BehavioralEvent, type EventProperty,
-} from "@/data/behavioralEventsMockData";
+  catalogEvents, eventGroups, eventsFor, counterpartOf,
+  type CatalogEvent, type CatalogProperty, type Platform,
+} from "@/data/eventCatalog";
 
-type Platform = "both" | "web" | "app";
 type Performed = "did" | "did_not";
 type Joiner = "AND" | "OR";
+type ScopeFilter = "all" | "standard" | "brand";
 
 interface PropFilter {
   id: string;
@@ -35,6 +33,7 @@ interface PropFilter {
 
 export interface EventCondition {
   id: string;
+  /** platform-qualified catalog id, e.g. app_add_to_cart */
   eventId: string;
   performed: Performed;
   freqOperator: string;
@@ -48,189 +47,210 @@ export interface EventCondition {
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
-const platformMeta: Record<string, { icon: JSX.Element; label: string; cls: string }> = {
-  web: { icon: <Globe className="h-3 w-3" />, label: "Web", cls: "bg-sky-100 text-sky-700 border-sky-200" },
-  app: { icon: <Smartphone className="h-3 w-3" />, label: "App", cls: "bg-violet-100 text-violet-700 border-violet-200" },
-  both: { icon: <Zap className="h-3 w-3" />, label: "Web + App", cls: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+const stringOperators = ["equals", "not equals", "contains", "does not contain", "starts with"];
+const numberOperators = ["equals", "greater than", "less than", "between"];
+const timeWindowPresets = [
+  "Last 7 days", "Last 14 days", "Last 30 days", "Last 60 days",
+  "Last 90 days", "Last 6 months", "This month", "Lifetime", "Custom range",
+];
+
+const platformMeta: Record<Platform, { icon: JSX.Element; label: string; cls: string; source: string }> = {
+  web: { icon: <Globe className="h-3 w-3" />, label: "Web", cls: "bg-sky-100 text-sky-700 border-sky-200", source: "Web SDK · websiteid 9" },
+  app: { icon: <Smartphone className="h-3 w-3" />, label: "App", cls: "bg-violet-100 text-violet-700 border-violet-200", source: "App SDK · websiteid 4" },
 };
 
-const sourceCls: Record<string, string> = {
-  system: "bg-slate-100 text-slate-600 border-slate-200",
-  standard: "bg-blue-50 text-blue-700 border-blue-200",
-  custom: "bg-amber-50 text-amber-700 border-amber-200",
+const scopeMeta: Record<CatalogEvent["scope"], { label: string; cls: string; hint: string }> = {
+  standard: {
+    label: "Standard",
+    cls: "bg-blue-50 text-blue-700 border-blue-200",
+    hint: "Mapped to the platform taxonomy — behaves the same for every client, so it can power templates, models and cross-platform reporting.",
+  },
+  brand: {
+    label: "Brand event",
+    cls: "bg-amber-50 text-amber-700 border-amber-200",
+    hint: "Specific to this brand's implementation. Usable in segments exactly like a standard event, but it is not part of the shared taxonomy — map it if you want it in templates and cross-platform logic.",
+  },
 };
 
-const availKey = (e: BehavioralEvent): Platform =>
-  e.availability.web && e.availability.app ? "both" : e.availability.web ? "web" : "app";
+const opsForType = (t: CatalogProperty["type"]) => (t === "number" ? numberOperators : stringOperators);
 
-/** Is the event tracked on the platform scope currently selected? */
-const isTracked = (e: BehavioralEvent, p: Platform) =>
-  p === "both" ? e.availability.web || e.availability.app : p === "web" ? e.availability.web : e.availability.app;
+/* ────────────────────────── Brand event mapping ────────────────────────── */
 
-/** Fully covers the selected scope (i.e. no partial-coverage caveat) */
-const fullyCovers = (e: BehavioralEvent, p: Platform) =>
-  p === "both" ? e.availability.web && e.availability.app : isTracked(e, p);
+const canonicalOptions = Array.from(
+  new Map(
+    catalogEvents.filter((e) => e.canonicalId).map((e) => [e.canonicalId!, e.canonicalName!])
+  ).entries()
+);
 
-const opsForType = (t: EventProperty["type"]) =>
-  t === "number" ? numberOperators : t === "boolean" ? booleanOperators : stringOperators;
-
-/** Import-your-own event list */
-const ImportEventsDialog = ({ onImport }: { onImport: (events: BehavioralEvent[]) => void }) => {
+const MappingDialog = ({
+  mappings,
+  onMap,
+}: {
+  mappings: Record<string, string>;
+  onMap: (eventId: string, canonicalId: string) => void;
+}) => {
   const [open, setOpen] = useState(false);
-  const [raw, setRaw] = useState("");
-  const [group, setGroup] = useState("Conversion");
-  const [scope, setScope] = useState<Platform>("both");
+  const [platform, setPlatform] = useState<Platform>("web");
+  const [q, setQ] = useState("");
 
-  const parsed = useMemo(
-    () =>
-      raw
-        .split(/[\n,]/)
-        .map((l) => l.trim())
-        .filter(Boolean),
-    [raw]
+  const list = eventsFor(platform).filter(
+    (e) => e.scope === "brand" && (e.name.toLowerCase().includes(q.toLowerCase()) || e.code.toLowerCase().includes(q.toLowerCase()))
   );
-
-  const doImport = () => {
-    const events: BehavioralEvent[] = parsed.map((name) => ({
-      id: `custom_${name.toLowerCase().replace(/[^a-z0-9]+/g, "_")}_${uid()}`,
-      name,
-      platform: scope as BehavioralEvent["platform"],
-      group,
-      description: "Imported from your event list",
-      availability: { web: scope !== "app", app: scope !== "web" },
-      source: "custom",
-      tags: ["custom event", scope === "web" ? "web-only" : scope === "app" ? "app-only" : "cross-platform"],
-      properties: [],
-    }));
-    onImport(events);
-    setRaw("");
-    setOpen(false);
-  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="h-7 gap-1.5 text-[11px]">
-          <Upload className="h-3 w-3" /> Import event list
+          <Link2 className="h-3 w-3" /> Brand event mapping
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-base">Populate your event list</DialogTitle>
+          <DialogTitle className="text-base">Brand event mapping</DialogTitle>
           <DialogDescription className="text-xs">
-            Paste event names from your Web / App SDK (one per line or comma separated). They become
-            selectable <span className="font-medium">Custom</span> events, tagged with the platform they are tracked on.
+            Web and App ship their own event codes. Brand-specific events (Crown Redeem, DineIn Mode, Call Rider…)
+            stay usable as-is — mapping one to a standard concept simply lets it drive templates, models and
+            web↔app equivalence.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-3">
-          <Textarea
-            value={raw}
-            onChange={(e) => setRaw(e.target.value)}
-            rows={6}
-            placeholder={"Wallet Recharged\nStore Locator Opened\nSubscription Paused"}
-            className="text-xs font-mono"
-          />
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <Label className="text-[11px]">Event group</Label>
-              <Select value={group} onValueChange={setGroup}>
-                <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {eventGroups.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[11px]">Tracked on</Label>
-              <Select value={scope} onValueChange={(v: Platform) => setScope(v)}>
-                <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="both">Web + App</SelectItem>
-                  <SelectItem value="web">Web only</SelectItem>
-                  <SelectItem value="app">App only</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center rounded-lg border border-border bg-background p-0.5">
+            {(["web", "app"] as Platform[]).map((p) => (
+              <button
+                key={p}
+                onClick={() => setPlatform(p)}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors ${
+                  platform === p ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
+                }`}
+              >
+                {platformMeta[p].icon} {platformMeta[p].label}
+              </button>
+            ))}
           </div>
-          <p className="text-[11px] text-muted-foreground">
-            {parsed.length} event{parsed.length === 1 ? "" : "s"} detected
-          </p>
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search brand events…" className="h-8 pl-8 text-xs" />
+          </div>
         </div>
 
+        <ScrollArea className="h-[340px] -mx-2 px-2">
+          <div className="space-y-1">
+            {list.map((e) => (
+              <div key={e.id} className="flex items-center gap-2 rounded-md border border-border bg-muted/20 px-2.5 py-1.5">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-medium text-foreground truncate">{e.name}</p>
+                  <p className="text-[10px] font-mono text-muted-foreground truncate">{e.code} · {e.properties.length} fields</p>
+                </div>
+                <Select value={mappings[e.id] ?? "unmapped"} onValueChange={(v) => onMap(e.id, v)}>
+                  <SelectTrigger className="h-7 w-[190px] text-[11px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unmapped">Keep brand-specific</SelectItem>
+                    {canonicalOptions.map(([id, name]) => (
+                      <SelectItem key={id} value={id}>{name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {mappings[e.id] && mappings[e.id] !== "unmapped" && (
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                )}
+              </div>
+            ))}
+            {!list.length && <p className="text-xs text-muted-foreground text-center py-10">No brand events match</p>}
+          </div>
+        </ScrollArea>
+
         <DialogFooter>
-          <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>Cancel</Button>
-          <Button size="sm" disabled={!parsed.length} onClick={doImport}>
-            Add {parsed.length || ""} event{parsed.length === 1 ? "" : "s"}
-          </Button>
+          <Button size="sm" onClick={() => setOpen(false)}>Done</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-/** Event picker popover, grouped by funnel stage, with tag filtering */
+/* ────────────────────────── Event picker ────────────────────────── */
+
 const EventPicker = ({
   platform,
-  events,
+  setPlatform,
   onSelect,
   trigger,
 }: {
   platform: Platform;
-  events: BehavioralEvent[];
-  onSelect: (e: BehavioralEvent) => void;
+  setPlatform: (p: Platform) => void;
+  onSelect: (e: CatalogEvent) => void;
   trigger: React.ReactNode;
 }) => {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
-  const [tag, setTag] = useState<string | null>(null);
-  const [hideUntracked, setHideUntracked] = useState(true);
+  const [scope, setScope] = useState<ScopeFilter>("all");
 
-  const activeTags = useMemo(() => {
-    const used = new Set<string>();
-    events.forEach((e) => e.tags.forEach((t) => used.add(t)));
-    return eventTags.filter((t) => used.has(t)).slice(0, 10);
-  }, [events]);
+  const events = useMemo(() => eventsFor(platform), [platform]);
+  const counts = useMemo(
+    () => ({
+      all: events.length,
+      standard: events.filter((e) => e.scope === "standard").length,
+      brand: events.filter((e) => e.scope === "brand").length,
+    }),
+    [events]
+  );
 
   const list = useMemo(
     () =>
       events.filter(
         (e) =>
-          (!hideUntracked || isTracked(e, platform)) &&
-          (!tag || e.tags.includes(tag)) &&
-          (e.name.toLowerCase().includes(q.toLowerCase()) || e.tags.some((t) => t.includes(q.toLowerCase())))
+          (scope === "all" || e.scope === scope) &&
+          (e.name.toLowerCase().includes(q.toLowerCase()) || e.code.toLowerCase().includes(q.toLowerCase()))
       ),
-    [events, platform, q, tag, hideUntracked]
+    [events, q, scope]
   );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{trigger}</PopoverTrigger>
-      <PopoverContent className="w-[380px] p-0" align="start" sideOffset={4}>
+      <PopoverContent className="w-[420px] p-0" align="start" sideOffset={4}>
+        {/* Platform tabs — web and app catalogs are separate, never merged */}
+        <div className="grid grid-cols-2 border-b border-border">
+          {(["web", "app"] as Platform[]).map((p) => (
+            <button
+              key={p}
+              onClick={() => setPlatform(p)}
+              className={`flex items-center justify-center gap-1.5 py-2 text-[11px] font-medium transition-colors ${
+                platform === p
+                  ? "bg-primary/10 text-primary border-b-2 border-primary"
+                  : "text-muted-foreground hover:bg-muted/60"
+              }`}
+            >
+              {platformMeta[p].icon} {platformMeta[p].label} events
+              <span className="text-[10px] opacity-70">({eventsFor(p).length})</span>
+            </button>
+          ))}
+        </div>
+
         <div className="p-2 border-b border-border space-y-2">
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search events or tags…" className="h-8 pl-8 text-xs bg-background" autoFocus />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search event name or code…" className="h-8 pl-8 text-xs bg-background" autoFocus />
           </div>
-          <div className="flex flex-wrap gap-1">
-            {activeTags.map((t) => (
+          <div className="flex gap-1">
+            {(["all", "standard", "brand"] as ScopeFilter[]).map((s) => (
               <button
-                key={t}
-                onClick={() => setTag(tag === t ? null : t)}
-                className={`px-1.5 py-0.5 rounded text-[10px] border transition-colors ${
-                  tag === t ? "bg-primary text-primary-foreground border-primary" : "bg-muted/60 text-muted-foreground border-border hover:bg-muted"
+                key={s}
+                onClick={() => setScope(s)}
+                className={`px-2 py-0.5 rounded text-[10px] border capitalize transition-colors ${
+                  scope === s ? "bg-primary text-primary-foreground border-primary" : "bg-muted/60 text-muted-foreground border-border hover:bg-muted"
                 }`}
               >
-                {t}
+                {s === "brand" ? "Brand-specific" : s} ({counts[s]})
               </button>
             ))}
           </div>
-          <label className="flex items-center gap-1.5 text-[10px] text-muted-foreground cursor-pointer">
-            <input type="checkbox" checked={!hideUntracked} onChange={() => setHideUntracked((v) => !v)} className="h-3 w-3 accent-primary" />
-            Show events not tracked on {platformMeta[platform].label}
-          </label>
+          <p className="text-[10px] text-muted-foreground">
+            Source: {platformMeta[platform].source}
+          </p>
         </div>
-        <ScrollArea className="h-[320px]">
+
+        <ScrollArea className="h-[330px]">
           <div className="p-1.5">
             {eventGroups.map((g) => {
               const items = list.filter((e) => e.group === g);
@@ -239,29 +259,29 @@ const EventPicker = ({
                 <div key={g} className="mb-2">
                   <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{g}</p>
                   {items.map((e) => {
-                    const k = availKey(e);
-                    const tracked = isTracked(e, platform);
+                    const twin = counterpartOf(e);
                     return (
                       <button
                         key={e.id}
                         className="w-full flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-primary/10 text-left group transition-colors"
                         onClick={() => { onSelect(e); setOpen(false); setQ(""); }}
                       >
-                        <span className={`mt-0.5 h-5 w-5 rounded flex items-center justify-center border ${platformMeta[k].cls}`}>
-                          {platformMeta[k].icon}
+                        <span className={`mt-0.5 h-5 w-5 rounded flex items-center justify-center border ${platformMeta[e.platform].cls}`}>
+                          {platformMeta[e.platform].icon}
                         </span>
                         <span className="flex-1 min-w-0">
-                          <span className="flex items-center gap-1.5">
-                            <span className="text-xs font-medium text-foreground leading-tight">{e.name}</span>
-                            {!tracked && <span className="text-[9px] text-amber-600 font-medium">not on {platformMeta[platform].label}</span>}
-                          </span>
-                          <span className="block text-[10px] text-muted-foreground truncate">{e.description}</span>
+                          <span className="text-xs font-medium text-foreground leading-tight block truncate">{e.name}</span>
+                          <span className="block text-[10px] font-mono text-muted-foreground truncate">{e.code}</span>
                           <span className="flex flex-wrap gap-1 mt-1">
-                            <span className={`px-1 rounded border text-[9px] ${sourceCls[e.source]}`}>{sourceMeta[e.source].label}</span>
-                            <span className="px-1 rounded border border-border bg-muted/50 text-[9px] text-muted-foreground">{availabilityLabel(e.availability)}</span>
-                            {e.tags.slice(0, 2).map((t) => (
-                              <span key={t} className="px-1 rounded bg-muted text-[9px] text-muted-foreground">#{t}</span>
-                            ))}
+                            <span className={`px-1 rounded border text-[9px] ${scopeMeta[e.scope].cls}`}>{scopeMeta[e.scope].label}</span>
+                            <span className="px-1 rounded border border-border bg-muted/50 text-[9px] text-muted-foreground">
+                              {e.properties.length} field{e.properties.length === 1 ? "" : "s"}
+                            </span>
+                            {twin && (
+                              <span className="px-1 rounded border border-emerald-200 bg-emerald-50 text-[9px] text-emerald-700 flex items-center gap-0.5">
+                                <Link2 className="h-2.5 w-2.5" /> {platformMeta[twin.platform].label}: {twin.code}
+                              </span>
+                            )}
                           </span>
                         </span>
                         <Plus className="h-3 w-3 text-primary opacity-0 group-hover:opacity-100 flex-shrink-0 mt-1" />
@@ -279,6 +299,8 @@ const EventPicker = ({
   );
 };
 
+/* ────────────────────────── Builder ────────────────────────── */
+
 const BehavioralEventBuilder = ({
   conditions,
   setConditions,
@@ -291,18 +313,18 @@ const BehavioralEventBuilder = ({
 }: {
   conditions: EventCondition[];
   setConditions: (c: EventCondition[]) => void;
-  platform: Platform;
+  platform: Platform | "both";
   setPlatform: (p: Platform) => void;
   joiner: Joiner;
   setJoiner: (j: Joiner) => void;
   sequenced: boolean;
   setSequenced: (v: boolean) => void;
 }) => {
-  const [customEvents, setCustomEvents] = useState<BehavioralEvent[]>([]);
-  const catalog = useMemo(() => [...behavioralEvents, ...customEvents], [customEvents]);
-  const eventById = (id: string) => catalog.find((e) => e.id === id);
+  const activePlatform: Platform = platform === "app" ? "app" : "web";
+  const [mappings, setMappings] = useState<Record<string, string>>({});
+  const eventById = (id: string) => catalogEvents.find((e) => e.id === id);
 
-  const addCondition = (e: BehavioralEvent) =>
+  const addCondition = (e: CatalogEvent) =>
     setConditions([
       ...conditions,
       {
@@ -336,16 +358,13 @@ const BehavioralEventBuilder = ({
   const removeProp = (c: EventCondition, pid: string) =>
     update(c.id, { propFilters: c.propFilters.filter((p) => p.id !== pid) });
 
-  const swapToEquivalent = (c: EventCondition, eqId: string) => {
-    const eq = eventById(eqId);
-    if (!eq) return;
-    update(c.id, { eventId: eq.id, propFilters: [] });
-  };
+  const usedPlatforms = useMemo(() => {
+    const s = new Set<Platform>();
+    conditions.forEach((c) => { const e = eventById(c.eventId); if (e) s.add(e.platform); });
+    return Array.from(s);
+  }, [conditions]);
 
-  const untrackedCount = conditions.filter((c) => {
-    const ev = eventById(c.eventId);
-    return ev && !fullyCovers(ev, platform);
-  }).length;
+  const brandCount = conditions.filter((c) => eventById(c.eventId)?.scope === "brand").length;
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -358,31 +377,29 @@ const BehavioralEventBuilder = ({
             </span>
             <h2 className="text-sm font-semibold text-foreground">Behavioural Events</h2>
             <Tooltip>
-              <TooltipTrigger asChild>
-                <Info className="h-3 w-3 text-muted-foreground cursor-help" />
-              </TooltipTrigger>
-              <TooltipContent className="max-w-[280px] text-xs">
-                Target users by what they did (or didn't do). Events are tagged by where they are tracked —
-                app-only events like <span className="font-medium">App Installed</span> have no web counterpart,
-                so we suggest the closest web equivalent.
+              <TooltipTrigger asChild><Info className="h-3 w-3 text-muted-foreground cursor-help" /></TooltipTrigger>
+              <TooltipContent className="max-w-[300px] text-xs">
+                Web and App keep separate event catalogs, because each platform ships its own event codes,
+                names and payload fields. Events shared across both are linked by a mapped standard concept.
               </TooltipContent>
             </Tooltip>
             <span className="text-[11px] text-muted-foreground ml-1">
-              {conditions.length} {conditions.length === 1 ? "event condition" : "event conditions"}
+              {conditions.length} {conditions.length === 1 ? "condition" : "conditions"}
+              {usedPlatforms.length === 2 && " · web + app"}
             </span>
           </div>
 
           <div className="ml-auto flex items-center gap-3">
-            <ImportEventsDialog onImport={(evs) => setCustomEvents((prev) => [...prev, ...evs])} />
+            <MappingDialog mappings={mappings} onMap={(id, canonical) => setMappings((m) => ({ ...m, [id]: canonical }))} />
 
-            {/* Platform toggle */}
+            {/* Catalog selector — Web and App are separate catalogs, not a merged scope */}
             <div className="flex items-center rounded-lg border border-border bg-background p-0.5">
-              {(["both", "web", "app"] as Platform[]).map((p) => (
+              {(["web", "app"] as Platform[]).map((p) => (
                 <button
                   key={p}
                   onClick={() => setPlatform(p)}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors ${
-                    platform === p ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
+                    activePlatform === p ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
                   }`}
                 >
                   {platformMeta[p].icon}
@@ -391,7 +408,6 @@ const BehavioralEventBuilder = ({
               ))}
             </div>
 
-            {/* Sequence mode */}
             <div className="flex items-center gap-1.5">
               <Repeat className="h-3.5 w-3.5 text-muted-foreground" />
               <Label className="text-[11px] font-medium cursor-pointer">In sequence</Label>
@@ -400,14 +416,32 @@ const BehavioralEventBuilder = ({
           </div>
         </div>
 
-        {/* Platform coverage note */}
-        {untrackedCount > 0 && (
+        {/* Catalog summary strip */}
+        <div className="flex flex-wrap items-center gap-4 px-4 py-2 border-b border-border bg-background/60 text-[11px] text-muted-foreground">
+          {(["web", "app"] as Platform[]).map((p) => {
+            const evs = eventsFor(p);
+            return (
+              <span key={p} className="flex items-center gap-1.5">
+                <span className={`h-4 w-4 rounded flex items-center justify-center border ${platformMeta[p].cls}`}>{platformMeta[p].icon}</span>
+                <span className="text-foreground font-medium">{platformMeta[p].label}</span>
+                <span>{evs.length} events</span>
+                <span className="text-blue-600">{evs.filter((e) => e.scope === "standard").length} standard</span>
+                <span className="text-amber-600">{evs.filter((e) => e.scope === "brand").length} brand</span>
+              </span>
+            );
+          })}
+          <span className="ml-auto flex items-center gap-1.5">
+            <Layers className="h-3 w-3" /> Cross-platform conditions combine with {sequenced ? "THEN" : joiner}
+          </span>
+        </div>
+
+        {brandCount > 0 && (
           <div className="flex items-start gap-2 px-4 py-2 bg-amber-50 border-b border-amber-200 text-[11px] text-amber-800">
-            <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+            <Building2 className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
             <span>
-              {untrackedCount} condition{untrackedCount > 1 ? "s use events" : " uses an event"} that {untrackedCount > 1 ? "are" : "is"} not
-              tracked across the full <span className="font-semibold">{platformMeta[platform].label}</span> scope — those users will only be
-              matched where the event exists. Swap to the suggested equivalent for full coverage.
+              {brandCount} brand-specific event{brandCount > 1 ? "s are" : " is"} used. These run only for this brand's
+              {" "}{platformMeta[activePlatform].label} implementation and are excluded from cross-platform templates
+              until mapped in <span className="font-semibold">Brand event mapping</span>.
             </span>
           </div>
         )}
@@ -418,12 +452,13 @@ const BehavioralEventBuilder = ({
               <Zap className="h-8 w-8 mx-auto mb-2 opacity-20" />
               <p className="text-sm font-medium">No behavioural conditions</p>
               <p className="text-xs mt-1 mb-4 max-w-sm mx-auto">
-                Pick web / app events like <span className="font-medium">Product Viewed</span> or{" "}
-                <span className="font-medium">Checkout Started</span>, then set how often and in what period.
+                Pick from the <span className="font-medium">Web</span> or <span className="font-medium">App</span> catalog —
+                standard events like <span className="font-mono">add_to_cart</span> or brand events like{" "}
+                <span className="font-mono">crown_redeem</span>.
               </p>
               <EventPicker
-                platform={platform}
-                events={catalog}
+                platform={activePlatform}
+                setPlatform={setPlatform}
                 onSelect={addCondition}
                 trigger={
                   <Button variant="outline" size="sm" className="gap-1.5 text-xs">
@@ -437,10 +472,11 @@ const BehavioralEventBuilder = ({
           {conditions.map((c, idx) => {
             const ev = eventById(c.eventId);
             if (!ev) return null;
-            const k = availKey(ev);
-            const meta = platformMeta[k];
-            const covered = fullyCovers(ev, platform);
-            const eq = ev.equivalent ? eventById(ev.equivalent.eventId) : undefined;
+            const meta = platformMeta[ev.platform];
+            const twin = counterpartOf(ev);
+            const mappedTo = mappings[ev.id] && mappings[ev.id] !== "unmapped"
+              ? canonicalOptions.find(([id]) => id === mappings[ev.id])?.[1]
+              : null;
             return (
               <div key={c.id}>
                 {idx > 0 && (
@@ -458,9 +494,7 @@ const BehavioralEventBuilder = ({
                             onClick={() => setJoiner(j)}
                             className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
                               joiner === j
-                                ? j === "AND"
-                                  ? "bg-blue-500 text-white"
-                                  : "bg-teal-500 text-white"
+                                ? j === "AND" ? "bg-blue-500 text-white" : "bg-teal-500 text-white"
                                 : "bg-muted text-muted-foreground hover:bg-muted/80"
                             }`}
                           >
@@ -478,45 +512,54 @@ const BehavioralEventBuilder = ({
                   <div className="flex flex-wrap items-center gap-2 px-3 py-2 bg-muted/30 border-b border-border">
                     <span className={`h-5 w-5 rounded flex items-center justify-center border ${meta.cls}`}>{meta.icon}</span>
                     <span className="text-xs font-semibold text-foreground">{ev.name}</span>
+                    <span className="text-[10px] font-mono text-muted-foreground">{ev.code}</span>
                     <Badge variant="outline" className="text-[9px] h-4 px-1.5">{ev.group}</Badge>
-                    <Badge variant="outline" className={`text-[9px] h-4 px-1.5 ${meta.cls}`}>{availabilityLabel(ev.availability)}</Badge>
+                    <Badge variant="outline" className={`text-[9px] h-4 px-1.5 ${meta.cls}`}>{meta.label}</Badge>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Badge variant="outline" className={`text-[9px] h-4 px-1.5 cursor-help ${sourceCls[ev.source]}`}>
-                          {sourceMeta[ev.source].label}
+                        <Badge variant="outline" className={`text-[9px] h-4 px-1.5 cursor-help ${scopeMeta[ev.scope].cls}`}>
+                          {scopeMeta[ev.scope].label}
                         </Badge>
                       </TooltipTrigger>
-                      <TooltipContent className="max-w-[240px] text-xs">{sourceMeta[ev.source].hint}</TooltipContent>
+                      <TooltipContent className="max-w-[260px] text-xs">{scopeMeta[ev.scope].hint}</TooltipContent>
                     </Tooltip>
-                    <span className="hidden sm:flex items-center gap-1 text-[9px] text-muted-foreground">
-                      <Tag className="h-2.5 w-2.5" />
-                      {ev.tags.slice(0, 3).join(" · ")}
-                    </span>
+                    {mappedTo && (
+                      <Badge variant="outline" className="text-[9px] h-4 px-1.5 bg-emerald-50 text-emerald-700 border-emerald-200">
+                        mapped → {mappedTo}
+                      </Badge>
+                    )}
                     <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto text-muted-foreground hover:text-destructive" onClick={() => remove(c.id)}>
                       <Trash2 className="h-3 w-3" />
                     </Button>
                   </div>
 
-                  {/* Platform mismatch callout */}
-                  {!covered && (
-                    <div className="flex flex-wrap items-center gap-2 px-3 py-2 bg-amber-50/70 border-b border-amber-200 text-[11px] text-amber-800">
-                      <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0" />
+                  {/* Cross-platform equivalence */}
+                  {twin ? (
+                    <div className="flex flex-wrap items-center gap-2 px-3 py-2 bg-emerald-50/60 border-b border-emerald-200 text-[11px] text-emerald-800">
+                      <Link2 className="h-3.5 w-3.5 flex-shrink-0" />
                       <span>
-                        <span className="font-semibold">{ev.name}</span> is tracked on{" "}
-                        {availabilityLabel(ev.availability)} only.
-                        {ev.equivalent ? ` ${ev.equivalent.note}` : " No equivalent exists on the other platform."}
+                        Same behaviour is tracked on {platformMeta[twin.platform].label} as{" "}
+                        <span className="font-mono font-semibold">{twin.code}</span> ({twin.name}).
                       </span>
-                      {eq && (
+                      {!conditions.some((x) => x.eventId === twin.id) && (
                         <Button
                           variant="outline" size="sm"
-                          className="h-6 gap-1 text-[10px] ml-auto border-amber-300 bg-white hover:bg-amber-100"
-                          onClick={() => swapToEquivalent(c, eq.id)}
+                          className="h-6 gap-1 text-[10px] ml-auto border-emerald-300 bg-background hover:bg-emerald-100"
+                          onClick={() => addCondition(twin)}
                         >
-                          <Replace className="h-3 w-3" /> Use “{eq.name}”
+                          <Plus className="h-3 w-3" /> Add {platformMeta[twin.platform].label} condition
                         </Button>
                       )}
                     </div>
-                  )}
+                  ) : ev.scope === "brand" ? (
+                    <div className="flex items-center gap-2 px-3 py-2 bg-amber-50/70 border-b border-amber-200 text-[11px] text-amber-800">
+                      <Building2 className="h-3.5 w-3.5 flex-shrink-0" />
+                      <span>
+                        Brand-specific to {meta.label} — no equivalent event exists on the other platform.
+                        Add a separate {meta.label === "Web" ? "App" : "Web"} condition if that journey is tracked there.
+                      </span>
+                    </div>
+                  ) : null}
 
                   {/* Condition body */}
                   <div className="p-3 space-y-3">
@@ -579,7 +622,7 @@ const BehavioralEventBuilder = ({
                       )}
                     </div>
 
-                    {/* Event property filters */}
+                    {/* Event property filters — fields come from the event payload schema */}
                     {c.propFilters.length > 0 && (
                       <div className="space-y-2 pl-3 border-l-2 border-dashed border-border">
                         {c.propFilters.map((p) => {
@@ -595,10 +638,12 @@ const BehavioralEventBuilder = ({
                                   updateProp(c, p.id, { propertyId: v, operator: opsForType(np?.type || "string")[0], value: "" });
                                 }}
                               >
-                                <SelectTrigger className="h-7 text-[11px] w-[150px] bg-background"><SelectValue /></SelectTrigger>
+                                <SelectTrigger className="h-7 text-[11px] w-[170px] bg-background"><SelectValue /></SelectTrigger>
                                 <SelectContent>
                                   {ev.properties.map((x) => (
-                                    <SelectItem key={x.id} value={x.id}>{x.name}</SelectItem>
+                                    <SelectItem key={x.id} value={x.id}>
+                                      {x.name} <span className="text-muted-foreground">· {x.type}</span>
+                                    </SelectItem>
                                   ))}
                                 </SelectContent>
                               </Select>
@@ -610,33 +655,20 @@ const BehavioralEventBuilder = ({
                                   ))}
                                 </SelectContent>
                               </Select>
-                              {type !== "boolean" && (
-                                prop?.options ? (
-                                  <Select value={p.value} onValueChange={(v) => updateProp(c, p.id, { value: v })}>
-                                    <SelectTrigger className="h-7 text-[11px] w-[150px] bg-background"><SelectValue placeholder="Select value" /></SelectTrigger>
-                                    <SelectContent>
-                                      {prop.options.map((o) => (
-                                        <SelectItem key={o} value={o}>{o}</SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                ) : (
-                                  <div className="flex items-center gap-1.5">
-                                    <Input
-                                      type={type === "number" ? "number" : "text"}
-                                      placeholder="Value" value={p.value}
-                                      onChange={(e) => updateProp(c, p.id, { value: e.target.value })}
-                                      className="h-7 text-[11px] w-[130px] bg-background"
-                                    />
-                                    {p.operator === "between" && (
-                                      <>
-                                        <span className="text-[10px] text-muted-foreground">to</span>
-                                        <Input type="number" value={p.valueTo || ""} onChange={(e) => updateProp(c, p.id, { valueTo: e.target.value })} className="h-7 text-[11px] w-[100px] bg-background" />
-                                      </>
-                                    )}
-                                  </div>
-                                )
-                              )}
+                              <div className="flex items-center gap-1.5">
+                                <Input
+                                  type={type === "number" ? "number" : "text"}
+                                  placeholder="Value" value={p.value}
+                                  onChange={(e) => updateProp(c, p.id, { value: e.target.value })}
+                                  className="h-7 text-[11px] w-[130px] bg-background"
+                                />
+                                {p.operator === "between" && (
+                                  <>
+                                    <span className="text-[10px] text-muted-foreground">to</span>
+                                    <Input type="number" value={p.valueTo || ""} onChange={(e) => updateProp(c, p.id, { valueTo: e.target.value })} className="h-7 text-[11px] w-[100px] bg-background" />
+                                  </>
+                                )}
+                              </div>
                               <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => removeProp(c, p.id)}>
                                 <X className="h-3 w-3" />
                               </Button>
@@ -649,10 +681,11 @@ const BehavioralEventBuilder = ({
                     {ev.properties.length > 0 ? (
                       <Button variant="ghost" size="sm" className="h-7 gap-1 text-[11px] text-primary hover:text-primary" onClick={() => addProp(c)}>
                         <SlidersHorizontal className="h-3 w-3" /> Add event property filter
+                        <span className="text-muted-foreground font-normal">({ev.properties.length} fields in payload)</span>
                       </Button>
                     ) : (
                       <p className="text-[10px] text-muted-foreground">
-                        No properties mapped for this event yet — share the property schema to enable attribute filters.
+                        No payload fields captured for <span className="font-mono">{ev.code}</span> on {meta.label} — only frequency and time window can be used.
                       </p>
                     )}
                   </div>
@@ -664,8 +697,8 @@ const BehavioralEventBuilder = ({
           {conditions.length > 0 && (
             <div className="pt-3">
               <EventPicker
-                platform={platform}
-                events={catalog}
+                platform={activePlatform}
+                setPlatform={setPlatform}
                 onSelect={addCondition}
                 trigger={
                   <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8">

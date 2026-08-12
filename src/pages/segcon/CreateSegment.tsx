@@ -511,7 +511,7 @@ const CreateSegment = () => {
   const navigate = useNavigate();
   const [segmentName, setSegmentName] = useState("");
   const [eventConditions, setEventConditions] = useState<EventCondition[]>([]);
-  const [eventPlatform, setEventPlatform] = useState<"both" | "web" | "app">("both");
+  const [eventPlatform, setEventPlatform] = useState<"web" | "app">("web");
   const [eventJoiner, setEventJoiner] = useState<"AND" | "OR">("AND");
   const [eventSequenced, setEventSequenced] = useState(false);
   const [rankEnabled, setRankEnabled] = useState(false);

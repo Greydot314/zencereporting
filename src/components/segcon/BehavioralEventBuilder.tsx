@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Activity, Plus, Trash2, Search, Globe, Smartphone, Zap, X,
-  SlidersHorizontal, CalendarRange, Info, ArrowRight,
+  SlidersHorizontal, CalendarRange, Info,
   Link2, Building2, Layers, CheckCircle2,
 } from "lucide-react";
 import {

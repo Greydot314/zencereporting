@@ -513,7 +513,6 @@ const CreateSegment = () => {
   const [eventConditions, setEventConditions] = useState<EventCondition[]>([]);
   const [eventPlatform, setEventPlatform] = useState<"web" | "app">("web");
   const [eventJoiner, setEventJoiner] = useState<"AND" | "OR">("AND");
-  const [eventSequenced, setEventSequenced] = useState(false);
   const [rankEnabled, setRankEnabled] = useState(false);
   const [rankValue, setRankValue] = useState("");
   const [rankLimit, setRankLimit] = useState("");
@@ -991,8 +990,6 @@ const CreateSegment = () => {
                 setPlatform={setEventPlatform}
                 joiner={eventJoiner}
                 setJoiner={setEventJoiner}
-                sequenced={eventSequenced}
-                setSequenced={setEventSequenced}
               />
 
               {/* ── Rules Builder Canvas ── */}

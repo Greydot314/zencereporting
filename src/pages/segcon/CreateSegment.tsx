@@ -22,6 +22,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import BreakdownSection from "@/components/segcon/BreakdownSection";
 import BehavioralEventBuilder, { type EventCondition } from "@/components/segcon/BehavioralEventBuilder";
+import { hasBehaviouralEvents } from "@/config/brandFeatures";
+import { catalogEvents } from "@/data/eventCatalog";
 
 // ── Category Config with colors ──
 const categoryConfig: Record<string, { icon: React.ReactNode; color: string; bg: string; label: string }> = {
@@ -507,6 +509,49 @@ const SegmentMindMap = ({ groups, interGroupConditions }: { groups: RuleGroup[];
   );
 };
 
+
+// ── Behavioural Event Mind Map ──
+const BehaviouralMindMap = ({ conditions, joiner }: { conditions: EventCondition[]; joiner: "AND" | "OR" }) => {
+  if (conditions.length === 0) return null;
+  return (
+    <div className="space-y-1.5 py-2">
+      {conditions.map((c, idx) => {
+        const ev = catalogEvents.find(e => e.id === c.eventId);
+        if (!ev) return null;
+        return (
+          <div key={c.id}>
+            {idx > 0 && (
+              <div className="flex items-center gap-2 py-1">
+                <div className="flex-1 h-px bg-border" />
+                <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${joiner === "AND" ? "bg-blue-500 text-white" : "bg-teal-500 text-white"}`}>{joiner}</span>
+                <div className="flex-1 h-px bg-border" />
+              </div>
+            )}
+            <div className="flex items-start gap-2 rounded-lg border border-border bg-muted/20 px-2.5 py-2">
+              <span className="mt-0.5 flex-shrink-0">
+                {ev.platform === "web" ? <Globe className="h-3.5 w-3.5 text-blue-600" /> : <Smartphone className="h-3.5 w-3.5 text-violet-600" />}
+              </span>
+              <div className="min-w-0">
+                <p className="text-[11px] font-semibold text-foreground truncate">
+                  {c.performed === "did" ? "Did" : "Did not do"} {ev.name}
+                </p>
+                <p className="text-[10px] text-muted-foreground font-mono truncate">
+                  {ev.code} · {c.freqOperator} {c.freqValue}{c.freqValueTo ? `–${c.freqValueTo}` : ""} · {c.window}
+                </p>
+                {c.propFilters.length > 0 && (
+                  <p className="text-[10px] text-muted-foreground mt-0.5 truncate">
+                    where {c.propFilters.map(f => `${f.property} ${f.operator} ${f.value || "…"}`).join(", ")}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const CreateSegment = () => {
   const navigate = useNavigate();
   const [segmentName, setSegmentName] = useState("");
@@ -689,6 +734,19 @@ const CreateSegment = () => {
     return result;
   };
 
+  const buildEventSummary = () => {
+    if (eventConditions.length === 0) return null;
+    const parts = eventConditions.map(c => {
+      const ev = catalogEvents.find(e => e.id === c.eventId);
+      if (!ev) return null;
+      const props = c.propFilters.length
+        ? ` where ${c.propFilters.map(f => `${f.property} ${f.operator} ${f.value || "…"}`).join(" AND ")}`
+        : "";
+      return `${ev.platform.toUpperCase()} · ${c.performed === "did" ? "DID" : "DID NOT"} ${ev.code} ${c.freqOperator} ${c.freqValue}${c.freqValueTo ? `-${c.freqValueTo}` : ""} in ${c.window}${props}`;
+    }).filter(Boolean) as string[];
+    return parts.join(` ${eventJoiner} `);
+  };
+
   const renderFilterInput = (groupId: string, rule: FilterRule) => {
     const sliderMin = rule.sliderMin ?? 1;
     const sliderMax = rule.sliderMax ?? 100;
@@ -863,6 +921,8 @@ const CreateSegment = () => {
   };
 
   const summary = buildSummary();
+  const eventSummary = buildEventSummary();
+  const behaviouralAvailable = hasBehaviouralEvents();
 
   return (
     <main className="flex-1 overflow-auto flex flex-col">
@@ -982,7 +1042,8 @@ const CreateSegment = () => {
           <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-5 items-start">
             {/* LEFT: Rules Builder Canvas */}
             <div className="space-y-5">
-              {/* ── Behavioural Event Segmentation (Web & App) ── */}
+              {/* ── Behavioural Event Segmentation (Web & App) — only for brands with events configured ── */}
+              {behaviouralAvailable && (
               <BehavioralEventBuilder
                 conditions={eventConditions}
                 setConditions={setEventConditions}
@@ -991,6 +1052,7 @@ const CreateSegment = () => {
                 joiner={eventJoiner}
                 setJoiner={setEventJoiner}
               />
+              )}
 
               {/* ── Rules Builder Canvas ── */}
               <div className="space-y-0">
@@ -1241,32 +1303,61 @@ const CreateSegment = () => {
 
             {/* RIGHT: Side Panel - Summary, Mind Map, Count */}
             <div className="space-y-4 xl:pt-10">
-              {/* ── Natural Language Summary ── */}
-              {summary && (
+              {/* ── Part 1: Attribute Criteria ── */}
+              {(summary || totalRules > 0) && (
                 <Card className="border-primary/20 bg-primary/5">
-                  <CardContent className="py-3 px-4">
-                    <div className="flex items-start gap-2.5">
-                      <Activity className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[10px] font-semibold text-primary uppercase tracking-wide mb-1">Query Summary</p>
+                  <CardContent className="py-3 px-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="px-1.5 py-0.5 rounded bg-primary text-primary-foreground text-[9px] font-bold">1</span>
+                      <Activity className="h-4 w-4 text-primary" />
+                      <p className="text-[10px] font-semibold text-primary uppercase tracking-wide">Attribute Criteria</p>
+                    </div>
+                    {summary && (
+                      <div>
+                        <p className="text-[9px] uppercase tracking-wide text-muted-foreground mb-1">Query summary</p>
                         <p className="text-xs text-foreground font-mono leading-relaxed break-words">{summary}</p>
                       </div>
-                    </div>
+                    )}
+                    {totalRules > 0 && (
+                      <div className="border-t border-primary/15 pt-2">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <GitBranch className="h-3.5 w-3.5 text-primary" />
+                          <p className="text-[9px] uppercase tracking-wide text-muted-foreground">Mind map</p>
+                        </div>
+                        <ScrollArea className="max-h-[340px]">
+                          <SegmentMindMap groups={groups} interGroupConditions={interGroupConditions} />
+                        </ScrollArea>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )}
 
-              {/* ── Mind Map ── */}
-              {totalRules > 0 && (
-                <Card className="border-border">
-                  <CardContent className="py-3 px-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <GitBranch className="h-4 w-4 text-primary" />
-                      <p className="text-[10px] font-semibold text-primary uppercase tracking-wide">Segment Mind Map</p>
+              {/* ── Part 2: Behavioural Events ── */}
+              {behaviouralAvailable && eventConditions.length > 0 && (
+                <Card className="border-violet-200 bg-violet-50/50 dark:bg-violet-950/20 dark:border-violet-900">
+                  <CardContent className="py-3 px-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="px-1.5 py-0.5 rounded bg-violet-600 text-white text-[9px] font-bold">2</span>
+                      <Zap className="h-4 w-4 text-violet-600" />
+                      <p className="text-[10px] font-semibold text-violet-700 dark:text-violet-300 uppercase tracking-wide">Behavioural Events</p>
+                      <span className="ml-auto text-[10px] text-muted-foreground">{eventConditions.length} condition{eventConditions.length > 1 ? "s" : ""}</span>
                     </div>
-                    <ScrollArea className="max-h-[400px]">
-                      <SegmentMindMap groups={groups} interGroupConditions={interGroupConditions} />
-                    </ScrollArea>
+                    {eventSummary && (
+                      <div>
+                        <p className="text-[9px] uppercase tracking-wide text-muted-foreground mb-1">Query summary</p>
+                        <p className="text-xs text-foreground font-mono leading-relaxed break-words">{eventSummary}</p>
+                      </div>
+                    )}
+                    <div className="border-t border-violet-200/60 dark:border-violet-900 pt-2">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <GitBranch className="h-3.5 w-3.5 text-violet-600" />
+                        <p className="text-[9px] uppercase tracking-wide text-muted-foreground">Mind map</p>
+                      </div>
+                      <ScrollArea className="max-h-[340px]">
+                        <BehaviouralMindMap conditions={eventConditions} joiner={eventJoiner} />
+                      </ScrollArea>
+                    </div>
                   </CardContent>
                 </Card>
               )}
@@ -1285,7 +1376,7 @@ const CreateSegment = () => {
               )}
 
               {/* Empty state for side panel */}
-              {!summary && totalRules === 0 && estimatedCount === null && (
+              {!summary && totalRules === 0 && eventConditions.length === 0 && estimatedCount === null && (
                 <Card className="border-dashed border-border">
                   <CardContent className="py-8 text-center text-muted-foreground">
                     <GitBranch className="h-8 w-8 mx-auto mb-2 opacity-20" />

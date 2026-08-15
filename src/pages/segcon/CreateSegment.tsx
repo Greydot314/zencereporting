@@ -16,7 +16,7 @@ import { format } from "date-fns";
 import {
   Plus, Trash2, Users, ChevronDown, ChevronRight, Calendar as CalendarIcon, Hash, Type, ToggleLeft,
   Loader2, Save, ArrowLeft, Filter, X, UserRound, BarChart3, Wallet, RefreshCw,
-  Search, Layers, GripVertical, Smartphone, Activity,
+  Search, Layers, GripVertical, Smartphone, Globe, Activity,
   Target, Zap, ShieldX, Clock, GitBranch, Megaphone, ShoppingBag, UserCheck, Timer
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -540,7 +540,7 @@ const BehaviouralMindMap = ({ conditions, joiner }: { conditions: EventCondition
                 </p>
                 {c.propFilters.length > 0 && (
                   <p className="text-[10px] text-muted-foreground mt-0.5 truncate">
-                    where {c.propFilters.map(f => `${f.property} ${f.operator} ${f.value || "…"}`).join(", ")}
+                    where {c.propFilters.map(f => `${f.propertyId} ${f.operator} ${f.value || "…"}`).join(", ")}
                   </p>
                 )}
               </div>
@@ -740,7 +740,7 @@ const CreateSegment = () => {
       const ev = catalogEvents.find(e => e.id === c.eventId);
       if (!ev) return null;
       const props = c.propFilters.length
-        ? ` where ${c.propFilters.map(f => `${f.property} ${f.operator} ${f.value || "…"}`).join(" AND ")}`
+        ? ` where ${c.propFilters.map(f => `${f.propertyId} ${f.operator} ${f.value || "…"}`).join(" AND ")}`
         : "";
       return `${ev.platform.toUpperCase()} · ${c.performed === "did" ? "DID" : "DID NOT"} ${ev.code} ${c.freqOperator} ${c.freqValue}${c.freqValueTo ? `-${c.freqValueTo}` : ""} in ${c.window}${props}`;
     }).filter(Boolean) as string[];

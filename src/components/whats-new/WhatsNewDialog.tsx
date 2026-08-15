@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -81,8 +81,8 @@ export const WhatsNewDialog = () => {
               What's new · {release.date}
             </span>
           </div>
-          <h2 className="text-base font-semibold">{release.headline}</h2>
-          <p className="text-xs text-primary-foreground/75 mt-0.5">Version {release.version}</p>
+          <DialogTitle className="text-base font-semibold">{release.headline}</DialogTitle>
+          <DialogDescription className="text-xs text-primary-foreground/75 mt-0.5">Version {release.version}</DialogDescription>
         </div>
 
         {/* Items */}

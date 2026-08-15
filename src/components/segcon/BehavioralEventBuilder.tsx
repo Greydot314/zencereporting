@@ -2,16 +2,14 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Activity, Plus, Trash2, Search, Globe, Smartphone, Zap, X,
-  SlidersHorizontal, CalendarRange, Info, ArrowRight, Repeat,
+  SlidersHorizontal, CalendarRange, Info,
   Link2, Building2, Layers, CheckCircle2,
 } from "lucide-react";
 import {
@@ -308,8 +306,6 @@ const BehavioralEventBuilder = ({
   setPlatform,
   joiner,
   setJoiner,
-  sequenced,
-  setSequenced,
 }: {
   conditions: EventCondition[];
   setConditions: (c: EventCondition[]) => void;
@@ -317,8 +313,6 @@ const BehavioralEventBuilder = ({
   setPlatform: (p: Platform) => void;
   joiner: Joiner;
   setJoiner: (j: Joiner) => void;
-  sequenced: boolean;
-  setSequenced: (v: boolean) => void;
 }) => {
   const activePlatform: Platform = platform === "app" ? "app" : "web";
   const [mappings, setMappings] = useState<Record<string, string>>({});
@@ -407,12 +401,6 @@ const BehavioralEventBuilder = ({
                 </button>
               ))}
             </div>
-
-            <div className="flex items-center gap-1.5">
-              <Repeat className="h-3.5 w-3.5 text-muted-foreground" />
-              <Label className="text-[11px] font-medium cursor-pointer">In sequence</Label>
-              <Switch checked={sequenced} onCheckedChange={setSequenced} />
-            </div>
           </div>
         </div>
 
@@ -431,7 +419,7 @@ const BehavioralEventBuilder = ({
             );
           })}
           <span className="ml-auto flex items-center gap-1.5">
-            <Layers className="h-3 w-3" /> Cross-platform conditions combine with {sequenced ? "THEN" : joiner}
+            <Layers className="h-3 w-3" /> Cross-platform conditions combine with {joiner}
           </span>
         </div>
 
@@ -482,27 +470,21 @@ const BehavioralEventBuilder = ({
                 {idx > 0 && (
                   <div className="flex items-center py-2">
                     <div className="flex-1 h-px bg-border" />
-                    {sequenced ? (
-                      <span className="mx-3 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">
-                        THEN <ArrowRight className="h-3 w-3" />
-                      </span>
-                    ) : (
-                      <div className="mx-3 flex gap-1">
-                        {(["AND", "OR"] as Joiner[]).map((j) => (
-                          <button
-                            key={j}
-                            onClick={() => setJoiner(j)}
-                            className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
-                              joiner === j
-                                ? j === "AND" ? "bg-blue-500 text-white" : "bg-teal-500 text-white"
-                                : "bg-muted text-muted-foreground hover:bg-muted/80"
-                            }`}
-                          >
-                            {j}
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    <div className="mx-3 flex gap-1">
+                      {(["AND", "OR"] as Joiner[]).map((j) => (
+                        <button
+                          key={j}
+                          onClick={() => setJoiner(j)}
+                          className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
+                            joiner === j
+                              ? j === "AND" ? "bg-blue-500 text-white" : "bg-teal-500 text-white"
+                              : "bg-muted text-muted-foreground hover:bg-muted/80"
+                          }`}
+                        >
+                          {j}
+                        </button>
+                      ))}
+                    </div>
                     <div className="flex-1 h-px bg-border" />
                   </div>
                 )}

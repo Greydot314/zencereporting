@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { NotificationPanel } from "@/components/NotificationPanel";
+import { openWhatsNew } from "@/components/whats-new/WhatsNewDialog";
+import { Gift } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useVoiceRecognition } from "@/hooks/useVoiceRecognition";
 import { useToast } from "@/hooks/use-toast";
@@ -212,6 +214,16 @@ export const Header = () => {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-1 flex-shrink-0">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={openWhatsNew}
+            title="What's new"
+            className="h-9 w-9 rounded-full text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10"
+          >
+            <Gift className="h-4 w-4" />
+          </Button>
+
           <NotificationPanel />
 
           <Popover>

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { WhatsNewDialog } from "@/components/whats-new/WhatsNewDialog";
 import { Header } from "@/components/Header";
 import Dashboard from "./pages/Dashboard";
 import AIInsights from "./pages/AIInsights";
@@ -45,6 +46,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <WhatsNewDialog />
         <Routes>
           {/* Landing page without sidebar */}
           <Route path="/landing" element={<AtlasLanding />} />

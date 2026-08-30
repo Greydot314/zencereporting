@@ -65,24 +65,26 @@ export const WhatsNewDialog = () => {
 
   return (
     <Dialog open={open} onOpenChange={(v) => (v ? setOpen(true) : close())}>
-      <DialogContent className="max-w-lg p-0 overflow-hidden gap-0 [&>button]:hidden">
-        {/* Header */}
-        <div className="relative px-5 py-4 bg-primary text-primary-foreground">
+      <DialogContent className="max-w-lg w-[calc(100vw-2rem)] p-0 overflow-hidden gap-0 [&>button]:hidden rounded-2xl">
+        {/* Header — subtle */}
+        <div className="relative px-5 pt-5 pb-4 border-b border-border bg-secondary/10">
           <button
             onClick={close}
-            className="absolute top-3 right-3 p-1 rounded-md text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10 transition-colors"
+            className="absolute top-3 right-3 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             aria-label="Close"
           >
             <X className="h-4 w-4" />
           </button>
-          <div className="flex items-center gap-2 mb-1">
-            <Sparkles className="h-4 w-4" />
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-primary-foreground/80">
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary">
+              <Sparkles className="h-3.5 w-3.5" />
+            </span>
+            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
               What's new · {release.date}
             </span>
           </div>
-          <DialogTitle className="text-base font-semibold">{release.headline}</DialogTitle>
-          <DialogDescription className="text-xs text-primary-foreground/75 mt-0.5">Version {release.version}</DialogDescription>
+          <DialogTitle className="text-sm font-semibold text-foreground leading-snug pr-6">{release.headline}</DialogTitle>
+          <DialogDescription className="text-[11px] text-muted-foreground mt-0.5">Version {release.version}</DialogDescription>
         </div>
 
         {/* Items */}

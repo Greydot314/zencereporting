@@ -47,7 +47,7 @@ export const OliverNudgeProvider = ({ page }: Props) => {
       )}
 
       {/* Variant switcher (dev preview) */}
-      <div className="fixed top-20 right-4 z-[60] rounded-full border border-border bg-card/95 backdrop-blur shadow-lg p-1 flex items-center gap-1">
+      <div className="fixed top-20 right-4 z-40 rounded-full border border-border bg-card/95 backdrop-blur shadow-lg p-1 flex items-center gap-1 max-sm:scale-90 max-sm:origin-top-right">
         <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-2">Nudge</span>
         {variantLabels.map((label, i) => (
           <button
